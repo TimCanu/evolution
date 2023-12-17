@@ -18,7 +18,8 @@ export default function Home() {
     const [cards, setCards] = useState<Card[]>(cardsData)
     const [species, setSpecies] = useState<Species[]>(speciesData)
     const [foods, setFoods] = useState<number[]>([])
-    const [hasAddedFood, setHasAddedFod] = useState(false)
+    const [amountOfFood, setAmountOfFood] = useState(0)
+    const [hasAddedFood, setHasAddedFood] = useState(false)
 
     const removeCard = (cardId: string): void => {
         const updatedCards = cards.filter(card => card.id !== cardId)
@@ -26,9 +27,18 @@ export default function Home() {
         if (!foodNumber) {
             throw Error("Food number is undefined")
         }
-        setHasAddedFod(true)
+        setHasAddedFood(true)
         setCards(updatedCards)
         setFoods([...foods, foodNumber])
+    }
+
+    const computeNumberOfFood = (): void => {
+        const newAmountOfFood = foods.reduce((previousValue, currentAmountOfFoods) => {
+            return previousValue + currentAmountOfFoods
+        }, amountOfFood)
+        setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
+        setFoods([])
+        setHasAddedFood(false)
     }
 
     return (
@@ -39,7 +49,7 @@ export default function Home() {
                 })}
             </div>
             <div className="flex justify-center row-span-1">
-                <FoodArea foodsAdded={foods}/>
+                <FoodArea amountOfFood={amountOfFood} foodsAdded={foods}/>
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
@@ -51,6 +61,14 @@ export default function Home() {
                         />
                     })}
                 </div>
+                {hasAddedFood &&
+                    <button
+                        className="my-4 bg-cyan-500 border bg-color-white w-36 self-center"
+                        onClick={computeNumberOfFood}
+                    >
+                        Finish turn
+                    </button>
+                }
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return <CardLayout
