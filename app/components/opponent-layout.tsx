@@ -6,7 +6,7 @@ interface OpponentLayoutProps {
 
 export const OpponentLayout: FC<OpponentLayoutProps> = ({ name }) => {
     return (
-        <div className="border border-indigo-600 w-64 h-64 ml-5">
+        <div className="border border-indigo-600 w-80 h-44 ml-5">
             {name}
         </div>
     )
