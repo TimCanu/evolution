@@ -27,7 +27,7 @@ export default function Home() {
     }
     
     return (
-        <div className="grid grid-rows-3">
+        <div className="grid grid-rows-3 min-h-[100vh]">
             <div className="mt-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
                     return <OpponentLayout key={index} name={opponent.name}/>
