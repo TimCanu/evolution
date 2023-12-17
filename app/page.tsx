@@ -19,7 +19,7 @@ export default function Home() {
     const [species, setSpecies] = useState<Species[]>(speciesData)
     const [foods, setFoods] = useState<number[]>([])
     const [amountOfFood, setAmountOfFood] = useState(0)
-    const [hasAddedFood, setHasAddedFod] = useState(false)
+    const [hasAddedFood, setHasAddedFood] = useState(false)
 
     const removeCard = (cardId: string): void => {
         const updatedCards = cards.filter(card => card.id !== cardId)
@@ -27,7 +27,7 @@ export default function Home() {
         if (!foodNumber) {
             throw Error("Food number is undefined")
         }
-        setHasAddedFod(true)
+        setHasAddedFood(true)
         setCards(updatedCards)
         setFoods([...foods, foodNumber])
     }
@@ -38,7 +38,7 @@ export default function Home() {
         }, amountOfFood)
         setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
         setFoods([])
-        setHasAddedFod(false)
+        setHasAddedFood(false)
     }
 
     return (
