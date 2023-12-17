@@ -3,50 +3,67 @@
 import {OpponentLayout} from "@/app/components/opponent-layout"
 import opponentsData from './data/opponents.json'
 import cardsData from './data/cards.json'
+import speciesData from './data/species.json'
 import {Opponent} from "@/app/models/opponent";
 import {FoodArea} from "@/app/components/food-area";
 import {CardLayout} from "@/app/components/card-layout";
 import {Card} from "@/app/models/card";
-import { useState } from "react";
+import {useState} from "react";
+import {Species} from "@/app/models/species";
+import {SpeciesLayout} from "@/app/components/species-layout";
 
 export default function Home() {
     const opponents: Opponent[] = opponentsData
-  
-    const [cards, setCards] = useState<Card[]>(cardsData)
 
+    const [cards, setCards] = useState<Card[]>(cardsData)
+    const [species, setSpecies] = useState<Species[]>(speciesData)
     const [foods, setFoods] = useState<number[]>([])
+    const [hasAddedFood, setHasAddedFod] = useState(false)
 
     const removeCard = (cardId: string): void => {
-      const updatedCards = cards.filter(card => card.id !== cardId)
-      const foodNumber = cards.find(card => card.id === cardId)?.foodNumber
-      if(!foodNumber){
-        throw Error("Food number is undefined")
-      }
-      setCards(updatedCards)
-      setFoods([...foods, foodNumber])
+        const updatedCards = cards.filter(card => card.id !== cardId)
+        const foodNumber = cards.find(card => card.id === cardId)?.foodNumber
+        if (!foodNumber) {
+            throw Error("Food number is undefined")
+        }
+        setHasAddedFod(true)
+        setCards(updatedCards)
+        setFoods([...foods, foodNumber])
     }
-    
+
     return (
-        <div className="grid grid-rows-3 min-h-[100vh]">
-            <div className="mt-1 flex flex-row justify-around">
+        <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">
+            <div className="mt-1 row-span-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
                     return <OpponentLayout key={index} name={opponent.name}/>
                 })}
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center row-span-1">
                 <FoodArea foodsAdded={foods}/>
             </div>
-            <div className="mb-1 flex flex-row self-end justify-center h-full items-end">
-                {cards.map((card, index) => {
-                    return <CardLayout
-                        key={index}
-                        id={card.id}
-                        name={card.name}
-                        description={card.description}
-                        foodNumber={card.foodNumber}
-                        removeCard={removeCard}
-                    />
-                })}
+            <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
+                <div className="flex flex-row justify-center ">
+                    {species.map((specie, index) => {
+                        return <SpeciesLayout
+                            key={index}
+                            size={specie.size}
+                            population={specie.population}
+                        />
+                    })}
+                </div>
+                <div className="flex flex-row justify-center h-56 items-end">
+                    {cards.map((card, index) => {
+                        return <CardLayout
+                            key={index}
+                            id={card.id}
+                            name={card.name}
+                            description={card.description}
+                            foodNumber={card.foodNumber}
+                            showAddFoodButton={!hasAddedFood}
+                            removeCard={removeCard}
+                        />
+                    })}
+                </div>
             </div>
         </div>
     )
