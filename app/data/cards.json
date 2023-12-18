@@ -1,14 +1,14 @@
 [
-  {
-    "id": "1",
-    "name": "Card 1",
-    "description": "This card does nothing for now :(",
-    "foodNumber": 5
-  },
-  {
-    "id": "2",
-    "name": "Card 2",
-    "description": "This card also does nothing for now...",
-    "foodNumber": -2
-  }
+    {
+        "id": "1",
+        "name": "Card 1",
+        "description": "This card does nothing for now :(",
+        "foodNumber": 5
+    },
+    {
+        "id": "2",
+        "name": "Card 2",
+        "description": "This card also does nothing for now...",
+        "foodNumber": -2
+    }
 ]
