@@ -50,6 +50,7 @@ export default function Home() {
                 return { ...specie, size: specie.size + 1 }
             })
             setSpecies(newSpeciesList)
+            setSpeciesIdToIncrementSize(null)
         }
     }
 

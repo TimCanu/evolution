@@ -19,7 +19,7 @@ export const SpeciesLayout: FC<CardProps> = ({
 }) => {
     return (
         <>
-            {showAddSizeButton && (
+            {showAddSizeButton && size < 6 && (
                 <button className="mb-5" onClick={() => incrementSize(id)}>
                     +
                 </button>
