@@ -62,6 +62,7 @@ export default function Home() {
         return { ...specie, population: specie.population + 1 };
       });
       setSpecies(newSpeciesList);
+      setSpeciesIdToIncrementPopulation(null);
     }
   };
 

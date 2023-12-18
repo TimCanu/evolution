@@ -36,7 +36,7 @@ export const SpeciesLayout: FC<CardProps> = ({
           {population}
         </span>
       </div>
-      {showAddPopulationButton && (
+      {showAddPopulationButton && population < 6 && (
         <button className="mb-5" onClick={() => incrementPopulation(id)}>
           +
         </button>
