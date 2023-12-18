@@ -3,12 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --main-font-color: white;
-  --background-color: #0a0b10;
+    --main-font-color: white;
+    --background-color: #0a0b10;
 }
 
-
 body {
-  color: var(--main-font-color);
-  background: var(--background-color);
+    color: var(--main-font-color);
+    background: var(--background-color);
 }
