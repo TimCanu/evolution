@@ -1,14 +1,44 @@
 [
-  {
-    "id": "1",
-    "name": "Card 1",
-    "description": "This card does nothing for now :(",
-    "foodNumber": 5
-  },
-  {
-    "id": "2",
-    "name": "Card 2",
-    "description": "This card also does nothing for now...",
-    "foodNumber": -2
-  }
+    {
+        "id": "1",
+        "name": "Card 1",
+        "description": "This card does nothing for now :(",
+        "foodNumber": 5
+    },
+    {
+        "id": "2",
+        "name": "Card 2",
+        "description": "This card also does nothing for now...",
+        "foodNumber": -2
+    },
+    {
+        "id": "3",
+        "name": "Card 3",
+        "description": "This card also does nothing for now...",
+        "foodNumber": 1
+    },
+    {
+        "id": "4",
+        "name": "Card 4",
+        "description": "This card also does nothing for now...",
+        "foodNumber": 6
+    },
+    {
+        "id": "5",
+        "name": "Card 5",
+        "description": "This card also does nothing for now...",
+        "foodNumber": -1
+    },
+    {
+        "id": "6",
+        "name": "Card 6",
+        "description": "This card also does nothing for now...",
+        "foodNumber": 0
+    },
+    {
+        "id": "7",
+        "name": "Card 7",
+        "description": "This card also does nothing for now...",
+        "foodNumber": 2
+    }
 ]
