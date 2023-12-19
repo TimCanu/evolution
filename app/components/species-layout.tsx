@@ -1,69 +1,105 @@
 import { FC } from 'react'
+import { Species } from '@/app/models/species'
+import { FeatureLayout } from '@/app/components/feature-layout'
 
 interface CardProps {
+    canRemoveSpecieFeature: boolean
     canShowAddSpeciesLeftButton: boolean
     canShowAddSpeciesRightButton: boolean
-    id: string
-    size: number
-    population: number
     isEditable: boolean
+    species: Species
+    addSpeciesFeature: (id: string) => void
     addSpeciesOnTheLeft: () => void
     addSpeciesOnTheRight: () => void
     incrementPopulation: (id: string) => void
     incrementSize: (id: string) => void
+    updateSpecies: (species: Species) => void
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
-    canShowAddSpeciesLeftButton = false,
-    canShowAddSpeciesRightButton = false,
-    id,
-    size,
-    population,
-    isEditable = false,
+    canRemoveSpecieFeature,
+    canShowAddSpeciesLeftButton,
+    canShowAddSpeciesRightButton,
+    isEditable,
+    species,
+    addSpeciesFeature,
     addSpeciesOnTheLeft,
     addSpeciesOnTheRight,
     incrementSize,
     incrementPopulation,
+    updateSpecies,
 }) => {
+    const removeFeature = (featureId: string) => {
+        const newFeatures = species.features.filter(
+            (feature) => feature.id !== featureId
+        )
+        updateSpecies({ ...species, features: newFeatures })
+    }
+
     return (
-        <>
-            {isEditable && canShowAddSpeciesLeftButton && (
-                <button
-                    className="mb-5 border border-indigo-600"
-                    onClick={addSpeciesOnTheLeft}
-                >
-                    Add a new specie here
-                </button>
-            )}
-            {isEditable && size < 6 && (
-                <button className="mb-5 mx-2" onClick={() => incrementSize(id)}>
-                    +
-                </button>
-            )}
-            <div className="border border-indigo-600 mb-5 w-20 h-8 flex flex-row justify-between">
-                <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
-                    {size}
-                </span>
-                <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                    {population}
-                </span>
+        <div className="flex flex-col">
+            <div className="flex self-center mb-2">
+                {species.features.map((feature, index) => {
+                    return (
+                        <FeatureLayout
+                            key={index}
+                            canRemoveSpecieFeature={canRemoveSpecieFeature}
+                            feature={feature}
+                            removeFeature={removeFeature}
+                        />
+                    )
+                })}
             </div>
-            {isEditable && population < 6 && (
-                <button
-                    className="mb-5 mx-2"
-                    onClick={() => incrementPopulation(id)}
-                >
-                    +
-                </button>
-            )}
-            {isEditable && canShowAddSpeciesRightButton && (
-                <button
-                    className="mb-5 border border-indigo-600"
-                    onClick={addSpeciesOnTheRight}
-                >
-                    Add a new specie here
-                </button>
-            )}
-        </>
+            <div className="flex">
+                {isEditable && canShowAddSpeciesLeftButton && (
+                    <button
+                        className="mb-5 border border-indigo-600 w-28"
+                        onClick={addSpeciesOnTheLeft}
+                    >
+                        Add a new specie here
+                    </button>
+                )}
+                {isEditable && species.size < 6 && (
+                    <button
+                        className="mb-5 mx-2"
+                        onClick={() => incrementSize(species.id)}
+                    >
+                        +
+                    </button>
+                )}
+                <div className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center">
+                    <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
+                        {species.size}
+                    </span>
+                    {isEditable && species.features.length < 3 && (
+                        <button
+                            className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            onClick={() => addSpeciesFeature(species.id)}
+                        >
+                            +
+                        </button>
+                    )}
+                    <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
+                        {species.population}
+                    </span>
+                </div>
+                {isEditable && species.population < 6 && (
+                    <button
+                        className="mb-5 mx-2"
+                        onClick={() => incrementPopulation(species.id)}
+                    >
+                        +
+                    </button>
+                )}
+                {isEditable && canShowAddSpeciesRightButton && (
+                    <button
+                        className="mb-5 border border-indigo-600 w-28"
+                        onClick={addSpeciesOnTheRight}
+                    >
+                        Add a new specie here
+                    </button>
+                )}
+            </div>
+        </div>
     )
 }
