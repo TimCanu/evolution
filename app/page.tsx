@@ -22,6 +22,8 @@ export default function Home() {
     const [speciesIdToIncrementSize, setSpeciesIdToIncrementSize] = useState<
         string | null
     >(null)
+    const [speciesIdToIncrementPopulation, setSpeciesIdToIncrementPopulation] =
+        useState<string | null>(null)
 
     const hasAddedFood = (): boolean => {
         return foods.length > 0
@@ -51,6 +53,17 @@ export default function Home() {
             })
             setSpecies(newSpeciesList)
             setSpeciesIdToIncrementSize(null)
+        } else if (speciesIdToIncrementPopulation) {
+            const updatedCards = cards.filter((card) => card.id !== cardId)
+            setCards(updatedCards)
+            const newSpeciesList = species.map((specie) => {
+                if (specie.id !== speciesIdToIncrementPopulation) {
+                    return specie
+                }
+                return { ...specie, population: specie.population + 1 }
+            })
+            setSpecies(newSpeciesList)
+            setSpeciesIdToIncrementPopulation(null)
         }
     }
 
@@ -69,8 +82,12 @@ export default function Home() {
         setSpeciesIdToIncrementSize(specieId)
     }
 
+    const incrementPopulation = (specieId: string): void => {
+        setSpeciesIdToIncrementPopulation(specieId)
+    }
+
     const showDiscardCardMessage = (): boolean => {
-        return !!speciesIdToIncrementSize
+        return !!speciesIdToIncrementSize || !!speciesIdToIncrementPopulation
     }
 
     return (
@@ -94,6 +111,8 @@ export default function Home() {
                                 population={specie.population}
                                 incrementSize={incrementSize}
                                 showAddSizeButton={hasAddedFood()}
+                                incrementPopulation={incrementPopulation}
+                                showAddPopulationButton={hasAddedFood()}
                             />
                         )
                     })}

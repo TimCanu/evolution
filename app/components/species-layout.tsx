@@ -8,6 +8,8 @@ interface CardProps {
     population: number
     incrementSize: (id: string) => void
     showAddSizeButton: boolean
+    incrementPopulation: (id: string) => void
+    showAddPopulationButton: boolean
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
@@ -16,6 +18,8 @@ export const SpeciesLayout: FC<CardProps> = ({
     population,
     incrementSize,
     showAddSizeButton,
+    incrementPopulation,
+    showAddPopulationButton,
 }) => {
     return (
         <>
@@ -32,6 +36,14 @@ export const SpeciesLayout: FC<CardProps> = ({
                     {population}
                 </span>
             </div>
+            {showAddPopulationButton && population < 6 && (
+                <button
+                    className="mb-5"
+                    onClick={() => incrementPopulation(id)}
+                >
+                    +
+                </button>
+            )}
         </>
     )
 }
