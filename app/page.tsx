@@ -1,5 +1,6 @@
 'use client'
 
+import { v4 as uuidv4 } from 'uuid'
 import { OpponentLayout } from '@/app/components/opponent-layout'
 import opponentsData from './data/opponents.json'
 import cardsData from './data/cards.json'
@@ -19,6 +20,10 @@ export default function Home() {
     const [species, setSpecies] = useState<Species[]>(speciesData)
     const [foods, setFoods] = useState<number[]>([])
     const [amountOfFood, setAmountOfFood] = useState(0)
+    const [isAddingSpeciesToTheLeft, setIsAddingSpeciesToTheLeft] =
+        useState(false)
+    const [isAddingSpeciesToTheRight, setIsAddingSpeciesToTheRight] =
+        useState(false)
     const [speciesIdToIncrementSize, setSpeciesIdToIncrementSize] = useState<
         string | null
     >(null)
@@ -29,42 +34,68 @@ export default function Home() {
         return foods.length > 0
     }
 
-    const addFood = (cardId: string): void => {
+    const removeCardFromState = (cardId: string): void => {
         const updatedCards = cards.filter((card) => card.id !== cardId)
+        setCards(updatedCards)
+    }
+
+    const addFood = (cardId: string): void => {
         const foodNumber = cards.find((card) => card.id === cardId)?.foodNumber
         if (!foodNumber) {
             throw Error('Food number is undefined')
         }
-        setCards(updatedCards)
         setFoods([...foods, foodNumber])
+    }
+
+    const incrementSize = (): void => {
+        const newSpeciesList = species.map((specie) => {
+            if (specie.id !== speciesIdToIncrementSize) {
+                return specie
+            }
+            return { ...specie, size: specie.size + 1 }
+        })
+        setSpecies(newSpeciesList)
+        setSpeciesIdToIncrementSize(null)
+    }
+
+    const incrementPopulation = (): void => {
+        const newSpeciesList = species.map((specie) => {
+            if (specie.id !== speciesIdToIncrementPopulation) {
+                return specie
+            }
+            return { ...specie, population: specie.population + 1 }
+        })
+        setSpecies(newSpeciesList)
+        setSpeciesIdToIncrementPopulation(null)
+    }
+
+    const addSpeciesToTheLeft = (): void => {
+        const newSpecies: Species = { size: 1, population: 1, id: uuidv4() }
+        setSpecies([newSpecies, ...species])
+        setIsAddingSpeciesToTheLeft(false)
+    }
+
+    const addSpeciesToTheRight = (): void => {
+        const newSpecies: Species = { size: 1, population: 1, id: uuidv4() }
+        setSpecies([newSpecies, ...species])
+        setIsAddingSpeciesToTheLeft(false)
     }
 
     const removeCard = (cardId: string): void => {
         if (!hasAddedFood()) {
             addFood(cardId)
         } else if (speciesIdToIncrementSize) {
-            const updatedCards = cards.filter((card) => card.id !== cardId)
-            setCards(updatedCards)
-            const newSpeciesList = species.map((specie) => {
-                if (specie.id !== speciesIdToIncrementSize) {
-                    return specie
-                }
-                return { ...specie, size: specie.size + 1 }
-            })
-            setSpecies(newSpeciesList)
-            setSpeciesIdToIncrementSize(null)
+            incrementSize()
         } else if (speciesIdToIncrementPopulation) {
-            const updatedCards = cards.filter((card) => card.id !== cardId)
-            setCards(updatedCards)
-            const newSpeciesList = species.map((specie) => {
-                if (specie.id !== speciesIdToIncrementPopulation) {
-                    return specie
-                }
-                return { ...specie, population: specie.population + 1 }
-            })
-            setSpecies(newSpeciesList)
-            setSpeciesIdToIncrementPopulation(null)
+            incrementPopulation()
+        } else if (isAddingSpeciesToTheLeft) {
+            addSpeciesToTheLeft()
+        } else if (isAddingSpeciesToTheRight) {
+            addSpeciesToTheRight()
+        } else {
+            throw Error('Action is not supported')
         }
+        removeCardFromState(cardId)
     }
 
     const computeNumberOfFood = (): void => {
@@ -78,16 +109,13 @@ export default function Home() {
         setFoods([])
     }
 
-    const incrementSize = (specieId: string): void => {
-        setSpeciesIdToIncrementSize(specieId)
-    }
-
-    const incrementPopulation = (specieId: string): void => {
-        setSpeciesIdToIncrementPopulation(specieId)
-    }
-
     const showDiscardCardMessage = (): boolean => {
-        return !!speciesIdToIncrementSize || !!speciesIdToIncrementPopulation
+        return (
+            !!speciesIdToIncrementSize ||
+            !!speciesIdToIncrementPopulation ||
+            isAddingSpeciesToTheLeft ||
+            isAddingSpeciesToTheRight
+        )
     }
 
     return (
@@ -103,16 +131,29 @@ export default function Home() {
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
                     {species.map((specie, index) => {
+                        const isFirstSpecies = index === 0
+                        const isLastSpecies = index === species.length - 1
                         return (
                             <SpeciesLayout
                                 key={index}
+                                canShowAddSpeciesLeftButton={isFirstSpecies}
+                                canShowAddSpeciesRightButton={isLastSpecies}
                                 id={specie.id}
                                 size={specie.size}
                                 population={specie.population}
-                                incrementSize={incrementSize}
-                                showAddSizeButton={hasAddedFood()}
-                                incrementPopulation={incrementPopulation}
-                                showAddPopulationButton={hasAddedFood()}
+                                isEditable={hasAddedFood()}
+                                addSpeciesOnTheLeft={() => {
+                                    setIsAddingSpeciesToTheLeft(true)
+                                }}
+                                addSpeciesOnTheRight={() => {
+                                    setIsAddingSpeciesToTheRight(true)
+                                }}
+                                incrementSize={(specieId: string) => {
+                                    setSpeciesIdToIncrementSize(specieId)
+                                }}
+                                incrementPopulation={(specieId: string) => {
+                                    setSpeciesIdToIncrementPopulation(specieId)
+                                }}
                             />
                         )
                     })}
