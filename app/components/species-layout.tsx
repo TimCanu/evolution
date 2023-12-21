@@ -1,10 +1,7 @@
 import { FC } from 'react'
 import { Species } from '@/app/models/species'
 import { FeatureLayout } from '@/app/components/feature-layout'
-import {
-    ActionState,
-    useSpeciesContext,
-} from '@/app/providers/species.provider'
+import { ActionState, useSpeciesContext } from '@/app/providers/species.provider'
 
 interface CardProps {
     canRemoveSpecieFeature: boolean
@@ -24,9 +21,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     const { updateSpecies, updateSpeciesOnGoingAction } = useSpeciesContext()
 
     const removeFeature = (featureId: string) => {
-        const newFeatures = species.features.filter(
-            (feature) => feature.id !== featureId
-        )
+        const newFeatures = species.features.filter((feature) => feature.id !== featureId)
         updateSpecies({ ...species, features: newFeatures })
     }
 

@@ -1,10 +1,4 @@
-import {
-    createContext,
-    FunctionComponent,
-    PropsWithChildren,
-    useContext,
-    useState,
-} from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
 import { Species } from '@/app/models/species'
 import speciesData from '@/app/data/species.json'
 import { v4 as uuidv4 } from 'uuid'
@@ -41,21 +35,15 @@ export interface SpeciesActionState {
     specieId?: string
 }
 
-const SpeciesContext = createContext<SpeciesContextResult>(
-    {} as SpeciesContextResult
-)
+const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
-export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({
-    children,
-}) => {
+export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
     const [speciesAction, setSpeciesAction] = useState<SpeciesActionState>({
         action: ActionState.NOTHING,
     })
     const [species, setSpecies] = useState<Species[]>(speciesData)
 
-    const updateSpeciesOnGoingAction = (
-        speciesActionState: SpeciesActionState
-    ): void => {
+    const updateSpeciesOnGoingAction = (speciesActionState: SpeciesActionState): void => {
         setSpeciesAction(speciesActionState)
     }
 
@@ -145,13 +133,10 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({
     const res = {
         species,
         isAddingSpeciesToTheLeft: speciesAction.action === ActionState.ADD_LEFT,
-        isAddingSpeciesToTheRight:
-            speciesAction.action === ActionState.ADD_RIGHT,
+        isAddingSpeciesToTheRight: speciesAction.action === ActionState.ADD_RIGHT,
         speciesIdToAddFeature: getSpecieId(ActionState.ADD_FEATURE),
         speciesIdToIncrementSize: getSpecieId(ActionState.INCREMENT_SIZE),
-        speciesIdToIncrementPopulation: getSpecieId(
-            ActionState.INCREMENT_POPULATION
-        ),
+        speciesIdToIncrementPopulation: getSpecieId(ActionState.INCREMENT_POPULATION),
         updateSpecies,
         addSpeciesToTheRight,
         addSpeciesFeature,
@@ -161,11 +146,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({
         updateSpeciesOnGoingAction,
     }
 
-    return (
-        <SpeciesContext.Provider value={res}>
-            {children}
-        </SpeciesContext.Provider>
-    )
+    return <SpeciesContext.Provider value={res}>{children}</SpeciesContext.Provider>
 }
 
 export function useSpeciesContext(): SpeciesContextResult {
