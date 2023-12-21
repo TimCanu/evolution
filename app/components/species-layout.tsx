@@ -1,34 +1,46 @@
-'use client'
 import { FC } from 'react'
-import { Card } from './../models/card'
 
 interface CardProps {
+    canShowAddSpeciesLeftButton: boolean
+    canShowAddSpeciesRightButton: boolean
     id: string
     size: number
     population: number
-    incrementSize: (id: string) => void
-    showAddSizeButton: boolean
+    isEditable: boolean
+    addSpeciesOnTheLeft: () => void
+    addSpeciesOnTheRight: () => void
     incrementPopulation: (id: string) => void
-    showAddPopulationButton: boolean
+    incrementSize: (id: string) => void
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
+    canShowAddSpeciesLeftButton = false,
+    canShowAddSpeciesRightButton = false,
     id,
     size,
     population,
+    isEditable = false,
+    addSpeciesOnTheLeft,
+    addSpeciesOnTheRight,
     incrementSize,
-    showAddSizeButton,
     incrementPopulation,
-    showAddPopulationButton,
 }) => {
     return (
         <>
-            {showAddSizeButton && size < 6 && (
-                <button className="mb-5" onClick={() => incrementSize(id)}>
+            {isEditable && canShowAddSpeciesLeftButton && (
+                <button
+                    className="mb-5 border border-indigo-600"
+                    onClick={addSpeciesOnTheLeft}
+                >
+                    Add a new specie here
+                </button>
+            )}
+            {isEditable && size < 6 && (
+                <button className="mb-5 mx-2" onClick={() => incrementSize(id)}>
                     +
                 </button>
             )}
-            <div className="border border-indigo-600 mb-5 w-20 h-8 ml-2 flex flex-row justify-between">
+            <div className="border border-indigo-600 mb-5 w-20 h-8 flex flex-row justify-between">
                 <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
                     {size}
                 </span>
@@ -36,12 +48,20 @@ export const SpeciesLayout: FC<CardProps> = ({
                     {population}
                 </span>
             </div>
-            {showAddPopulationButton && population < 6 && (
+            {isEditable && population < 6 && (
                 <button
-                    className="mb-5"
+                    className="mb-5 mx-2"
                     onClick={() => incrementPopulation(id)}
                 >
                     +
+                </button>
+            )}
+            {isEditable && canShowAddSpeciesRightButton && (
+                <button
+                    className="mb-5 border border-indigo-600"
+                    onClick={addSpeciesOnTheRight}
+                >
+                    Add a new specie here
                 </button>
             )}
         </>
