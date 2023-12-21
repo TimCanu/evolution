@@ -12,6 +12,7 @@ import { Card } from '@/app/models/card'
 import { useState } from 'react'
 import { Species } from '@/app/models/species'
 import { SpeciesLayout } from '@/app/components/species-layout'
+import { Feature } from '@/app/models/feature'
 
 export default function Home() {
     const opponents: Opponent[] = opponentsData
@@ -24,6 +25,9 @@ export default function Home() {
         useState(false)
     const [isAddingSpeciesToTheRight, setIsAddingSpeciesToTheRight] =
         useState(false)
+    const [speciesIdToAddFeature, setSpeciesIdToAddFeature] = useState<
+        string | null
+    >(null)
     const [speciesIdToIncrementSize, setSpeciesIdToIncrementSize] = useState<
         string | null
     >(null)
@@ -32,6 +36,16 @@ export default function Home() {
 
     const hasAddedFood = (): boolean => {
         return foods.length > 0
+    }
+
+    const updateSpecies = (speciesToUpdate: Species): void => {
+        const newSpecies = species.map((specie) => {
+            if (specie.id !== speciesToUpdate.id) {
+                return specie
+            }
+            return speciesToUpdate
+        })
+        setSpecies(newSpecies)
     }
 
     const removeCardFromState = (cardId: string): void => {
@@ -70,15 +84,45 @@ export default function Home() {
     }
 
     const addSpeciesToTheLeft = (): void => {
-        const newSpecies: Species = { size: 1, population: 1, id: uuidv4() }
+        const newSpecies: Species = {
+            size: 1,
+            population: 1,
+            id: uuidv4(),
+            features: [],
+        }
         setSpecies([newSpecies, ...species])
         setIsAddingSpeciesToTheLeft(false)
     }
 
     const addSpeciesToTheRight = (): void => {
-        const newSpecies: Species = { size: 1, population: 1, id: uuidv4() }
-        setSpecies([newSpecies, ...species])
-        setIsAddingSpeciesToTheLeft(false)
+        const newSpecies: Species = {
+            size: 1,
+            population: 1,
+            id: uuidv4(),
+            features: [],
+        }
+        setSpecies([...species, newSpecies])
+        setIsAddingSpeciesToTheRight(false)
+    }
+
+    const addSpeciesFeature = (cardId: string): void => {
+        const card = cards.find((card) => card.id === cardId)
+        if (!card) {
+            throw Error(`Could not find any card with id ${cardId}`)
+        }
+        const feature: Feature = {
+            id: card.id,
+            name: card.name,
+            description: card.description,
+        }
+        const newSpecies = species.map((specie) => {
+            if (specie.id !== speciesIdToAddFeature) {
+                return specie
+            }
+            return { ...specie, features: [...specie.features, feature] }
+        })
+        setSpecies(newSpecies)
+        setSpeciesIdToAddFeature(null)
     }
 
     const removeCard = (cardId: string): void => {
@@ -92,6 +136,8 @@ export default function Home() {
             addSpeciesToTheLeft()
         } else if (isAddingSpeciesToTheRight) {
             addSpeciesToTheRight()
+        } else if (speciesIdToAddFeature) {
+            addSpeciesFeature(cardId)
         } else {
             throw Error('Action is not supported')
         }
@@ -138,10 +184,12 @@ export default function Home() {
                                 key={index}
                                 canShowAddSpeciesLeftButton={isFirstSpecies}
                                 canShowAddSpeciesRightButton={isLastSpecies}
-                                id={specie.id}
-                                size={specie.size}
-                                population={specie.population}
+                                canRemoveSpecieFeature={hasAddedFood()}
+                                species={specie}
                                 isEditable={hasAddedFood()}
+                                addSpeciesFeature={(specieId: string) => {
+                                    setSpeciesIdToAddFeature(specieId)
+                                }}
                                 addSpeciesOnTheLeft={() => {
                                     setIsAddingSpeciesToTheLeft(true)
                                 }}
@@ -154,6 +202,7 @@ export default function Home() {
                                 incrementPopulation={(specieId: string) => {
                                     setSpeciesIdToIncrementPopulation(specieId)
                                 }}
+                                updateSpecies={updateSpecies}
                             />
                         )
                     })}
@@ -169,18 +218,23 @@ export default function Home() {
                 {showDiscardCardMessage() && (
                     <p className="self-center ">Choose the card to discard</p>
                 )}
+                {!!speciesIdToAddFeature && (
+                    <p className="self-center ">
+                        Choose the card to add as a feature
+                    </p>
+                )}
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return (
                             <CardLayout
                                 key={index}
-                                id={card.id}
-                                name={card.name}
-                                description={card.description}
-                                foodNumber={card.foodNumber}
+                                card={card}
                                 showAddFoodButton={!hasAddedFood()}
                                 removeCard={removeCard}
-                                showDiscardCard={showDiscardCardMessage()}
+                                showDiscardCard={
+                                    showDiscardCardMessage() ||
+                                    !!speciesIdToAddFeature
+                                }
                             />
                         )
                     })}
