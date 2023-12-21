@@ -8,12 +8,7 @@ interface CardProps {
     removeCard: (cardId: string) => void
 }
 
-export const CardLayout: FC<CardProps> = ({
-    card,
-    showAddFoodButton,
-    removeCard,
-    showDiscardCard,
-}) => {
+export const CardLayout: FC<CardProps> = ({ card, showAddFoodButton, removeCard, showDiscardCard }) => {
     return (
         <div className="border border-indigo-600 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group">
             <span className="mb-auto">{card.name}</span>

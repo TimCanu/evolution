@@ -7,11 +7,7 @@ interface CardProps {
     removeFeature: (featureId: string) => void
 }
 
-export const FeatureLayout: FC<CardProps> = ({
-    canRemoveSpecieFeature,
-    feature,
-    removeFeature,
-}) => {
+export const FeatureLayout: FC<CardProps> = ({ canRemoveSpecieFeature, feature, removeFeature }) => {
     return (
         <div className="border border-indigo-600 w-24 h-36 ml-2 flex flex-col">
             <div className="mb-auto flex justify-between">

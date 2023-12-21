@@ -73,12 +73,9 @@ export function Game() {
     }
 
     const computeNumberOfFood = (): void => {
-        const newAmountOfFood = foods.reduce(
-            (previousValue, currentAmountOfFoods) => {
-                return previousValue + currentAmountOfFoods
-            },
-            amountOfFood
-        )
+        const newAmountOfFood = foods.reduce((previousValue, currentAmountOfFoods) => {
+            return previousValue + currentAmountOfFoods
+        }, amountOfFood)
         setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
         setFoods([])
     }
@@ -127,14 +124,8 @@ export function Game() {
                         Finish turn
                     </button>
                 )}
-                {showDiscardCardMessage() && (
-                    <p className="self-center ">Choose the card to discard</p>
-                )}
-                {!!speciesIdToAddFeature && (
-                    <p className="self-center ">
-                        Choose the card to add as a feature
-                    </p>
-                )}
+                {showDiscardCardMessage() && <p className="self-center ">Choose the card to discard</p>}
+                {!!speciesIdToAddFeature && <p className="self-center ">Choose the card to add as a feature</p>}
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return (
@@ -143,10 +134,7 @@ export function Game() {
                                 card={card}
                                 showAddFoodButton={!hasAddedFood()}
                                 removeCard={removeCard}
-                                showDiscardCard={
-                                    showDiscardCardMessage() ||
-                                    !!speciesIdToAddFeature
-                                }
+                                showDiscardCard={showDiscardCardMessage() || !!speciesIdToAddFeature}
                             />
                         )
                     })}
