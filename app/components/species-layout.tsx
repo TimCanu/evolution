@@ -37,7 +37,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     }
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col self-end">
             <div className="flex self-center mb-2">
                 {species.features.map((feature, index) => {
                     return (

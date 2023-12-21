@@ -101,8 +101,8 @@ export default function Home() {
             id: uuidv4(),
             features: [],
         }
-        setSpecies([newSpecies, ...species])
-        setIsAddingSpeciesToTheLeft(false)
+        setSpecies([...species, newSpecies])
+        setIsAddingSpeciesToTheRight(false)
     }
 
     const addSpeciesFeature = (cardId: string): void => {
@@ -231,7 +231,10 @@ export default function Home() {
                                 card={card}
                                 showAddFoodButton={!hasAddedFood()}
                                 removeCard={removeCard}
-                                showDiscardCard={showDiscardCardMessage()}
+                                showDiscardCard={
+                                    showDiscardCardMessage() ||
+                                    !!speciesIdToAddFeature
+                                }
                             />
                         )
                     })}
