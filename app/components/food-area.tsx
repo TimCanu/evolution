@@ -16,7 +16,14 @@ export const FoodArea: FC<FoodAreaProps> = ({ foodsAdded, amountOfFood }) => {
                     />
                 )
             })}
-            {amountOfFood}
+            {[...Array(amountOfFood)].map((food, index) => {
+                return (
+                    <div
+                        className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                        key={index}
+                    />
+                )
+            })}
         </div>
     )
 }
