@@ -10,31 +10,19 @@ import { Card } from '@/app/models/card'
 import { useState } from 'react'
 import { SpeciesLayout } from '@/app/components/species-layout'
 import { useSpeciesContext } from '@/app/providers/species.provider'
+import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
 
 export function Game() {
     const opponents: Opponent[] = opponentsData
 
-    const {
-        species,
-        speciesIdToIncrementSize,
-        speciesIdToIncrementPopulation,
-        isAddingSpeciesToTheRight,
-        isAddingSpeciesToTheLeft,
-        speciesIdToAddFeature,
-        addSpeciesToTheRight,
-        addSpeciesFeature,
-        addSpeciesToTheLeft,
-        incrementPopulation,
-        incrementSize,
-    } = useSpeciesContext()
+    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
+        usePlayerActionsContext()
+
+    const { speciesList, playEvolvingAction } = useSpeciesContext()
 
     const [cards, setCards] = useState<Card[]>(cardsData)
     const [foods, setFoods] = useState<number[]>([])
     const [amountOfFood, setAmountOfFood] = useState(0)
-
-    const hasAddedFood = (): boolean => {
-        return foods.length > 0
-    }
 
     const removeCardFromState = (cardId: string): void => {
         const updatedCards = cards.filter((card) => card.id !== cardId)
@@ -47,27 +35,20 @@ export function Game() {
             throw Error('Food number is undefined')
         }
         setFoods([...foods, foodNumber])
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
     }
 
     const removeCard = (cardId: string): void => {
-        if (!hasAddedFood()) {
+        const card = cards.find((card) => card.id === cardId)
+        if (!card) {
+            throw Error(`Could not find any card with id ${cardId}`)
+        }
+        if (isAddingFoodStage()) {
             addFood(cardId)
-        } else if (speciesIdToIncrementSize) {
-            incrementSize()
-        } else if (speciesIdToIncrementPopulation) {
-            incrementPopulation()
-        } else if (isAddingSpeciesToTheLeft) {
-            addSpeciesToTheLeft()
-        } else if (isAddingSpeciesToTheRight) {
-            addSpeciesToTheRight()
-        } else if (speciesIdToAddFeature) {
-            const card = cards.find((card) => card.id === cardId)
-            if (!card) {
-                throw Error(`Could not find any card with id ${cardId}`)
-            }
-            addSpeciesFeature(card)
-        } else {
-            throw Error('Action is not supported')
+        } else if (isEvolvingStage()) {
+            playEvolvingAction(card)
+        } else if (isFeedingStage()) {
+            console.log('Action is not supported yet')
         }
         removeCardFromState(cardId)
     }
@@ -78,15 +59,7 @@ export function Game() {
         }, amountOfFood)
         setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
         setFoods([])
-    }
-
-    const showDiscardCardMessage = (): boolean => {
-        return (
-            !!speciesIdToIncrementSize ||
-            !!speciesIdToIncrementPopulation ||
-            isAddingSpeciesToTheLeft ||
-            isAddingSpeciesToTheRight
-        )
+        updatePlayerState({ action: ActionState.FEEDING })
     }
 
     return (
@@ -101,22 +74,20 @@ export function Game() {
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
-                    {species.map((specie, index) => {
+                    {speciesList.map((species, index) => {
                         const isFirstSpecies = index === 0
-                        const isLastSpecies = index === species.length - 1
+                        const isLastSpecies = index === speciesList.length - 1
                         return (
                             <SpeciesLayout
                                 key={index}
                                 canShowAddSpeciesLeftButton={isFirstSpecies}
                                 canShowAddSpeciesRightButton={isLastSpecies}
-                                canRemoveSpecieFeature={hasAddedFood()}
-                                species={specie}
-                                isEditable={hasAddedFood()}
+                                species={species}
                             />
                         )
                     })}
                 </div>
-                {hasAddedFood() && (
+                {isEvolvingStage() && (
                     <button
                         className="my-4 bg-cyan-500 border bg-color-white w-36 self-center"
                         onClick={computeNumberOfFood}
@@ -124,19 +95,10 @@ export function Game() {
                         Finish turn
                     </button>
                 )}
-                {showDiscardCardMessage() && <p className="self-center ">Choose the card to discard</p>}
-                {!!speciesIdToAddFeature && <p className="self-center ">Choose the card to add as a feature</p>}
+                <p className="self-center ">{getCardDiscardMessage()}</p>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
-                        return (
-                            <CardLayout
-                                key={index}
-                                card={card}
-                                showAddFoodButton={!hasAddedFood()}
-                                removeCard={removeCard}
-                                showDiscardCard={showDiscardCardMessage() || !!speciesIdToAddFeature}
-                            />
-                        )
+                        return <CardLayout key={index} card={card} removeCard={removeCard} />
                     })}
                 </div>
             </div>
