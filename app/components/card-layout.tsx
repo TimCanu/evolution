@@ -4,10 +4,10 @@ import { usePlayerActionsContext } from '@/app/providers/player-actions.provider
 
 interface CardProps {
     card: Card
-    removeCard: (cardId: string) => void
+    playCard: (cardId: string) => void
 }
 
-export const CardLayout: FC<CardProps> = ({ card, removeCard }) => {
+export const CardLayout: FC<CardProps> = ({ card, playCard }) => {
     const { canDiscardCard, isAddingFoodStage } = usePlayerActionsContext()
 
     return (
@@ -17,7 +17,7 @@ export const CardLayout: FC<CardProps> = ({ card, removeCard }) => {
                 <button
                     className="bg-cyan-500 invisible group-hover:visible"
                     onClick={() => {
-                        removeCard(card.id)
+                        playCard(card.id)
                     }}
                 >
                     Add as food
@@ -27,7 +27,7 @@ export const CardLayout: FC<CardProps> = ({ card, removeCard }) => {
                 <button
                     className="bg-cyan-500 invisible group-hover:visible"
                     onClick={() => {
-                        removeCard(card.id)
+                        playCard(card.id)
                     }}
                 >
                     Discard card

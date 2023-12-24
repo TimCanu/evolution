@@ -1,3 +1,4 @@
+'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
 
 interface PlayerActionsContextResult {

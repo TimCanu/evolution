@@ -1,3 +1,4 @@
+'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
 import { Species } from '@/app/models/species'
 import speciesData from '@/app/data/species.json'

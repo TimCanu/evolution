@@ -2,64 +2,33 @@
 
 import { OpponentLayout } from '@/app/components/opponent-layout'
 import opponentsData from '../data/opponents.json'
-import cardsData from '../data/cards.json'
 import { Opponent } from '@/app/models/opponent'
 import { FoodArea } from '@/app/components/food-area'
 import { CardLayout } from '@/app/components/card-layout'
-import { Card } from '@/app/models/card'
-import { useState } from 'react'
 import { SpeciesLayout } from '@/app/components/species-layout'
 import { useSpeciesContext } from '@/app/providers/species.provider'
-import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { useCardsContext } from '@/app/providers/cards.provider'
+import { useFoodsContext } from '@/app/providers/foods.provider'
 
 export function Game() {
     const opponents: Opponent[] = opponentsData
 
-    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
-        usePlayerActionsContext()
-
+    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
+    const { cards, getCard, removeCard } = useCardsContext()
+    const { addFood, computeNumberOfFood } = useFoodsContext()
 
-    const [cards, setCards] = useState<Card[]>(cardsData)
-    const [foods, setFoods] = useState<number[]>([])
-    const [amountOfFood, setAmountOfFood] = useState(0)
-
-    const removeCardFromState = (cardId: string): void => {
-        const updatedCards = cards.filter((card) => card.id !== cardId)
-        setCards(updatedCards)
-    }
-
-    const addFood = (cardId: string): void => {
-        const foodNumber = cards.find((card) => card.id === cardId)?.foodNumber
-        if (!foodNumber) {
-            throw Error('Food number is undefined')
-        }
-        setFoods([...foods, foodNumber])
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
-    }
-
-    const removeCard = (cardId: string): void => {
-        const card = cards.find((card) => card.id === cardId)
-        if (!card) {
-            throw Error(`Could not find any card with id ${cardId}`)
-        }
+    const playCard = (cardId: string): void => {
+        const card = getCard(cardId)
         if (isAddingFoodStage()) {
-            addFood(cardId)
+            addFood(card.foodNumber)
         } else if (isEvolvingStage()) {
             playEvolvingAction(card)
         } else if (isFeedingStage()) {
             console.log('Action is not supported yet')
         }
-        removeCardFromState(cardId)
-    }
-
-    const computeNumberOfFood = (): void => {
-        const newAmountOfFood = foods.reduce((previousValue, currentAmountOfFoods) => {
-            return previousValue + currentAmountOfFoods
-        }, amountOfFood)
-        setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
-        setFoods([])
-        updatePlayerState({ action: ActionState.FEEDING })
+        removeCard(cardId)
     }
 
     return (
@@ -70,7 +39,7 @@ export function Game() {
                 })}
             </div>
             <div className="flex justify-center row-span-1">
-                <FoodArea amountOfFood={amountOfFood} foodsAdded={foods} />
+                <FoodArea />
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
@@ -98,7 +67,7 @@ export function Game() {
                 <p className="self-center ">{getCardDiscardMessage()}</p>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
-                        return <CardLayout key={index} card={card} removeCard={removeCard} />
+                        return <CardLayout key={index} card={card} playCard={playCard} />
                     })}
                 </div>
             </div>
