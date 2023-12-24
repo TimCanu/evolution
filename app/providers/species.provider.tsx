@@ -4,85 +4,63 @@ import speciesData from '@/app/data/species.json'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/app/models/feature'
 import { Card } from '@/app/models/card'
+import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
 
 interface SpeciesContextResult {
-    species: Species[]
-    isAddingSpeciesToTheLeft: boolean
-    isAddingSpeciesToTheRight: boolean
-    speciesIdToAddFeature?: string
-    speciesIdToIncrementSize?: string
-    speciesIdToIncrementPopulation?: string
-    updateSpecies: (speciesToUpdate: Species) => void
-    incrementSize: () => void
-    incrementPopulation: () => void
-    addSpeciesToTheLeft: () => void
-    addSpeciesToTheRight: () => void
-    addSpeciesFeature: (card: Card) => void
-    updateSpeciesOnGoingAction: (speciesActionState: SpeciesActionState) => void
-}
-
-export enum ActionState {
-    NOTHING,
-    ADD_LEFT,
-    ADD_RIGHT,
-    INCREMENT_SIZE,
-    INCREMENT_POPULATION,
-    ADD_FEATURE,
-}
-
-export interface SpeciesActionState {
-    action: ActionState
-    specieId?: string
+    speciesList: Species[]
+    playEvolvingAction: (card: Card) => void
+    removeFeature: (speciesId: string, featureId: string) => void
 }
 
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
 export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
-    const [speciesAction, setSpeciesAction] = useState<SpeciesActionState>({
-        action: ActionState.NOTHING,
-    })
-    const [species, setSpecies] = useState<Species[]>(speciesData)
+    const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
+    const [speciesList, setSpeciesList] = useState<Species[]>(speciesData)
 
-    const updateSpeciesOnGoingAction = (speciesActionState: SpeciesActionState): void => {
-        setSpeciesAction(speciesActionState)
+    const getSpecies = (speciesId: string): Species => {
+        const speciesToReturn = speciesList.find((species) => species.id === speciesId)
+        if (!speciesToReturn) {
+            throw Error(`Could not find any species with id ${speciesId}`)
+        }
+        return speciesToReturn
     }
 
-    const resetActionState = (): void => {
-        setSpeciesAction({
-            action: ActionState.NOTHING,
-        })
+    const getSpeciesForOnGoingAction = (): Species => {
+        if (!playerOnGoingAction.speciesId) {
+            throw Error('Cannot get species for on going action as no species id has been saved')
+        }
+        return getSpecies(playerOnGoingAction.speciesId)
     }
 
     const updateSpecies = (speciesToUpdate: Species): void => {
-        const newSpecies = species.map((specie) => {
-            if (specie.id !== speciesToUpdate.id) {
-                return specie
+        const newSpecies = speciesList.map((species) => {
+            if (species.id !== speciesToUpdate.id) {
+                return species
             }
             return speciesToUpdate
         })
-        setSpecies(newSpecies)
+        setSpeciesList(newSpecies)
     }
 
-    const incrementSize = (): void => {
-        const newSpeciesList = species.map((specie) => {
-            if (specie.id !== speciesAction.specieId) {
-                return specie
-            }
-            return { ...specie, size: specie.size + 1 }
-        })
-        setSpecies(newSpeciesList)
-        resetActionState()
+    const removeFeature = (speciesId: string, featureId: string): void => {
+        const speciesToUpdate = getSpecies(speciesId)
+        const newFeatures = speciesToUpdate.features.filter((feature) => feature.id !== featureId)
+        updateSpecies({ ...speciesToUpdate, features: newFeatures })
     }
 
-    const incrementPopulation = (): void => {
-        const newSpeciesList = species.map((specie) => {
-            if (specie.id !== speciesAction.specieId) {
-                return specie
-            }
-            return { ...specie, population: specie.population + 1 }
-        })
-        setSpecies(newSpeciesList)
-        resetActionState()
+    const incrementSpeciesSize = (): void => {
+        const speciesToUpdate = getSpeciesForOnGoingAction()
+        const speciesUpdated = { ...speciesToUpdate, size: speciesToUpdate.size + 1 }
+        updateSpecies(speciesUpdated)
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+    }
+
+    const incrementSpeciesPopulation = (): void => {
+        const speciesToUpdate = getSpeciesForOnGoingAction()
+        const speciesUpdated = { ...speciesToUpdate, population: speciesToUpdate.population + 1 }
+        updateSpecies(speciesUpdated)
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesToTheLeft = (): void => {
@@ -92,8 +70,8 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             id: uuidv4(),
             features: [],
         }
-        setSpecies([newSpecies, ...species])
-        resetActionState()
+        setSpeciesList([newSpecies, ...speciesList])
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesToTheRight = (): void => {
@@ -103,8 +81,8 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             id: uuidv4(),
             features: [],
         }
-        setSpecies([...species, newSpecies])
-        resetActionState()
+        setSpeciesList([...speciesList, newSpecies])
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesFeature = (card: Card): void => {
@@ -113,37 +91,38 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             name: card.name,
             description: card.description,
         }
-        const newSpecies = species.map((specie) => {
-            if (specie.id !== speciesAction.specieId) {
-                return specie
-            }
-            return { ...specie, features: [...specie.features, feature] }
-        })
-        setSpecies(newSpecies)
-        resetActionState()
+        const specieToUpdate = getSpeciesForOnGoingAction()
+        const specieUpdated = { ...specieToUpdate, features: [...specieToUpdate.features, feature] }
+        updateSpecies(specieUpdated)
+        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
     }
 
-    const getSpecieId = (action: ActionState): string | undefined => {
-        if (speciesAction.action === action) {
-            return speciesAction.specieId
+    const playEvolvingAction = (card: Card): void => {
+        switch (playerOnGoingAction.action) {
+            case ActionState.ADD_SPECIES_FEATURE:
+                addSpeciesFeature(card)
+                break
+            case ActionState.ADD_LEFT_SPECIES:
+                addSpeciesToTheLeft()
+                break
+            case ActionState.ADD_RIGHT_SPECIES:
+                addSpeciesToTheRight()
+                break
+            case ActionState.INCREMENT_SPECIES_POPULATION:
+                incrementSpeciesPopulation()
+                break
+            case ActionState.INCREMENT_SPECIES_SIZE:
+                incrementSpeciesSize()
+                break
+            default:
+                throw Error(`Action ${playerOnGoingAction.action} is not supported`)
         }
-        return undefined
     }
 
     const res = {
-        species,
-        isAddingSpeciesToTheLeft: speciesAction.action === ActionState.ADD_LEFT,
-        isAddingSpeciesToTheRight: speciesAction.action === ActionState.ADD_RIGHT,
-        speciesIdToAddFeature: getSpecieId(ActionState.ADD_FEATURE),
-        speciesIdToIncrementSize: getSpecieId(ActionState.INCREMENT_SIZE),
-        speciesIdToIncrementPopulation: getSpecieId(ActionState.INCREMENT_POPULATION),
-        updateSpecies,
-        addSpeciesToTheRight,
-        addSpeciesFeature,
-        addSpeciesToTheLeft,
-        incrementPopulation,
-        incrementSize,
-        updateSpeciesOnGoingAction,
+        speciesList,
+        playEvolvingAction,
+        removeFeature,
     }
 
     return <SpeciesContext.Provider value={res}>{children}</SpeciesContext.Provider>

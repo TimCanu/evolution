@@ -1,64 +1,49 @@
 import { FC } from 'react'
 import { Species } from '@/app/models/species'
 import { FeatureLayout } from '@/app/components/feature-layout'
-import { ActionState, useSpeciesContext } from '@/app/providers/species.provider'
+import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
 
 interface CardProps {
-    canRemoveSpecieFeature: boolean
     canShowAddSpeciesLeftButton: boolean
     canShowAddSpeciesRightButton: boolean
-    isEditable: boolean
     species: Species
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
-    canRemoveSpecieFeature,
     canShowAddSpeciesLeftButton,
     canShowAddSpeciesRightButton,
-    isEditable,
     species,
 }) => {
-    const { updateSpecies, updateSpeciesOnGoingAction } = useSpeciesContext()
-
-    const removeFeature = (featureId: string) => {
-        const newFeatures = species.features.filter((feature) => feature.id !== featureId)
-        updateSpecies({ ...species, features: newFeatures })
-    }
+    const { updatePlayerState, isEvolvingStage } = usePlayerActionsContext()
+    const canActionsBeShown = isEvolvingStage()
 
     return (
         <div className="flex flex-col self-end">
             <div className="flex self-center mb-2">
                 {species.features.map((feature, index) => {
-                    return (
-                        <FeatureLayout
-                            key={index}
-                            canRemoveSpecieFeature={canRemoveSpecieFeature}
-                            feature={feature}
-                            removeFeature={removeFeature}
-                        />
-                    )
+                    return <FeatureLayout key={index} feature={feature} speciesId={species.id} />
                 })}
             </div>
             <div className="flex">
-                {isEditable && canShowAddSpeciesLeftButton && (
+                {canActionsBeShown && canShowAddSpeciesLeftButton && (
                     <button
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
-                            updateSpeciesOnGoingAction({
-                                action: ActionState.ADD_LEFT,
+                            updatePlayerState({
+                                action: ActionState.ADD_LEFT_SPECIES,
                             })
                         }}
                     >
-                        Add a new specie here
+                        Add a new species here
                     </button>
                 )}
-                {isEditable && species.size < 6 && (
+                {canActionsBeShown && species.size < 6 && (
                     <button
                         className="mb-5 mx-2"
                         onClick={() => {
-                            updateSpeciesOnGoingAction({
-                                action: ActionState.INCREMENT_SIZE,
-                                specieId: species.id,
+                            updatePlayerState({
+                                action: ActionState.INCREMENT_SPECIES_SIZE,
+                                speciesId: species.id,
                             })
                         }}
                     >
@@ -69,13 +54,13 @@ export const SpeciesLayout: FC<CardProps> = ({
                     <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
                         {species.size}
                     </span>
-                    {isEditable && species.features.length < 3 && (
+                    {canActionsBeShown && species.features.length < 3 && (
                         <button
                             className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
                             onClick={() => {
-                                updateSpeciesOnGoingAction({
-                                    action: ActionState.ADD_FEATURE,
-                                    specieId: species.id,
+                                updatePlayerState({
+                                    action: ActionState.ADD_SPECIES_FEATURE,
+                                    speciesId: species.id,
                                 })
                             }}
                         >
@@ -86,29 +71,29 @@ export const SpeciesLayout: FC<CardProps> = ({
                         {species.population}
                     </span>
                 </div>
-                {isEditable && species.population < 6 && (
+                {canActionsBeShown && species.population < 6 && (
                     <button
                         className="mb-5 mx-2"
                         onClick={() =>
-                            updateSpeciesOnGoingAction({
-                                action: ActionState.INCREMENT_POPULATION,
-                                specieId: species.id,
+                            updatePlayerState({
+                                action: ActionState.INCREMENT_SPECIES_POPULATION,
+                                speciesId: species.id,
                             })
                         }
                     >
                         +
                     </button>
                 )}
-                {isEditable && canShowAddSpeciesRightButton && (
+                {canActionsBeShown && canShowAddSpeciesRightButton && (
                     <button
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
-                            updateSpeciesOnGoingAction({
-                                action: ActionState.ADD_RIGHT,
+                            updatePlayerState({
+                                action: ActionState.ADD_RIGHT_SPECIES,
                             })
                         }}
                     >
-                        Add a new specie here
+                        Add a new species here
                     </button>
                 )}
             </div>
