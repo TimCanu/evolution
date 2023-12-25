@@ -2,9 +2,6 @@
     "name": "evolution",
     "version": "0.1.0",
     "private": true,
-    "browser":{
-        "child_process": false
-    },
     "scripts": {
         "dev": "next dev",
         "build": "next build",
