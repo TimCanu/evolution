@@ -1,4 +1,4 @@
-import { Game } from '@/app/pages/game'
+import { Game } from '@/app/components/game'
 import { SpeciesProvider } from '@/app/providers/species.provider'
 import { PlayerActionsProvider } from '@/app/providers/player-actions.provider'
 import { CardsProvider } from '@/app/providers/cards.provider'
