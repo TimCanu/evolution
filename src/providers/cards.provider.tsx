@@ -1,7 +1,6 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { Card } from '@/app/models/card'
-import cardsData from '@/app/data/cards.json'
+import { Card } from '@/src/models/card'
 
 interface CardsContextResult {
     cards: Card[]
@@ -9,9 +8,16 @@ interface CardsContextResult {
     removeCard: (cardId: string) => void
 }
 
+interface CardsContextProps {
+    cards: Card[]
+}
+
 const CardsContext = createContext<CardsContextResult>({} as CardsContextResult)
 
-export const CardsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProps>> = ({
+    children,
+    cards: cardsData,
+}) => {
     const [cards, setCards] = useState<Card[]>(cardsData)
 
     const removeCard = (cardId: string): void => {

@@ -20,6 +20,27 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## DB
+
+Our DB is a mongo instance hosted on atlas. To use it locally, you must have a `.env.local` file with the correct configuration. 
+This configuration must reference an existing DB with the necessaries collections created in them. If the collections are empty, they can be populated with given scripts.
+The collections that have to be created by hands are `features` and `games` (both this collections must be under the same database).
+
+### Configuration
+
+Update your file `.env.local` with these new fields (update the `CHANGE_ME` values):
+```
+DB_USERNAME=CHANGE_ME
+DB_PASSWORD=CHANGE_ME
+DB_CLUSTER=evolution.dxcrvij.mongodb.net
+DATABASE_NAME=CHANGE_ME
+```
+This configuration should be enough to communicate with the DB.
+
+### Populate the DB
+
+To reset the DB with basic data, the script `./dbScripts/loadData.sh` can be ran. For this, you must have configured your DB and installed the [mongo db shell](https://www.mongodb.com/try/download/shell) and [mongoimport](https://www.mongodb.com/docs/database-tools/mongoimport/).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

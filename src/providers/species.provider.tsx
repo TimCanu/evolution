@@ -1,11 +1,11 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { Species } from '@/app/models/species'
-import speciesData from '@/app/data/species.json'
+import { Species } from '@/src/models/species'
+import speciesData from '@/src/data/species.json'
 import { v4 as uuidv4 } from 'uuid'
-import { Feature } from '@/app/models/feature'
-import { Card } from '@/app/models/card'
-import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { Feature } from '@/src/models/feature'
+import { Card } from '@/src/models/card'
+import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface SpeciesContextResult {
     speciesList: Species[]

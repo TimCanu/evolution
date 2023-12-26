@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { Species } from '@/app/models/species'
-import { FeatureLayout } from '@/app/components/feature-layout'
-import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { Species } from '@/src/models/species'
+import { FeatureLayout } from '@/src/components/feature-layout'
+import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean

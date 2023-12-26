@@ -1,19 +1,17 @@
 'use client'
 
-import { OpponentLayout } from '@/app/components/opponent-layout'
-import opponentsData from '../data/opponents.json'
-import { Opponent } from '@/app/models/opponent'
-import { FoodArea } from '@/app/components/food-area'
-import { CardLayout } from '@/app/components/card-layout'
-import { SpeciesLayout } from '@/app/components/species-layout'
-import { useSpeciesContext } from '@/app/providers/species.provider'
-import { usePlayerActionsContext } from '@/app/providers/player-actions.provider'
-import { useCardsContext } from '@/app/providers/cards.provider'
-import { useFoodsContext } from '@/app/providers/foods.provider'
+import { OpponentLayout } from '@/src/components/opponent-layout'
+import { FoodArea } from '@/src/components/food-area'
+import { CardLayout } from '@/src/components/card-layout'
+import { SpeciesLayout } from '@/src/components/species-layout'
+import { useSpeciesContext } from '@/src/providers/species.provider'
+import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { useCardsContext } from '@/src/providers/cards.provider'
+import { useFoodsContext } from '@/src/providers/foods.provider'
+import { useOpponentsContext } from '@/src/providers/opponents.provider'
 
 export function Game() {
-    const opponents: Opponent[] = opponentsData
-
+    const { opponents } = useOpponentsContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard } = useCardsContext()
