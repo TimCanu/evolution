@@ -1,15 +1,17 @@
 import { NextResponse } from 'next/server'
-import { Feature } from '@/app/models/feature'
-import { Card } from '@/app/models/card'
+import { Feature } from '@/src/models/feature'
+import { Card } from '@/src/models/card'
 import { v4 as uuidv4 } from 'uuid'
-import { Game } from '@/app/models/game'
+import { Game } from '@/src/models/game'
 import { NextRequest } from 'next/server.js'
-import clientPromise from '@/app/lib/mongodb'
+import clientPromise from '@/src/lib/mongodb'
+import { uuidV4 } from 'mongodb/src/utils'
 
 const NB_OF_CARDS_PER_FEATURE = 2
 
 export const POST = async (request: NextRequest) => {
     try {
+        const data: { nbOfPlayers: number; playerName: string } = await request.json()
         const client = await clientPromise
         const db = client.db(process.env.DATABASE_NAME)
 
@@ -25,11 +27,16 @@ export const POST = async (request: NextRequest) => {
             return cards
         }, [])
 
-        const game: Game = { cards: resultingCards }
+        const playerId = uuidv4()
+        const game: Game = {
+            cards: resultingCards,
+            nbOfPlayers: data.nbOfPlayers,
+            players: [{ id: playerId, name: data.playerName }],
+        }
 
         const res = await db.collection('games').insertOne(game)
         const { insertedId } = JSON.parse(JSON.stringify(res))
-        return NextResponse.json({ gameId: insertedId }, { status: 200 })
+        return NextResponse.json({ gameId: insertedId, playerId }, { status: 200 })
     } catch (e) {
         console.error(e)
     }

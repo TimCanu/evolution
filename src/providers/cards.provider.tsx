@@ -1,6 +1,6 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { Card } from '@/app/models/card'
+import { Card } from '@/src/models/card'
 
 interface CardsContextResult {
     cards: Card[]

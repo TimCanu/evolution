@@ -1,6 +1,6 @@
 import { FC } from 'react'
-import { Card } from '@/app/models/card'
-import { usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { Card } from '@/src/models/card'
+import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface CardProps {
     card: Card

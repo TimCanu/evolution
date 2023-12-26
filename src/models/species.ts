@@ -1,4 +1,4 @@
-import { Feature } from '@/app/models/feature'
+import { Feature } from '@/src/models/feature'
 
 export interface Species {
     id: string

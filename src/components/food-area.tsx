@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { useFoodsContext } from '@/app/providers/foods.provider'
+import { useFoodsContext } from '@/src/providers/foods.provider'
 
 export const FoodArea: FC = () => {
     const { hiddenFoods, amountOfFood } = useFoodsContext()

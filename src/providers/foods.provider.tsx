@@ -1,6 +1,6 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { ActionState, usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface FoodsContextResult {
     amountOfFood: number

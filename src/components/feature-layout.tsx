@@ -1,7 +1,7 @@
 import { FC } from 'react'
-import { Feature } from '@/app/models/feature'
-import { useSpeciesContext } from '@/app/providers/species.provider'
-import { usePlayerActionsContext } from '@/app/providers/player-actions.provider'
+import { Feature } from '@/src/models/feature'
+import { useSpeciesContext } from '@/src/providers/species.provider'
+import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface CardProps {
     feature: Feature

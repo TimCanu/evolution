@@ -1,12 +1,18 @@
-import { Game } from '@/app/components/game'
-import { SpeciesProvider } from '@/app/providers/species.provider'
-import { PlayerActionsProvider } from '@/app/providers/player-actions.provider'
-import { CardsProvider } from '@/app/providers/cards.provider'
-import { FoodsProvider } from '@/app/providers/foods.provider'
-import { getGame } from '@/app/lib/game.service'
+import { Game } from '@/src/components/game'
+import { SpeciesProvider } from '@/src/providers/species.provider'
+import { PlayerActionsProvider } from '@/src/providers/player-actions.provider'
+import { CardsProvider } from '@/src/providers/cards.provider'
+import { FoodsProvider } from '@/src/providers/foods.provider'
+import { getGame } from '@/src/lib/game.service'
 
-export default async function Home({ params }: { params: { gameId: string } }) {
-    const game = await getGame(params.gameId)
+export default async function Home({
+    params,
+    searchParams,
+}: {
+    params: { gameId: string }
+    searchParams: { playerId: string }
+}) {
+    const game = await getGame(params.gameId, searchParams.playerId)
 
     return (
         <PlayerActionsProvider>
