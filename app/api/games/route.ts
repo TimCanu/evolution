@@ -2,10 +2,9 @@ import { NextResponse } from 'next/server'
 import { Feature } from '@/src/models/feature'
 import { Card } from '@/src/models/card'
 import { v4 as uuidv4 } from 'uuid'
-import { Game } from '@/src/models/game'
 import { NextRequest } from 'next/server.js'
 import clientPromise from '@/src/lib/mongodb'
-import { uuidV4 } from 'mongodb/src/utils'
+import { GameEntity } from '@/src/models/game-entity'
 
 const NB_OF_CARDS_PER_FEATURE = 2
 
@@ -28,8 +27,8 @@ export const POST = async (request: NextRequest) => {
         }, [])
 
         const playerId = uuidv4()
-        const game: Game = {
-            cards: resultingCards,
+        const game: GameEntity = {
+            remainingCards: resultingCards,
             nbOfPlayers: data.nbOfPlayers,
             players: [{ id: playerId, name: data.playerName }],
         }

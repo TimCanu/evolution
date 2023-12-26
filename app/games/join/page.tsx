@@ -15,15 +15,15 @@ export default function Home() {
     }
 
     return (
-        <div className="flex flex-col h-screen justify-center ">
-            <form onSubmit={onSubmit} className="flex flex-col gap-4 justify-center items-center">
-                <div className="flex flex-row gap-4 text-xl">
+        <div className="flex flex-col h-screen justify-center items-center">
+            <form onSubmit={onSubmit} className="flex flex-col gap-4 justify-center">
+                <div className="flex flex-row gap-4 text-xl justify-between">
                     <label htmlFor="gameId">Game code:</label>
-                    <input type="text" name="gameId" className="text-black" />
+                    <input type="text" name="gameId" className="text-black w-48" />
                 </div>
-                <div className="flex flex-row gap-4 text-xl">
+                <div className="flex flex-row gap-4 text-xl justify-between">
                     <label htmlFor="playerName">Your name:</label>
-                    <input type="text" name="playerName" className="text-black" />
+                    <input type="text" name="playerName" className="text-black w-48" />
                 </div>
                 <button
                     type="submit"

@@ -1,9 +1,9 @@
 import { Card } from '@/src/models/card'
 import { Player } from '@/src/models/player'
 
-export interface Game {
+// This is the struct that we have in the database (without the _id)
+export interface GameEntity {
     nbOfPlayers: number
     remainingCards: Card[]
-    opponents: Player[]
-    player: Player
+    players: Player[]
 }

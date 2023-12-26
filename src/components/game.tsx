@@ -1,8 +1,6 @@
 'use client'
 
 import { OpponentLayout } from '@/src/components/opponent-layout'
-import opponentsData from '../data/opponents.json'
-import { Opponent } from '@/src/models/opponent'
 import { FoodArea } from '@/src/components/food-area'
 import { CardLayout } from '@/src/components/card-layout'
 import { SpeciesLayout } from '@/src/components/species-layout'
@@ -10,10 +8,10 @@ import { useSpeciesContext } from '@/src/providers/species.provider'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { useCardsContext } from '@/src/providers/cards.provider'
 import { useFoodsContext } from '@/src/providers/foods.provider'
+import { useOpponentsContext } from '@/src/providers/opponents.provider'
 
 export function Game() {
-    const opponents: Opponent[] = opponentsData
-
+    const { opponents } = useOpponentsContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard } = useCardsContext()

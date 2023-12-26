@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server.js'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { Player } from '@/src/models/player'
+import { GameEntity } from '@/src/models/game-entity'
 
 export const GET = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -17,23 +18,23 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
             .find({ _id: new ObjectId(params.gameId) })
             .toArray()
 
-        const game: Game = JSON.parse(JSON.stringify(gameAsDocument[0]))
+        const gameEntity: GameEntity = JSON.parse(JSON.stringify(gameAsDocument[0]))
 
-        const doesPlayerExists = !!game.players.find((player) => player.id === playerId)
+        const player = gameEntity.players.find((player) => player.id === playerId)
 
-        if (!doesPlayerExists) {
+        if (!player) {
             return NextResponse.error()
         }
 
-        const playersWithoutOtherPlayersInfo: Player[] = game.players.map((player) => {
+        const opponents: Player[] = gameEntity.players.reduce((opponents: Player[], player: Player) => {
             if (player.id !== playerId) {
-                return { ...player, id: undefined }
+                return [...opponents, { ...player, id: undefined }]
             }
-            return player
-        })
+            return opponents
+        }, [])
 
-        const gameWithoutOtherPlayersInfo = { ...game, players: playersWithoutOtherPlayersInfo }
-        return NextResponse.json(gameWithoutOtherPlayersInfo, { status: 200 })
+        const game: Game = { ...gameEntity, opponents, player }
+        return NextResponse.json(game, { status: 200 })
     } catch (e) {
         console.error(e)
     }
@@ -50,7 +51,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { gameId: 
             .find({ _id: new ObjectId(params.gameId) })
             .toArray()
 
-        const game: Game = JSON.parse(JSON.stringify(gameAsDocument[0]))
+        const game: GameEntity = JSON.parse(JSON.stringify(gameAsDocument[0]))
 
         if (game.nbOfPlayers === game.players.length) {
             return NextResponse.error()
