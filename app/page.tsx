@@ -1,22 +1,14 @@
-import { Game } from '@/app/components/game'
-import { SpeciesProvider } from '@/app/providers/species.provider'
-import { PlayerActionsProvider } from '@/app/providers/player-actions.provider'
-import { CardsProvider } from '@/app/providers/cards.provider'
-import { FoodsProvider } from '@/app/providers/foods.provider'
-import { getCards } from '@/app/lib/cards.service'
+'use client'
+import { createGame } from '@/app/lib/game.service'
+import { useRouter } from 'next/navigation'
 
-export default async function Home() {
-    const cards = await getCards()
+export default function Home() {
+    const router = useRouter()
 
-    return (
-        <PlayerActionsProvider>
-            <CardsProvider cards={cards}>
-                <SpeciesProvider>
-                    <FoodsProvider>
-                        <Game />
-                    </FoodsProvider>
-                </SpeciesProvider>
-            </CardsProvider>
-        </PlayerActionsProvider>
-    )
+    const startNewGame = async () => {
+        const { gameId } = await createGame()
+        router.push(`/games/${gameId}`)
+    }
+
+    return <button onClick={startNewGame}>New game</button>
 }

@@ -24,6 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 Our DB is a mongo instance hosted on atlas. To use it locally, you must have a `.env.local` file with the correct configuration. 
 This configuration must reference an existing DB with the necessaries collections created in them. If the collections are empty, they can be populated with given scripts.
+The collections that have to be created by hands are `features` and `games` (both this collections must be under the same database).
 
 ### Configuration
 

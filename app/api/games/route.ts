@@ -1,12 +1,14 @@
-import clientPromise from '../../lib/mongodb'
 import { NextResponse } from 'next/server'
 import { Feature } from '@/app/models/feature'
 import { Card } from '@/app/models/card'
 import { v4 as uuidv4 } from 'uuid'
+import { Game } from '@/app/models/game'
+import { NextRequest } from 'next/server.js'
+import clientPromise from '@/app/lib/mongodb'
 
 const NB_OF_CARDS_PER_FEATURE = 2
 
-export const GET = async () => {
+export const POST = async (request: NextRequest) => {
     try {
         const client = await clientPromise
         const db = client.db(process.env.DATABASE_NAME)
@@ -22,7 +24,12 @@ export const GET = async () => {
             }
             return cards
         }, [])
-        return NextResponse.json(resultingCards, { status: 200 })
+
+        const game: Game = { cards: resultingCards }
+
+        const res = await db.collection('games').insertOne(game)
+        const { insertedId } = JSON.parse(JSON.stringify(res))
+        return NextResponse.json({ gameId: insertedId }, { status: 200 })
     } catch (e) {
         console.error(e)
     }
