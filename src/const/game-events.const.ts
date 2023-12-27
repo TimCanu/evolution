@@ -1,1 +1,2 @@
 export const GAME_STATUS = 'GAME_STATUS'
+export const OPPONENTS_STATUS = 'OPPONENTS_STATUS'

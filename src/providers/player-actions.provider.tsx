@@ -1,9 +1,9 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import pusherClient from '@/src/lib/pusher-client'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { GAME_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { PusherInstance } from '@/src/lib/pusher.service'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
@@ -55,9 +55,9 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
         action: status,
     })
 
-    const channel = pusherClient.subscribe(`game-${params.gameId}`)
+    const channel = useMemo(() => PusherInstance.getChannel(params.gameId), [params.gameId])
+
     channel.bind(GAME_STATUS, function (data: { gameStatus: GameStatus }) {
-        console.log({ data })
         if (playerOnGoingAction.action !== data.gameStatus) {
             setPlayerActions({ action: data.gameStatus })
         }

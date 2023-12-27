@@ -1,6 +1,7 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface FoodsContextResult {
     amountOfFood: number
@@ -18,7 +19,7 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }
 
     const addFood = (foodNumber: number): void => {
         setHiddenFoods([...hiddenFoods, foodNumber])
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const computeNumberOfFood = (): void => {
@@ -27,7 +28,7 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         }, amountOfFood)
         setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
         setHiddenFoods([])
-        updatePlayerState({ action: ActionState.FEEDING })
+        updatePlayerState({ action: GameStatus.FEEDING_SPECIES })
     }
 
     const res = {

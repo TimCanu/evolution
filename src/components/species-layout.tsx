@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Species } from '@/src/models/species'
 import { FeatureLayout } from '@/src/components/feature-layout'
-import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -30,7 +30,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
                             updatePlayerState({
-                                action: ActionState.ADD_LEFT_SPECIES,
+                                action: EVOLVING_STAGES.ADD_LEFT_SPECIES,
                             })
                         }}
                     >
@@ -42,7 +42,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         className="mb-5 mx-2"
                         onClick={() => {
                             updatePlayerState({
-                                action: ActionState.INCREMENT_SPECIES_SIZE,
+                                action: EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
                                 speciesId: species.id,
                             })
                         }}
@@ -59,7 +59,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
                             onClick={() => {
                                 updatePlayerState({
-                                    action: ActionState.ADD_SPECIES_FEATURE,
+                                    action: EVOLVING_STAGES.ADD_SPECIES_FEATURE,
                                     speciesId: species.id,
                                 })
                             }}
@@ -76,7 +76,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         className="mb-5 mx-2"
                         onClick={() =>
                             updatePlayerState({
-                                action: ActionState.INCREMENT_SPECIES_POPULATION,
+                                action: EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
                                 speciesId: species.id,
                             })
                         }
@@ -89,7 +89,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
                             updatePlayerState({
-                                action: ActionState.ADD_RIGHT_SPECIES,
+                                action: EVOLVING_STAGES.ADD_RIGHT_SPECIES,
                             })
                         }}
                     >

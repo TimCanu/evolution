@@ -9,7 +9,6 @@ import { usePlayerActionsContext } from '@/src/providers/player-actions.provider
 import { useCardsContext } from '@/src/providers/cards.provider'
 import { useFoodsContext } from '@/src/providers/foods.provider'
 import { useOpponentsContext } from '@/src/providers/opponents.provider'
-import pusherClient from '@/src/lib/pusher-client'
 
 export function Game() {
     const { opponents } = useOpponentsContext()

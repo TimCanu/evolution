@@ -8,7 +8,7 @@ import { Player } from '@/src/models/player'
 import { GameEntity } from '@/src/models/game-entity'
 import pusherServ from '@/src/lib/pusher-serv'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { GAME_STATUS } from '@/src/const/game-events.const'
+import { GAME_STATUS, OPPONENTS_STATUS } from '@/src/const/game-events.const'
 
 export const GET = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -74,6 +74,7 @@ export const PUT = async (request: NextRequest, { params }: { params: { gameId: 
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, status: gameStatus } })
 
         await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
+        await pusherServ.trigger(`game-${params.gameId}`, OPPONENTS_STATUS, { refresh: true })
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)
