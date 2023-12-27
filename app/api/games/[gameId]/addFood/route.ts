@@ -45,7 +45,10 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const playerUpdated: Player = {
             ...playerToUpdate,
             cards: cardsUpdated,
-            status: GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
+            status:
+                gameStatus === GameStatus.CHOOSING_EVOLVING_ACTION
+                    ? gameStatus
+                    : GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
         }
         const playersUpdated: Player[] = game.players.map((player) => {
             if (gameStatus === GameStatus.CHOOSING_EVOLVING_ACTION) {
