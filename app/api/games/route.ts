@@ -6,8 +6,10 @@ import { NextRequest } from 'next/server.js'
 import clientPromise from '@/src/lib/mongodb'
 import { GameEntity } from '@/src/models/game-entity'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { Player } from '@/src/models/player'
+import { shuffleCards } from '@/src/lib/card.utils'
 
-const NB_OF_CARDS_PER_FEATURE = 2
+const NB_OF_CARDS_PER_FEATURE = 7
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -27,14 +29,30 @@ export const POST = async (request: NextRequest) => {
             return cards
         }, [])
 
+        const shuffledCards = shuffleCards(resultingCards)
+
         const gameStatus =
             data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN
 
         const playerId = uuidv4()
+        const firstPlayerCards = [...Array(4)].map((_) => {
+            const card = shuffledCards.pop()
+            if (!card) {
+                throw Error('No cards left... Maybe add some more in the DB?')
+            }
+            return card
+        })
+
+        const firstPlayer: Player = {
+            id: playerId,
+            name: data.playerName,
+            species: [{ id: uuidv4(), size: 1, population: 1, features: [] }],
+            cards: firstPlayerCards,
+        }
         const game: GameEntity = {
-            remainingCards: resultingCards,
+            remainingCards: shuffledCards,
             nbOfPlayers: data.nbOfPlayers,
-            players: [{ id: playerId, name: data.playerName }],
+            players: [firstPlayer],
             status: gameStatus,
         }
 

@@ -1,7 +1,6 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
 import { Species } from '@/src/models/species'
-import speciesData from '@/src/data/species.json'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/src/models/feature'
 import { Card } from '@/src/models/card'
@@ -14,11 +13,18 @@ interface SpeciesContextResult {
     removeFeature: (speciesId: string, featureId: string) => void
 }
 
+interface SpeciesContextProps {
+    speciesInitialData: Species[]
+}
+
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
-export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
+    children,
+    speciesInitialData,
+}) => {
     const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
-    const [speciesList, setSpeciesList] = useState<Species[]>(speciesData)
+    const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
 
     const getSpecies = (speciesId: string): Species => {
         const speciesToReturn = speciesList.find((species) => species.id === speciesId)

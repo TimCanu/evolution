@@ -17,8 +17,8 @@ export default async function Home({
 
     return (
         <PlayerActionsProvider status={game.status}>
-            <CardsProvider cards={game.remainingCards}>
-                <SpeciesProvider>
+            <CardsProvider cards={game.player.cards}>
+                <SpeciesProvider speciesInitialData={game.player.species}>
                     <FoodsProvider>
                         <OpponentsProvider opponents={game.opponents}>
                             <Game />
