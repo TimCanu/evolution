@@ -1,26 +1,41 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
+import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
+import { FOOD_STATUS } from '@/src/const/game-events.const'
+
+interface FoodsContextProps {
+    initialAmountOfFood: number
+    initialHiddenFoods: number[]
+    gameId: string
+}
 
 interface FoodsContextResult {
     amountOfFood: number
     hiddenFoods: number[]
-    addFood: (foodNumber: number) => void
     computeNumberOfFood: () => void
     decrementFood: () => void
 }
 
 const FoodsContext = createContext<FoodsContextResult>({} as FoodsContextResult)
 
-export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProps>> = ({
+    children,
+    initialAmountOfFood,
+    initialHiddenFoods,
+    gameId,
+}) => {
     const { updatePlayerState } = usePlayerActionsContext()
-    const [hiddenFoods, setHiddenFoods] = useState<number[]>([])
-    const [amountOfFood, setAmountOfFood] = useState(0)
+    const [hiddenFoods, setHiddenFoods] = useState<number[]>(initialHiddenFoods)
+    const [amountOfFood, setAmountOfFood] = useState(initialAmountOfFood)
 
-    const addFood = (foodNumber: number): void => {
-        setHiddenFoods([...hiddenFoods, foodNumber])
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
-    }
+    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+
+    channel.bind(FOOD_STATUS, function (data: { hiddenFoods: number[]; amountOfFood: number }) {
+        setHiddenFoods(data.hiddenFoods)
+        setAmountOfFood(data.amountOfFood)
+    })
 
     const computeNumberOfFood = (): void => {
         const newAmountOfFood = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
@@ -28,7 +43,7 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         }, amountOfFood)
         setAmountOfFood(newAmountOfFood > 0 ? newAmountOfFood : 0)
         setHiddenFoods([])
-        updatePlayerState({ action: ActionState.FEEDING })
+        updatePlayerState({ action: GameStatus.FEEDING_SPECIES })
     }
 
     const decrementFood = (): void => {
@@ -39,7 +54,6 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }
     const res = {
         amountOfFood,
         hiddenFoods,
-        addFood,
         computeNumberOfFood,
         decrementFood,
     }

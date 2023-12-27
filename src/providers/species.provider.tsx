@@ -1,11 +1,11 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
 import { Species } from '@/src/models/species'
-import speciesData from '@/src/data/species.json'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/src/models/feature'
 import { Card } from '@/src/models/card'
-import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface SpeciesContextResult {
     speciesList: Species[]
@@ -14,11 +14,18 @@ interface SpeciesContextResult {
     incrementFoodEaten: (speciesId: string) => void
 }
 
+interface SpeciesContextProps {
+    speciesInitialData: Species[]
+}
+
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
-export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
+    children,
+    speciesInitialData,
+}) => {
     const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
-    const [speciesList, setSpeciesList] = useState<Species[]>(speciesData)
+    const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
 
     const getSpecies = (speciesId: string): Species => {
         const speciesToReturn = speciesList.find((species) => species.id === speciesId)
@@ -60,14 +67,14 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
         const speciesToUpdate = getSpeciesForOnGoingAction()
         const speciesUpdated = { ...speciesToUpdate, size: speciesToUpdate.size + 1 }
         updateSpecies(speciesUpdated)
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const incrementSpeciesPopulation = (): void => {
         const speciesToUpdate = getSpeciesForOnGoingAction()
         const speciesUpdated = { ...speciesToUpdate, population: speciesToUpdate.population + 1 }
         updateSpecies(speciesUpdated)
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesToTheLeft = (): void => {
@@ -79,7 +86,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             foodEaten: 0,
         }
         setSpeciesList([newSpecies, ...speciesList])
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesToTheRight = (): void => {
@@ -91,7 +98,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             foodEaten: 0,
         }
         setSpeciesList([...speciesList, newSpecies])
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const addSpeciesFeature = (card: Card): void => {
@@ -103,24 +110,24 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
         const specieToUpdate = getSpeciesForOnGoingAction()
         const specieUpdated = { ...specieToUpdate, features: [...specieToUpdate.features, feature] }
         updateSpecies(specieUpdated)
-        updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
+        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
     }
 
     const playEvolvingAction = (card: Card): void => {
         switch (playerOnGoingAction.action) {
-            case ActionState.ADD_SPECIES_FEATURE:
+            case EVOLVING_STAGES.ADD_SPECIES_FEATURE:
                 addSpeciesFeature(card)
                 break
-            case ActionState.ADD_LEFT_SPECIES:
+            case EVOLVING_STAGES.ADD_LEFT_SPECIES:
                 addSpeciesToTheLeft()
                 break
-            case ActionState.ADD_RIGHT_SPECIES:
+            case EVOLVING_STAGES.ADD_RIGHT_SPECIES:
                 addSpeciesToTheRight()
                 break
-            case ActionState.INCREMENT_SPECIES_POPULATION:
+            case EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION:
                 incrementSpeciesPopulation()
                 break
-            case ActionState.INCREMENT_SPECIES_SIZE:
+            case EVOLVING_STAGES.INCREMENT_SPECIES_SIZE:
                 incrementSpeciesSize()
                 break
             default:

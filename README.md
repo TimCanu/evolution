@@ -41,6 +41,22 @@ This configuration should be enough to communicate with the DB.
 
 To reset the DB with basic data, the script `./dbScripts/loadData.sh` can be ran. For this, you must have configured your DB and installed the [mongo db shell](https://www.mongodb.com/try/download/shell) and [mongoimport](https://www.mongodb.com/docs/database-tools/mongoimport/).
 
+## Web socket
+
+The app is using [Pusher](https://dashboard.pusher.com) as a web socket solution. 
+It is necessary for this application to use web sockets in order to be notified of other players actions.
+
+### Configuration
+
+Here is the configuration that must be added to `.env.local`:
+
+```
+PUSHER_APP_ID=CHANGE_ME
+PUSHER_KEY=CHANGE_ME
+PUSHER_SECRET=CHANGE_ME
+PUSHER_CLUSTER=CHANGE_ME
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

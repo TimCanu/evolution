@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { Game } from '@/src/models/game'
 import { NextRequest } from 'next/server.js'
 import { Player } from '@/src/models/player'
 import { GameEntity } from '@/src/models/game-entity'
@@ -20,13 +19,7 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
 
         const opponents: Player[] = getGameOpponents(gameEntity, playerId)
 
-        const game: Game = {
-            hiddenFoods: gameEntity.hiddenFoods,
-            amountOfFood: gameEntity.amountOfFood,
-            opponents,
-            player,
-        }
-        return NextResponse.json(game, { status: 200 })
+        return NextResponse.json(opponents, { status: 200 })
     } catch (e) {
         console.error(e)
     }

@@ -22,9 +22,9 @@ export const joinGame = async ({
     playerName: string
     gameId: string
 }): Promise<{ playerId: string }> => {
-    const res = await fetch(`http://localhost:3000/api/games/${gameId}`, {
+    const res = await fetch(`http://localhost:3000/api/games/${gameId}/join`, {
         next: { revalidate: 0 },
-        method: 'PUT',
+        method: 'POST',
         body: JSON.stringify({ playerName }),
     })
     return res.json()

@@ -3,16 +3,18 @@ import { Feature } from '@/src/models/feature'
 import { Card } from '@/src/models/card'
 import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server.js'
-import clientPromise from '@/src/lib/mongodb'
 import { GameEntity } from '@/src/models/game-entity'
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { Player } from '@/src/models/player'
+import { shuffleCards } from '@/src/lib/card.utils'
+import { getDb } from '@/src/repositories/shared.repository'
 
-const NB_OF_CARDS_PER_FEATURE = 2
+const NB_OF_CARDS_PER_FEATURE = 7
 
 export const POST = async (request: NextRequest) => {
     try {
         const data: { nbOfPlayers: number; playerName: string } = await request.json()
-        const client = await clientPromise
-        const db = client.db(process.env.DATABASE_NAME)
+        const db = await getDb()
 
         const featuresAsDocuments = await db.collection('features').find({}).toArray()
         const features: Feature[] = JSON.parse(JSON.stringify(featuresAsDocuments))
@@ -26,11 +28,31 @@ export const POST = async (request: NextRequest) => {
             return cards
         }, [])
 
+        const shuffledCards = shuffleCards(resultingCards)
+
         const playerId = uuidv4()
+        const firstPlayerCards = [...Array(4)].map((_) => {
+            const card = shuffledCards.pop()
+            if (!card) {
+                throw Error('No cards left... Maybe add some more in the DB?')
+            }
+            return card
+        })
+
+        const firstPlayer: Player = {
+            id: playerId,
+            name: data.playerName,
+            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
+            cards: firstPlayerCards,
+            status:
+                data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
+        }
         const game: GameEntity = {
-            remainingCards: resultingCards,
+            remainingCards: shuffledCards,
             nbOfPlayers: data.nbOfPlayers,
-            players: [{ id: playerId, name: data.playerName }],
+            players: [firstPlayer],
+            hiddenFoods: [],
+            amountOfFood: 0,
         }
 
         const res = await db.collection('games').insertOne(game)

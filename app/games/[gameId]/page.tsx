@@ -14,13 +14,22 @@ export default async function Home({
     searchParams: { playerId: string }
 }) {
     const game = await getGame(params.gameId, searchParams.playerId)
+    const playerId = searchParams.playerId
+
+    if (!playerId) {
+        throw Error('Player ID must be provided')
+    }
 
     return (
-        <PlayerActionsProvider>
-            <CardsProvider cards={game.remainingCards}>
-                <SpeciesProvider>
-                    <FoodsProvider>
-                        <OpponentsProvider opponents={game.opponents}>
+        <PlayerActionsProvider status={game.player.status} gameId={params.gameId}>
+            <CardsProvider cards={game.player.cards} gameId={params.gameId} playerId={playerId}>
+                <SpeciesProvider speciesInitialData={game.player.species}>
+                    <FoodsProvider
+                        initialAmountOfFood={game.amountOfFood}
+                        initialHiddenFoods={game.hiddenFoods}
+                        gameId={params.gameId}
+                    >
+                        <OpponentsProvider opponents={game.opponents} gameId={params.gameId} playerId={playerId}>
                             <Game />
                         </OpponentsProvider>
                     </FoodsProvider>

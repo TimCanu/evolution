@@ -9,18 +9,28 @@ import { usePlayerActionsContext } from '@/src/providers/player-actions.provider
 import { useCardsContext } from '@/src/providers/cards.provider'
 import { useFoodsContext } from '@/src/providers/foods.provider'
 import { useOpponentsContext } from '@/src/providers/opponents.provider'
+import { useParams, useSearchParams } from 'next/navigation'
+import { useMemo } from 'react'
+import { addFood } from '@/src/lib/foods.service'
 
 export function Game() {
+    const searchParams = useSearchParams()
+    const { gameId } = useParams<{ gameId: string }>()
+    const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
+
+    if (!playerId) {
+        throw Error('Player ID must be provided')
+    }
     const { opponents } = useOpponentsContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard } = useCardsContext()
-    const { addFood, computeNumberOfFood } = useFoodsContext()
+    const { computeNumberOfFood } = useFoodsContext()
 
-    const playCard = (cardId: string): void => {
+    const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
         if (isAddingFoodStage()) {
-            addFood(card.foodNumber)
+            await addFood({ gameId, playerId, cardId })
         } else if (isEvolvingStage()) {
             playEvolvingAction(card)
         } else if (isFeedingStage()) {
