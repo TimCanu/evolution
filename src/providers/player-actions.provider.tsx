@@ -1,5 +1,9 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
+import pusherClient from '@/src/lib/pusher-client'
+import { useParams } from 'next/navigation'
+import { GAME_STATUS } from '@/src/const/game-events.const'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
@@ -11,24 +15,27 @@ interface PlayerActionsContextResult {
     updatePlayerState: (action: PlayerActionsState) => void
 }
 
-export enum ActionState {
-    ADDING_FOOD_TO_WATER_PLAN,
-    CHOOSING_EVOLVING_ACTION,
+interface PlayerActionsContextProps {
+    status: GameStatus
+}
+
+export enum EVOLVING_STAGES {
     ADD_LEFT_SPECIES,
     ADD_RIGHT_SPECIES,
     INCREMENT_SPECIES_SIZE,
     INCREMENT_SPECIES_POPULATION,
     ADD_SPECIES_FEATURE,
-    FEEDING,
 }
 
+type ActionState = EVOLVING_STAGES | GameStatus
+
 const ALL_EVOLVING_STAGE_STEPS = [
-    ActionState.CHOOSING_EVOLVING_ACTION,
-    ActionState.ADD_LEFT_SPECIES,
-    ActionState.ADD_RIGHT_SPECIES,
-    ActionState.INCREMENT_SPECIES_POPULATION,
-    ActionState.INCREMENT_SPECIES_SIZE,
-    ActionState.ADD_SPECIES_FEATURE,
+    GameStatus.CHOOSING_EVOLVING_ACTION,
+    EVOLVING_STAGES.ADD_LEFT_SPECIES,
+    EVOLVING_STAGES.ADD_RIGHT_SPECIES,
+    EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
+    EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
+    EVOLVING_STAGES.ADD_SPECIES_FEATURE,
 ]
 
 export interface PlayerActionsState {
@@ -38,9 +45,22 @@ export interface PlayerActionsState {
 
 const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as PlayerActionsContextResult)
 
-export const PlayerActionsProvider: FunctionComponent<PropsWithChildren> = ({ children }) => {
+export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = ({
+    children,
+    status,
+}) => {
+    const params = useParams<{ gameId: string }>()
+
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
-        action: ActionState.ADDING_FOOD_TO_WATER_PLAN,
+        action: status,
+    })
+
+    const channel = pusherClient.subscribe(`game-${params.gameId}`)
+    channel.bind(GAME_STATUS, function (data: { gameStatus: GameStatus }) {
+        console.log({ data })
+        if (playerOnGoingAction.action !== data.gameStatus) {
+            setPlayerActions({ action: data.gameStatus })
+        }
     })
 
     const updatePlayerState = (action: PlayerActionsState): void => {
@@ -48,7 +68,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren> = ({ ch
     }
 
     const isAddingFoodStage = (): boolean => {
-        return playerOnGoingAction.action === ActionState.ADDING_FOOD_TO_WATER_PLAN
+        return playerOnGoingAction.action === GameStatus.ADDING_FOOD_TO_WATER_PLAN
     }
 
     const isEvolvingStage = (): boolean => {
@@ -56,30 +76,30 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren> = ({ ch
     }
 
     const isFeedingStage = (): boolean => {
-        return playerOnGoingAction.action === ActionState.FEEDING
+        return playerOnGoingAction.action === GameStatus.FEEDING_SPECIES
     }
 
     const canDiscardCard = (): boolean => {
-        return isEvolvingStage() && playerOnGoingAction.action !== ActionState.CHOOSING_EVOLVING_ACTION
+        return isEvolvingStage() && playerOnGoingAction.action !== GameStatus.CHOOSING_EVOLVING_ACTION
     }
 
     const getCardDiscardMessage = (): string => {
         switch (playerOnGoingAction.action) {
-            case ActionState.ADD_LEFT_SPECIES:
+            case EVOLVING_STAGES.ADD_LEFT_SPECIES:
                 return 'Choose the species to add to the left'
-            case ActionState.ADD_RIGHT_SPECIES:
+            case EVOLVING_STAGES.ADD_RIGHT_SPECIES:
                 return 'Choose the species to add to the right'
-            case ActionState.CHOOSING_EVOLVING_ACTION:
+            case GameStatus.CHOOSING_EVOLVING_ACTION:
                 return 'Choose an action to evolve your species or finish your turn'
-            case ActionState.ADDING_FOOD_TO_WATER_PLAN:
+            case GameStatus.ADDING_FOOD_TO_WATER_PLAN:
                 return 'Discard a card to add food to the water plan'
-            case ActionState.INCREMENT_SPECIES_SIZE:
+            case EVOLVING_STAGES.INCREMENT_SPECIES_SIZE:
                 return 'Discard a card to increase the selected species size'
-            case ActionState.INCREMENT_SPECIES_POPULATION:
+            case EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION:
                 return 'Discard a card to increase the selected species population'
-            case ActionState.ADD_SPECIES_FEATURE:
+            case EVOLVING_STAGES.ADD_SPECIES_FEATURE:
                 return 'Choose the card to add as a feature for the selected species'
-            case ActionState.FEEDING:
+            case GameStatus.FEEDING_SPECIES:
                 return 'Choose the species you would like to feed'
             default:
                 console.warn(

@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server.js'
 import clientPromise from '@/src/lib/mongodb'
 import { GameEntity } from '@/src/models/game-entity'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 const NB_OF_CARDS_PER_FEATURE = 2
 
@@ -26,11 +27,15 @@ export const POST = async (request: NextRequest) => {
             return cards
         }, [])
 
+        const gameStatus =
+            data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN
+
         const playerId = uuidv4()
         const game: GameEntity = {
             remainingCards: resultingCards,
             nbOfPlayers: data.nbOfPlayers,
             players: [{ id: playerId, name: data.playerName }],
+            status: gameStatus,
         }
 
         const res = await db.collection('games').insertOne(game)

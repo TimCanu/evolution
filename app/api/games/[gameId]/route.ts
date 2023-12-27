@@ -6,6 +6,9 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { Player } from '@/src/models/player'
 import { GameEntity } from '@/src/models/game-entity'
+import pusherServ from '@/src/lib/pusher-serv'
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { GAME_STATUS } from '@/src/const/game-events.const'
 
 export const GET = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -54,15 +57,23 @@ export const PUT = async (request: NextRequest, { params }: { params: { gameId: 
         const game: GameEntity = JSON.parse(JSON.stringify(gameAsDocument[0]))
 
         if (game.nbOfPlayers === game.players.length) {
+            console.error('The players list is already full')
             return NextResponse.error()
         }
 
         const playerId = uuidv4()
         const playersUpdated = [...game.players, { id: playerId, name: data.playerName }]
 
+        const gameStatus =
+            game.nbOfPlayers === playersUpdated.length
+                ? GameStatus.ADDING_FOOD_TO_WATER_PLAN
+                : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN
+
         await db
             .collection('games')
-            .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated } })
+            .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, status: gameStatus } })
+
+        await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)
