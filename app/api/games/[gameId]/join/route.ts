@@ -1,4 +1,3 @@
-import clientPromise from '@/src/lib/mongodb'
 import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { ObjectId } from 'mongodb'
@@ -8,19 +7,14 @@ import { GameEntity } from '@/src/models/game-entity'
 import pusherServ from '@/src/lib/pusher-serv'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
+import { getGameEntity } from '@/src/repositories/games.repository'
+import { getDb } from '@/src/repositories/shared.repository'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
         const data: { playerName: string } = await request.json()
-        const client = await clientPromise
-        const db = client.db(process.env.DATABASE_NAME)
 
-        const gameAsDocument = await db
-            .collection('games')
-            .find({ _id: new ObjectId(params.gameId) })
-            .toArray()
-
-        const game: GameEntity = JSON.parse(JSON.stringify(gameAsDocument[0]))
+        const game: GameEntity = await getGameEntity(params.gameId)
 
         if (game.nbOfPlayers === game.players.length) {
             console.error('The players list is already full')
@@ -58,6 +52,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             return player
         })
 
+        const db = await getDb()
         await db
             .collection('games')
             .updateOne(

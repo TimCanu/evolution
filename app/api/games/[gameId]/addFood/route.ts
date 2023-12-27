@@ -1,24 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import clientPromise from '@/src/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { GameEntity } from '@/src/models/game-entity'
 import { Player } from '@/src/models/player'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import pusherServ from '@/src/lib/pusher-serv'
 import { FOOD_STATUS, GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
+import { getGameEntity } from '@/src/repositories/games.repository'
+import { GameEntity } from '@/src/models/game-entity'
+import { getDb } from '@/src/repositories/shared.repository'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
         const data: { playerId: string; cardId: string } = await request.json()
-        const client = await clientPromise
-        const db = client.db(process.env.DATABASE_NAME)
 
-        const gameAsDocument = await db
-            .collection('games')
-            .find({ _id: new ObjectId(params.gameId) })
-            .toArray()
-
-        const game: GameEntity = JSON.parse(JSON.stringify(gameAsDocument[0]))
+        const game: GameEntity = await getGameEntity(params.gameId)
 
         const playerToUpdate = game.players.find((player) => player.id === data.playerId)
         if (!playerToUpdate) {
@@ -60,6 +54,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             return player
         })
 
+        const db = await getDb()
         await db
             .collection('games')
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, hiddenFoods } })
