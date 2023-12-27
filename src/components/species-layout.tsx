@@ -2,6 +2,8 @@ import { FC } from 'react'
 import { Species } from '@/src/models/species'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { ActionState, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { useFoodsContext } from '../providers/foods.provider'
+import { useSpeciesContext } from '../providers/species.provider'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -14,8 +16,10 @@ export const SpeciesLayout: FC<CardProps> = ({
     canShowAddSpeciesRightButton,
     species,
 }) => {
-    const { updatePlayerState, isEvolvingStage } = usePlayerActionsContext()
+    const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
+    const { decrementFood } = useFoodsContext()
+    const { incrementFoodEaten } = useSpeciesContext()
 
     return (
         <div className="flex flex-col self-end">
@@ -67,8 +71,25 @@ export const SpeciesLayout: FC<CardProps> = ({
                             +
                         </button>
                     )}
+                    {isFeedingStage() && species.foodEaten < species.population && (
+                        <button
+                            className="border border-indigo-600 bg-amber-400 rounded-full w-8 h-8 flex justify-center items-center"
+                            onClick={() => {
+                                decrementFood()
+                                incrementFoodEaten(species.id)
+                            }}
+                        >
+                            FEED
+                        </button>
+                    )}
+
                     <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                        {species.population}
+                        {isFeedingStage() && (
+                            <>
+                                {species.foodEaten} / {species.population}
+                            </>
+                        )}
+                        {!isFeedingStage() && <> {species.population}</>}
                     </span>
                 </div>
                 {canActionsBeShown && species.population < 6 && (

@@ -11,6 +11,7 @@ interface SpeciesContextResult {
     speciesList: Species[]
     playEvolvingAction: (card: Card) => void
     removeFeature: (speciesId: string, featureId: string) => void
+    incrementFoodEaten: (speciesId: string) => void
 }
 
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
@@ -50,6 +51,11 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
         updateSpecies({ ...speciesToUpdate, features: newFeatures })
     }
 
+    const incrementFoodEaten = (speciesId: string): void => {
+        const speciesToUpdate = getSpecies(speciesId)
+        updateSpecies({ ...speciesToUpdate, foodEaten: speciesToUpdate.foodEaten + 1 })
+    }
+
     const incrementSpeciesSize = (): void => {
         const speciesToUpdate = getSpeciesForOnGoingAction()
         const speciesUpdated = { ...speciesToUpdate, size: speciesToUpdate.size + 1 }
@@ -70,6 +76,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             population: 1,
             id: uuidv4(),
             features: [],
+            foodEaten: 0,
         }
         setSpeciesList([newSpecies, ...speciesList])
         updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
@@ -81,6 +88,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
             population: 1,
             id: uuidv4(),
             features: [],
+            foodEaten: 0,
         }
         setSpeciesList([...speciesList, newSpecies])
         updatePlayerState({ action: ActionState.CHOOSING_EVOLVING_ACTION })
@@ -124,6 +132,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren> = ({ children
         speciesList,
         playEvolvingAction,
         removeFeature,
+        incrementFoodEaten,
     }
 
     return <SpeciesContext.Provider value={res}>{children}</SpeciesContext.Provider>
