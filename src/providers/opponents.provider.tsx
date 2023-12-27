@@ -2,7 +2,6 @@
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { Player } from '@/src/models/player'
 import { PusherInstance } from '@/src/lib/pusher.service'
-import { useParams, useSearchParams } from 'next/navigation'
 import { PLAYER_STATUS } from '@/src/const/game-events.const'
 import { getOpponents } from '@/src/lib/players.service'
 
@@ -12,6 +11,8 @@ interface OpponentsContextResult {
 
 interface OpponentsContextProps {
     opponents: Player[]
+    gameId: string
+    playerId: string
 }
 
 const OpponentsContext = createContext<OpponentsContextResult>({} as OpponentsContextResult)
@@ -19,16 +20,10 @@ const OpponentsContext = createContext<OpponentsContextResult>({} as OpponentsCo
 export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsContextProps>> = ({
     children,
     opponents: opponentsData,
+    gameId,
+    playerId,
 }) => {
     const [opponents, setOpponents] = useState<Player[]>(opponentsData)
-
-    const searchParams = useSearchParams()
-    const { gameId } = useParams<{ gameId: string }>()
-    const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
-
-    if (!playerId) {
-        throw Error('Player ID must be provided')
-    }
 
     const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
 

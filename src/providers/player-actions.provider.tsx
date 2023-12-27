@@ -1,6 +1,5 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
-import { useParams } from 'next/navigation'
 import { GAME_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.service'
@@ -17,6 +16,7 @@ interface PlayerActionsContextResult {
 
 interface PlayerActionsContextProps {
     status: GameStatus
+    gameId: string
 }
 
 export enum EVOLVING_STAGES {
@@ -48,14 +48,13 @@ const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as Pla
 export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = ({
     children,
     status,
+    gameId,
 }) => {
-    const params = useParams<{ gameId: string }>()
-
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
         action: status,
     })
 
-    const channel = useMemo(() => PusherInstance.getChannel(params.gameId), [params.gameId])
+    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
 
     channel.bind(GAME_STATUS, function (data: { gameStatus: GameStatus }) {
         if (playerOnGoingAction.action !== data.gameStatus) {

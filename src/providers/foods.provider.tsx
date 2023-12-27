@@ -2,13 +2,13 @@
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { useParams, useSearchParams } from 'next/navigation'
 import { PusherInstance } from '@/src/lib/pusher.service'
 import { FOOD_STATUS } from '@/src/const/game-events.const'
 
 interface FoodsContextProps {
     initialAmountOfFood: number
     initialHiddenFoods: number[]
+    gameId: string
 }
 
 interface FoodsContextResult {
@@ -23,18 +23,11 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProp
     children,
     initialAmountOfFood,
     initialHiddenFoods,
+    gameId,
 }) => {
     const { updatePlayerState } = usePlayerActionsContext()
     const [hiddenFoods, setHiddenFoods] = useState<number[]>(initialHiddenFoods)
     const [amountOfFood, setAmountOfFood] = useState(initialAmountOfFood)
-
-    const searchParams = useSearchParams()
-    const { gameId } = useParams<{ gameId: string }>()
-    const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
-
-    if (!playerId) {
-        throw Error('Player ID must be provided')
-    }
 
     const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
 
