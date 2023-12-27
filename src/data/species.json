@@ -3,6 +3,7 @@
         "id": "1",
         "size": 1,
         "population": 1,
-        "features": []
+        "features": [],
+        "foodEaten": 0
     }
 ]

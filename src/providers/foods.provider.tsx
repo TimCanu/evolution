@@ -7,6 +7,7 @@ interface FoodsContextResult {
     hiddenFoods: number[]
     addFood: (foodNumber: number) => void
     computeNumberOfFood: () => void
+    decrementFood: () => void
 }
 
 const FoodsContext = createContext<FoodsContextResult>({} as FoodsContextResult)
@@ -30,11 +31,17 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren> = ({ children }
         updatePlayerState({ action: ActionState.FEEDING })
     }
 
+    const decrementFood = (): void => {
+        const newAmountOfFood = amountOfFood - 1
+        setAmountOfFood(newAmountOfFood)
+    }
+
     const res = {
         amountOfFood,
         hiddenFoods,
         addFood,
         computeNumberOfFood,
+        decrementFood,
     }
 
     return <FoodsContext.Provider value={res}>{children}</FoodsContext.Provider>
