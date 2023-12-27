@@ -42,7 +42,7 @@ export const POST = async (request: NextRequest) => {
         const firstPlayer: Player = {
             id: playerId,
             name: data.playerName,
-            species: [{ id: uuidv4(), size: 1, population: 1, features: [] }],
+            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
             cards: firstPlayerCards,
             status:
                 data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
