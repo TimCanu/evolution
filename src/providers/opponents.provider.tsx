@@ -1,7 +1,7 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { Player } from '@/src/models/player'
-import { PusherInstance } from '@/src/lib/pusher.service'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
 import { PLAYER_STATUS } from '@/src/const/game-events.const'
 import { getOpponents } from '@/src/lib/players.service'
 

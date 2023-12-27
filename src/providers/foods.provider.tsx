@@ -2,7 +2,7 @@
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { PusherInstance } from '@/src/lib/pusher.service'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
 import { FOOD_STATUS } from '@/src/const/game-events.const'
 
 interface FoodsContextProps {

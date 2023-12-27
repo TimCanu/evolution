@@ -4,7 +4,7 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { Player } from '@/src/models/player'
 import { GameEntity } from '@/src/models/game-entity'
-import pusherServ from '@/src/lib/pusher-serv'
+import pusherServer from '@/src/lib/pusher-server'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
 import { getGameEntity } from '@/src/repositories/games.repository'
@@ -61,9 +61,9 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             )
 
         if (gameStatus === GameStatus.ADDING_FOOD_TO_WATER_PLAN) {
-            await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
+            await pusherServer.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
         }
-        await pusherServ.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId })
+        await pusherServer.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId })
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)

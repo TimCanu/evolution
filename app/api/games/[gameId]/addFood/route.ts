@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { Player } from '@/src/models/player'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import pusherServ from '@/src/lib/pusher-serv'
+import pusherServer from '@/src/lib/pusher-server'
 import { FOOD_STATUS, GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
 import { getGameEntity } from '@/src/repositories/games.repository'
 import { GameEntity } from '@/src/models/game-entity'
@@ -60,10 +60,10 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, hiddenFoods } })
 
         if (gameStatus === GameStatus.CHOOSING_EVOLVING_ACTION) {
-            await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
+            await pusherServer.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
         }
-        await pusherServ.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId: data.playerId })
-        await pusherServ.trigger(`game-${params.gameId}`, FOOD_STATUS, {
+        await pusherServer.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId: data.playerId })
+        await pusherServer.trigger(`game-${params.gameId}`, FOOD_STATUS, {
             hiddenFoods,
             amountOfFood: game.amountOfFood,
         })

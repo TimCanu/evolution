@@ -2,7 +2,7 @@
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { GAME_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { PusherInstance } from '@/src/lib/pusher.service'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
