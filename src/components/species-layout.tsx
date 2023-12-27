@@ -58,7 +58,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                     <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
                         {species.size}
                     </span>
-                    {canActionsBeShown && species.features.length < 3 && !isFeedingStage() && (
+                    {canActionsBeShown && species.features.length < 3 && (
                         <button
                             className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
                             onClick={() => {
