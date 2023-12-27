@@ -1,6 +1,10 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { Card } from '@/src/models/card'
+import { useParams, useSearchParams } from 'next/navigation'
+import { PusherInstance } from '@/src/lib/pusher.service'
+import { PLAYER_STATUS } from '@/src/const/game-events.const'
+import { getPlayer } from '@/src/lib/players.service'
 
 interface CardsContextResult {
     cards: Card[]
@@ -19,6 +23,23 @@ export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProp
     cards: cardsData,
 }) => {
     const [cards, setCards] = useState<Card[]>(cardsData)
+
+    const searchParams = useSearchParams()
+    const { gameId } = useParams<{ gameId: string }>()
+    const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
+
+    if (!playerId) {
+        throw Error('Player ID must be provided')
+    }
+
+    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+
+    channel.bind(PLAYER_STATUS, async function (data: { playerId: string }) {
+        if (data.playerId === playerId) {
+            const player = await getPlayer(gameId, playerId)
+            setCards(player.cards)
+        }
+    })
 
     const removeCard = (cardId: string): void => {
         const updatedCards = cards.filter((card) => card.id !== cardId)

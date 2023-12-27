@@ -32,7 +32,12 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
             return opponents
         }, [])
 
-        const game: Game = { ...gameEntity, opponents, player }
+        const game: Game = {
+            hiddenFoods: gameEntity.hiddenFoods,
+            amountOfFood: gameEntity.amountOfFood,
+            opponents,
+            player,
+        }
         return NextResponse.json(game, { status: 200 })
     } catch (e) {
         console.error(e)

@@ -7,7 +7,7 @@ import { Player } from '@/src/models/player'
 import { GameEntity } from '@/src/models/game-entity'
 import pusherServ from '@/src/lib/pusher-serv'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { GAME_STATUS, OPPONENTS_STATUS } from '@/src/const/game-events.const'
+import { GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -43,24 +43,32 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             name: data.playerName,
             species: [{ id: uuidv4(), size: 1, population: 1, features: [] }],
             cards: newPlayerCards,
+            status: GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
         }
 
-        const playersUpdated = [...game.players, newPlayer]
-
         const gameStatus =
-            game.nbOfPlayers === playersUpdated.length
+            game.nbOfPlayers === game.players.length + 1
                 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN
                 : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN
+
+        const playersUpdated = [...game.players, newPlayer].map((player) => {
+            if (gameStatus === GameStatus.ADDING_FOOD_TO_WATER_PLAN) {
+                return { ...player, status: gameStatus }
+            }
+            return player
+        })
 
         await db
             .collection('games')
             .updateOne(
                 { _id: new ObjectId(params.gameId) },
-                { $set: { players: playersUpdated, status: gameStatus, remainingCards: gameCards } }
+                { $set: { players: playersUpdated, remainingCards: gameCards } }
             )
 
-        await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
-        await pusherServ.trigger(`game-${params.gameId}`, OPPONENTS_STATUS, { refresh: true })
+        if (gameStatus === GameStatus.ADDING_FOOD_TO_WATER_PLAN) {
+            await pusherServ.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
+        }
+        await pusherServ.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId })
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)

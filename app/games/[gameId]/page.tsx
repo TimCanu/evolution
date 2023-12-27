@@ -16,10 +16,10 @@ export default async function Home({
     const game = await getGame(params.gameId, searchParams.playerId)
 
     return (
-        <PlayerActionsProvider status={game.status}>
+        <PlayerActionsProvider status={game.player.status}>
             <CardsProvider cards={game.player.cards}>
                 <SpeciesProvider speciesInitialData={game.player.species}>
-                    <FoodsProvider>
+                    <FoodsProvider initialAmountOfFood={game.amountOfFood} initialHiddenFoods={game.hiddenFoods}>
                         <OpponentsProvider opponents={game.opponents}>
                             <Game />
                         </OpponentsProvider>

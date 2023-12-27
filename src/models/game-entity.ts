@@ -7,5 +7,6 @@ export interface GameEntity {
     nbOfPlayers: number
     remainingCards: Card[]
     players: Player[]
-    status: GameStatus
+    hiddenFoods: number[]
+    amountOfFood: number
 }

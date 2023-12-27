@@ -3,8 +3,8 @@ import { createContext, FunctionComponent, PropsWithChildren, useContext, useMem
 import { Player } from '@/src/models/player'
 import { PusherInstance } from '@/src/lib/pusher.service'
 import { useParams, useSearchParams } from 'next/navigation'
-import { OPPONENTS_STATUS } from '@/src/const/game-events.const'
-import { getOpponents } from '@/src/lib/opponents.service'
+import { PLAYER_STATUS } from '@/src/const/game-events.const'
+import { getOpponents } from '@/src/lib/players.service'
 
 interface OpponentsContextResult {
     opponents: Player[]
@@ -20,11 +20,10 @@ export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsCon
     children,
     opponents: opponentsData,
 }) => {
-    const { gameId } = useParams<{ gameId: string }>()
-    const searchParams = useSearchParams()
-
     const [opponents, setOpponents] = useState<Player[]>(opponentsData)
 
+    const searchParams = useSearchParams()
+    const { gameId } = useParams<{ gameId: string }>()
     const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
 
     if (!playerId) {
@@ -33,8 +32,8 @@ export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsCon
 
     const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
 
-    channel.bind(OPPONENTS_STATUS, async function (data: { refresh: boolean }) {
-        if (data.refresh) {
+    channel.bind(PLAYER_STATUS, async function (data: { playerId: string }) {
+        if (data.playerId !== playerId) {
             const refreshedOpponents = await getOpponents(gameId, playerId)
             setOpponents(refreshedOpponents)
         }

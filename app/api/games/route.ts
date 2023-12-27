@@ -48,12 +48,15 @@ export const POST = async (request: NextRequest) => {
             name: data.playerName,
             species: [{ id: uuidv4(), size: 1, population: 1, features: [] }],
             cards: firstPlayerCards,
+            status:
+                data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
         }
         const game: GameEntity = {
             remainingCards: shuffledCards,
             nbOfPlayers: data.nbOfPlayers,
             players: [firstPlayer],
-            status: gameStatus,
+            hiddenFoods: [],
+            amountOfFood: 0,
         }
 
         const res = await db.collection('games').insertOne(game)
