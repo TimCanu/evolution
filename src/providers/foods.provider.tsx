@@ -50,6 +50,10 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProp
     const decrementFood = (): void => {
         const newAmountOfFood = amountOfFood - 1
         setAmountOfFood(newAmountOfFood)
+
+        if (newAmountOfFood === 0) {
+            updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
+        }
     }
 
     const res = {

@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { GameStatus } from '../enums/game.events.enum'
 import { useFoodsContext } from '../providers/foods.provider'
 import { useSpeciesContext } from '../providers/species.provider'
 
@@ -19,7 +20,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
     const { decrementFood } = useFoodsContext()
-    const { incrementFoodEaten } = useSpeciesContext()
+    const { incrementFoodEaten, speciesList } = useSpeciesContext()
 
     return (
         <div className="flex flex-col self-end">
@@ -77,6 +78,11 @@ export const SpeciesLayout: FC<CardProps> = ({
                             onClick={() => {
                                 decrementFood()
                                 incrementFoodEaten(species.id)
+                                for (const species of speciesList) {
+                                    if (species.foodEaten === species.population) {
+                                        updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
+                                    }
+                                }
                             }}
                         >
                             FEED
