@@ -1,21 +1,25 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
 import { Species } from '@/src/models/species.model'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/src/models/feature.model'
 import { Card } from '@/src/models/card.model'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
+import { UPDATE_PLAYER_SPECIES } from '@/src/const/game-events.const'
+import { PushUpdatePlayerSpeciesData } from '@/src/models/pusher.channels.model'
 
 interface SpeciesContextResult {
     speciesList: Species[]
     playEvolvingAction: (card: Card) => void
     removeFeature: (speciesId: string, featureId: string) => void
-    incrementFoodEaten: (speciesId: string) => void
 }
 
 interface SpeciesContextProps {
     speciesInitialData: Species[]
+    gameId: string
+    playerId: string
 }
 
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
@@ -23,9 +27,17 @@ const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextR
 export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
     children,
     speciesInitialData,
+    gameId,
+    playerId,
 }) => {
     const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
     const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
+
+    const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
+
+    channel.bind(UPDATE_PLAYER_SPECIES, async function (data: PushUpdatePlayerSpeciesData) {
+        setSpeciesList(data.species)
+    })
 
     const getSpecies = (speciesId: string): Species => {
         const speciesToReturn = speciesList.find((species) => species.id === speciesId)
@@ -56,20 +68,6 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
         const speciesToUpdate = getSpecies(speciesId)
         const newFeatures = speciesToUpdate.features.filter((feature) => feature.id !== featureId)
         updateSpecies({ ...speciesToUpdate, features: newFeatures })
-    }
-
-    const incrementFoodEaten = (speciesId: string): void => {
-        const speciesToUpdate = getSpecies(speciesId)
-        speciesToUpdate.foodEaten++
-        updateSpecies(speciesToUpdate)
-        if (speciesToUpdate.foodEaten >= speciesToUpdate.population) {
-            const haveAllSpeciesEaten = speciesList.every((species) => {
-                return species.id === speciesToUpdate.id || species.foodEaten === species.population
-            })
-            if (haveAllSpeciesEaten) {
-                updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
-            }
-        }
     }
 
     const incrementSpeciesSize = (): void => {
@@ -148,7 +146,6 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
         speciesList,
         playEvolvingAction,
         removeFeature,
-        incrementFoodEaten,
     }
 
     return <SpeciesContext.Provider value={res}>{children}</SpeciesContext.Provider>

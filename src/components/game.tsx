@@ -78,6 +78,8 @@ export function Game({ game }: GameProps) {
                                 canShowAddSpeciesLeftButton={isFirstSpecies}
                                 canShowAddSpeciesRightButton={isLastSpecies}
                                 species={species}
+                                gameId={gameId}
+                                playerId={playerId}
                             />
                         )
                     })}
