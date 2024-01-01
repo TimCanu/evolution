@@ -19,6 +19,6 @@ export interface PushUpdateGameStatusData {
 }
 
 export interface PushUpdateFoodData {
-    hiddenFoods: number[],
-    amountOfFood: number,
+    hiddenFoods: number[]
+    amountOfFood: number
 }

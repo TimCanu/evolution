@@ -19,19 +19,17 @@ interface CardsContextProps {
 
 const CardsContext = createContext<CardsContextResult>({} as CardsContextResult)
 
-export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProps>> = (
-    {
-        children,
-        cards: cardsData,
-        gameId,
-        playerId,
-    },
-) => {
+export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProps>> = ({
+    children,
+    cards: cardsData,
+    gameId,
+    playerId,
+}) => {
     const [cards, setCards] = useState<Card[]>(cardsData)
 
     const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
 
-    channel.bind(UPDATE_PLAYER_CARDS, async function(data: PushUpdatePlayerCardsData) {
+    channel.bind(UPDATE_PLAYER_CARDS, async function (data: PushUpdatePlayerCardsData) {
         setCards(data.cards)
     })
 

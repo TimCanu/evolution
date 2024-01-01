@@ -47,14 +47,12 @@ export interface PlayerActionsState {
 
 const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as PlayerActionsContextResult)
 
-export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = (
-    {
-        children,
-        status,
-        gameId,
-        playerId,
-    },
-) => {
+export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = ({
+    children,
+    status,
+    gameId,
+    playerId,
+}) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
         action: status,
     })
@@ -62,13 +60,13 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     const gameChannel = useMemo(() => PusherInstance.getGameChannel(gameId), [gameId])
     const playerChannel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
 
-    gameChannel.bind(UPDATE_GAME_STATUS, function(data: PushUpdateGameStatusData) {
+    gameChannel.bind(UPDATE_GAME_STATUS, function (data: PushUpdateGameStatusData) {
         if (playerOnGoingAction.action !== data.status) {
             setPlayerActions({ action: data.status })
         }
     })
 
-    playerChannel.bind(UPDATE_PLAYER_STATUS, function(data: PushUpdatePlayerStatusData) {
+    playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
         if (playerOnGoingAction.action !== data.status) {
             setPlayerActions({ action: data.status })
         }
@@ -114,7 +112,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
                 return 'Choose the species you would like to feed'
             default:
                 console.warn(
-                    `Adding an action message has not been supported for the action ${playerOnGoingAction.action} `,
+                    `Adding an action message has not been supported for the action ${playerOnGoingAction.action} `
                 )
                 return ''
         }

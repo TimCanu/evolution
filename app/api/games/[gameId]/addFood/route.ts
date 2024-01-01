@@ -27,7 +27,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const cardPlayedAsFood = playerToUpdate.cards.find((card) => card.id === data.cardId)
         if (!cardPlayedAsFood) {
             console.error(
-                `Player with id ${data.playerId} does not have a card with id ${data.cardId} in game with id ${params.gameId}`,
+                `Player with id ${data.playerId} does not have a card with id ${data.cardId} in game with id ${params.gameId}`
             )
             return NextResponse.error()
         }
@@ -41,7 +41,9 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const playerUpdated: Player = {
             ...playerToUpdate,
             cards: cardsUpdated,
-            status: hasEveryPlayersAddedFood ? GameStatus.CHOOSING_EVOLVING_ACTION : GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
+            status: hasEveryPlayersAddedFood
+                ? GameStatus.CHOOSING_EVOLVING_ACTION
+                : GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
         }
         const playersUpdated: Player[] = game.players.map((player) => {
             if (hasEveryPlayersAddedFood) {
@@ -64,7 +66,9 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             await pushNewStatusToPlayer(params.gameId, data.playerId, playerUpdated.status)
         }
         await pushNewCardsToPlayer(params.gameId, data.playerId, playerUpdated.cards)
-        const playerIdsToNotify = playersUpdated.filter(player => player.id !== data.playerId).map(player => player.id)
+        const playerIdsToNotify = playersUpdated
+            .filter((player) => player.id !== data.playerId)
+            .map((player) => player.id)
         await pushUpdatedOpponents(params.gameId, game.players, playerIdsToNotify)
         await pushNewFood(params.gameId, { hiddenFoods, amountOfFood: game.amountOfFood })
         return NextResponse.json(null, { status: 200 })

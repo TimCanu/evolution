@@ -19,7 +19,6 @@ import { Opponent } from '@/src/models/opponent.model'
 import { getOpponents } from '@/src/repositories/games.repository'
 import { Player } from '@/src/models/player.model'
 
-
 const updatePlayerCards = async (channelId: string, data: PushUpdatePlayerCardsData): Promise<void> => {
     await pusherServer.trigger(channelId, UPDATE_PLAYER_CARDS, data)
 }
@@ -52,7 +51,11 @@ const pushUpdatedOpponentsToPlayer = async (gameId: string, playerId: string, op
     await updatePlayerOpponents(`game-${gameId}-player-${playerId}`, { opponents })
 }
 
-export const pushUpdatedOpponents = async (gameId: string, players: Player[], playerIdsToNotify: string[]): Promise<void> => {
+export const pushUpdatedOpponents = async (
+    gameId: string,
+    players: Player[],
+    playerIdsToNotify: string[]
+): Promise<void> => {
     for (const playerId of playerIdsToNotify) {
         const playerOpponents = getOpponents(players, playerId)
         await pushUpdatedOpponentsToPlayer(gameId, playerId, playerOpponents)

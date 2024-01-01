@@ -4,8 +4,7 @@ export class PusherInstance {
     private static gameChannels: Map<string, Channel> = new Map<string, Channel>()
     private static playerChannels: Map<string, Channel> = new Map<string, Channel>()
 
-    private constructor() {
-    }
+    private constructor() {}
 
     public static getGameChannel(gameId: string): Channel {
         const channel = PusherInstance.gameChannels.get(gameId)
