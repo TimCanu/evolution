@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
-import { Player } from '@/src/models/player'
-import { GameEntity } from '@/src/models/game-entity'
-import pusherServer from '@/src/lib/pusher-server'
+import { Player } from '@/src/models/player.model'
+import { GameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { GAME_STATUS, PLAYER_STATUS } from '@/src/const/game-events.const'
 import { getGameEntity } from '@/src/repositories/games.repository'
 import { getDb } from '@/src/repositories/shared.repository'
+import { pushNewGameStatus, pushUpdatedOpponents } from '@/src/lib/pusher.server.service'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -40,14 +39,11 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             status: GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
         }
 
-        const gameStatus =
-            game.nbOfPlayers === game.players.length + 1
-                ? GameStatus.ADDING_FOOD_TO_WATER_PLAN
-                : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN
+        const areAllPlayersConnected = game.nbOfPlayers === game.players.length + 1
 
         const playersUpdated = [...game.players, newPlayer].map((player) => {
-            if (gameStatus === GameStatus.ADDING_FOOD_TO_WATER_PLAN) {
-                return { ...player, status: gameStatus }
+            if (areAllPlayersConnected) {
+                return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
             }
             return player
         })
@@ -60,10 +56,12 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
                 { $set: { players: playersUpdated, remainingCards: gameCards } }
             )
 
-        if (gameStatus === GameStatus.ADDING_FOOD_TO_WATER_PLAN) {
-            await pusherServer.trigger(`game-${params.gameId}`, GAME_STATUS, { gameStatus })
+        if (areAllPlayersConnected) {
+            await pushNewGameStatus(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN)
         }
-        await pusherServer.trigger(`game-${params.gameId}`, PLAYER_STATUS, { playerId })
+        const playerIdsToNotify = playersUpdated.filter((player) => player.id !== playerId).map((player) => player.id)
+
+        await pushUpdatedOpponents(params.gameId, playersUpdated, playerIdsToNotify)
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)

@@ -1,9 +1,9 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
-import { Card } from '@/src/models/card'
+import { Card } from '@/src/models/card.model'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
-import { PLAYER_STATUS } from '@/src/const/game-events.const'
-import { getPlayer } from '@/src/lib/players.service'
+import { UPDATE_PLAYER_CARDS } from '@/src/const/game-events.const'
+import { PushUpdatePlayerCardsData } from '@/src/models/pusher.channels.model'
 
 interface CardsContextResult {
     cards: Card[]
@@ -27,13 +27,10 @@ export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProp
 }) => {
     const [cards, setCards] = useState<Card[]>(cardsData)
 
-    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+    const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
 
-    channel.bind(PLAYER_STATUS, async function (data: { playerId: string }) {
-        if (data.playerId === playerId) {
-            const player = await getPlayer(gameId, playerId)
-            setCards(player.cards)
-        }
+    channel.bind(UPDATE_PLAYER_CARDS, async function (data: PushUpdatePlayerCardsData) {
+        setCards(data.cards)
     })
 
     const removeCard = (cardId: string): void => {

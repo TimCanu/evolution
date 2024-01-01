@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Card } from '@/src/models/card'
+import { Card } from '@/src/models/card.model'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 
 interface CardProps {

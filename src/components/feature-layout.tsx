@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Feature } from '@/src/models/feature'
+import { Feature } from '@/src/models/feature.model'
 import { useSpeciesContext } from '@/src/providers/species.provider'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 

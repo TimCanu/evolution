@@ -3,7 +3,8 @@ import { createContext, FunctionComponent, PropsWithChildren, useContext, useMem
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
-import { FOOD_STATUS } from '@/src/const/game-events.const'
+import { UPDATE_FOOD_STATUS } from '@/src/const/game-events.const'
+import { PushUpdateFoodData } from '@/src/models/pusher.channels.model'
 
 interface FoodsContextProps {
     initialAmountOfFood: number
@@ -30,9 +31,9 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProp
     const [hiddenFoods, setHiddenFoods] = useState<number[]>(initialHiddenFoods)
     const [amountOfFood, setAmountOfFood] = useState(initialAmountOfFood)
 
-    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+    const channel = useMemo(() => PusherInstance.getGameChannel(gameId), [gameId])
 
-    channel.bind(FOOD_STATUS, function (data: { hiddenFoods: number[]; amountOfFood: number }) {
+    channel.bind(UPDATE_FOOD_STATUS, function (data: PushUpdateFoodData) {
         setHiddenFoods(data.hiddenFoods)
         setAmountOfFood(data.amountOfFood)
     })

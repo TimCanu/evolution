@@ -1,9 +1,9 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useState } from 'react'
-import { Species } from '@/src/models/species'
+import { Species } from '@/src/models/species.model'
 import { v4 as uuidv4 } from 'uuid'
-import { Feature } from '@/src/models/feature'
-import { Card } from '@/src/models/card'
+import { Feature } from '@/src/models/feature.model'
+import { Card } from '@/src/models/card.model'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
 

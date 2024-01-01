@@ -1,8 +1,9 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
-import { GAME_STATUS } from '@/src/const/game-events.const'
+import { UPDATE_GAME_STATUS, UPDATE_PLAYER_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
+import { PushUpdateGameStatusData, PushUpdatePlayerStatusData } from '@/src/models/pusher.channels.model'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
@@ -17,6 +18,7 @@ interface PlayerActionsContextResult {
 interface PlayerActionsContextProps {
     status: GameStatus
     gameId: string
+    playerId: string
 }
 
 export enum EVOLVING_STAGES {
@@ -49,16 +51,24 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     children,
     status,
     gameId,
+    playerId,
 }) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
         action: status,
     })
 
-    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+    const gameChannel = useMemo(() => PusherInstance.getGameChannel(gameId), [gameId])
+    const playerChannel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
 
-    channel.bind(GAME_STATUS, function (data: { gameStatus: GameStatus }) {
-        if (playerOnGoingAction.action !== data.gameStatus) {
-            setPlayerActions({ action: data.gameStatus })
+    gameChannel.bind(UPDATE_GAME_STATUS, function (data: PushUpdateGameStatusData) {
+        if (playerOnGoingAction.action !== data.status) {
+            setPlayerActions({ action: data.status })
+        }
+    })
+
+    playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
+        if (playerOnGoingAction.action !== data.status) {
+            setPlayerActions({ action: data.status })
         }
     })
 

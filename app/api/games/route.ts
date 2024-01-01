@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
-import { Feature } from '@/src/models/feature'
-import { Card } from '@/src/models/card'
+import { Feature } from '@/src/models/feature.model'
+import { Card } from '@/src/models/card.model'
 import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server.js'
-import { GameEntity } from '@/src/models/game-entity'
+import { CreateGameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { Player } from '@/src/models/player'
+import { Player } from '@/src/models/player.model'
 import { shuffleCards } from '@/src/lib/card.utils'
 import { getDb } from '@/src/repositories/shared.repository'
 
@@ -47,7 +47,7 @@ export const POST = async (request: NextRequest) => {
             status:
                 data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
         }
-        const game: GameEntity = {
+        const game: CreateGameEntity = {
             remainingCards: shuffledCards,
             nbOfPlayers: data.nbOfPlayers,
             players: [firstPlayer],
