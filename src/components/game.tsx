@@ -7,13 +7,19 @@ import { SpeciesLayout } from '@/src/components/species-layout'
 import { useSpeciesContext } from '@/src/providers/species.provider'
 import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { useCardsContext } from '@/src/providers/cards.provider'
-import { useFoodsContext } from '@/src/providers/foods.provider'
 import { useOpponentsContext } from '@/src/providers/opponents.provider'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useMemo } from 'react'
 import { addFood } from '@/src/lib/foods.service'
+import { updatePlayer } from '@/src/lib/player.service'
+import { Game as GameModel } from '@/src/models/game.model'
+import { Player } from '@/src/models/player.model'
 
-export function Game() {
+interface GameProps {
+    game: GameModel
+}
+
+export function Game({ game }: GameProps) {
     const searchParams = useSearchParams()
     const { gameId } = useParams<{ gameId: string }>()
     const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
@@ -22,10 +28,10 @@ export function Game() {
         throw Error('Player ID must be provided')
     }
     const { opponents } = useOpponentsContext()
-    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerActionsContext()
+    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
+        usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard } = useCardsContext()
-    const { computeNumberOfFood } = useFoodsContext()
 
     const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
@@ -37,6 +43,12 @@ export function Game() {
             console.log('Action is not supported yet')
         }
         removeCard(cardId)
+    }
+
+    const finishEvolvingStage = async (): Promise<void> => {
+        const player: Player = { ...game.player, species: speciesList, cards }
+        const { gameStatus } = await updatePlayer({ gameId, player })
+        updatePlayerState({ action: gameStatus })
     }
 
     return (
@@ -67,7 +79,7 @@ export function Game() {
                 {isEvolvingStage() && (
                     <button
                         className="my-4 bg-cyan-500 border bg-color-white w-36 self-center"
-                        onClick={computeNumberOfFood}
+                        onClick={finishEvolvingStage}
                     >
                         Finish turn
                     </button>

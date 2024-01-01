@@ -30,7 +30,7 @@ export default async function Home({
                         gameId={params.gameId}
                     >
                         <OpponentsProvider opponents={game.opponents} gameId={params.gameId} playerId={playerId}>
-                            <Game />
+                            <Game game={game} />
                         </OpponentsProvider>
                     </FoodsProvider>
                 </SpeciesProvider>
