@@ -2,6 +2,7 @@ import { FC } from 'react'
 import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { GameStatus } from '../enums/game.events.enum'
 import { useFoodsContext } from '../providers/foods.provider'
 import { useSpeciesContext } from '../providers/species.provider'
 

@@ -8,14 +8,15 @@ export const FoodArea: FC = () => {
             {hiddenFoods.map((_, index) => {
                 return <div className="w-10 h-10 bg-sky-800 border mr-5" key={index} />
             })}
-            {[...Array(amountOfFood)].map((_, index) => {
-                return (
-                    <div
-                        className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
-                        key={index}
-                    />
-                )
-            })}
+            {amountOfFood > 0 &&
+                [...Array(amountOfFood)].map((_, index) => {
+                    return (
+                        <div
+                            className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            key={index}
+                        />
+                    )
+                })}
         </div>
     )
 }
