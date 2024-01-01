@@ -14,6 +14,8 @@ import { addFood } from '@/src/lib/foods.service'
 import { updatePlayer } from '@/src/lib/player.service'
 import { Game as GameModel } from '@/src/models/game.model'
 import { Player } from '@/src/models/player.model'
+import { useFoodsContext } from '../providers/foods.provider'
+import { GameStatus } from '../enums/game.events.enum'
 
 interface GameProps {
     game: GameModel
@@ -32,6 +34,7 @@ export function Game({ game }: GameProps) {
         usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard } = useCardsContext()
+    const { hiddenFoods } = useFoodsContext()
 
     const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
@@ -49,6 +52,9 @@ export function Game({ game }: GameProps) {
         const player: Player = { ...game.player, species: speciesList, cards }
         const { gameStatus } = await updatePlayer({ gameId, player })
         updatePlayerState({ action: gameStatus })
+        if (hiddenFoods.length <= 0) {
+            updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
+        }
     }
 
     return (

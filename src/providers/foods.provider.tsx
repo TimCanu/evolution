@@ -28,6 +28,7 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProp
 }) => {
     const [hiddenFoods, setHiddenFoods] = useState<number[]>(initialHiddenFoods)
     const [amountOfFood, setAmountOfFood] = useState(initialAmountOfFood)
+    const { updatePlayerState } = usePlayerActionsContext()
 
     const channel = useMemo(() => PusherInstance.getGameChannel(gameId), [gameId])
 
