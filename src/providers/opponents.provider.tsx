@@ -1,37 +1,36 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
-import { Player } from '@/src/models/player'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
-import { PLAYER_STATUS } from '@/src/const/game-events.const'
-import { getOpponents } from '@/src/lib/players.service'
+import { UPDATE_OPPONENT_STATUS } from '@/src/const/game-events.const'
+import { Opponent } from '@/src/models/opponent.model'
+import { PushUpdatePlayerOpponentsData } from '@/src/models/pusher.channels.model'
 
 interface OpponentsContextResult {
-    opponents: Player[]
+    opponents: Opponent[]
 }
 
 interface OpponentsContextProps {
-    opponents: Player[]
+    opponents: Opponent[]
     gameId: string
     playerId: string
 }
 
 const OpponentsContext = createContext<OpponentsContextResult>({} as OpponentsContextResult)
 
-export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsContextProps>> = ({
-    children,
-    opponents: opponentsData,
-    gameId,
-    playerId,
-}) => {
-    const [opponents, setOpponents] = useState<Player[]>(opponentsData)
+export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsContextProps>> = (
+    {
+        children,
+        opponents: opponentsData,
+        gameId,
+        playerId,
+    },
+) => {
+    const [opponents, setOpponents] = useState<Opponent[]>(opponentsData)
 
-    const channel = useMemo(() => PusherInstance.getChannel(gameId), [gameId])
+    const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
 
-    channel.bind(PLAYER_STATUS, async function (data: { playerId: string }) {
-        if (data.playerId !== playerId) {
-            const refreshedOpponents = await getOpponents(gameId, playerId)
-            setOpponents(refreshedOpponents)
-        }
+    channel.bind(UPDATE_OPPONENT_STATUS, async function(data: PushUpdatePlayerOpponentsData) {
+        setOpponents(data.opponents)
     })
 
     const res = {

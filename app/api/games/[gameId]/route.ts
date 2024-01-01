@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server'
-import { Game } from '@/src/models/game'
+import { Game } from '@/src/models/game.model'
 import { NextRequest } from 'next/server.js'
-import { Player } from '@/src/models/player'
-import { GameEntity } from '@/src/models/game-entity'
-import { getGameEntity, getGameOpponents } from '@/src/repositories/games.repository'
+import { GameEntity } from '@/src/models/game-entity.model'
+import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
+import { Opponent } from '@/src/models/opponent.model'
 
 export const GET = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -18,7 +18,7 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
             return NextResponse.error()
         }
 
-        const opponents: Player[] = getGameOpponents(gameEntity, playerId)
+        const opponents: Opponent[] = getOpponents(gameEntity.players, playerId)
 
         const game: Game = {
             hiddenFoods: gameEntity.hiddenFoods,

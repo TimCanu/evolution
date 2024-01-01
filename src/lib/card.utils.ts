@@ -1,4 +1,4 @@
-import { Card } from '@/src/models/card'
+import { Card } from '@/src/models/card.model'
 
 // This method has been copied from
 // https://dev.to/codebubb/how-to-shuffle-an-array-in-javascript-2ikj
