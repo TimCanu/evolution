@@ -20,7 +20,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
     const { decrementFood } = useFoodsContext()
-    const { incrementFoodEaten, speciesList } = useSpeciesContext()
+    const { incrementFoodEaten } = useSpeciesContext()
 
     return (
         <div className="flex flex-col self-end">
@@ -78,11 +78,6 @@ export const SpeciesLayout: FC<CardProps> = ({
                             onClick={() => {
                                 decrementFood()
                                 incrementFoodEaten(species.id)
-                                for (const species of speciesList) {
-                                    if (species.foodEaten === species.population) {
-                                        updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
-                                    }
-                                }
                             }}
                         >
                             FEED

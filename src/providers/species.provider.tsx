@@ -60,7 +60,16 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
 
     const incrementFoodEaten = (speciesId: string): void => {
         const speciesToUpdate = getSpecies(speciesId)
-        updateSpecies({ ...speciesToUpdate, foodEaten: speciesToUpdate.foodEaten + 1 })
+        speciesToUpdate.foodEaten++
+        updateSpecies(speciesToUpdate)
+        if (speciesToUpdate.foodEaten >= speciesToUpdate.population) {
+            const haveAllSpeciesEaten = speciesList.every((species) => {
+                return species.id === speciesToUpdate.id || species.foodEaten === species.population
+            })
+            if (haveAllSpeciesEaten) {
+                updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
+            }
+        }
     }
 
     const incrementSpeciesSize = (): void => {
