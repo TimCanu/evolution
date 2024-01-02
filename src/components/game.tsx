@@ -60,7 +60,6 @@ export function Game({ game }: GameProps) {
 
     useEffect(() => {
         return () => {
-            console.log('Closing channel')
             PusherInstance.unsubscribeToAllChannels()
         }
     }, [gameId, playerId])
