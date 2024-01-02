@@ -1,5 +1,5 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { UPDATE_GAME_STATUS, UPDATE_PLAYER_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
@@ -48,29 +48,27 @@ export interface PlayerActionsState {
 const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as PlayerActionsContextResult)
 
 export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = ({
-    children,
-    status,
-    gameId,
-    playerId,
-}) => {
+                                                                                                           children,
+                                                                                                           status,
+                                                                                                           gameId,
+                                                                                                           playerId,
+                                                                                                       }) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
         action: status,
     })
 
-    const gameChannel = useMemo(() => PusherInstance.getGameChannel(gameId), [gameId])
-    const playerChannel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
+    useEffect(() => {
+        const playerChannel = PusherInstance.getPlayerChannel(gameId, playerId)
+        const gameChannel = PusherInstance.getGameChannel(gameId)
 
-    gameChannel.bind(UPDATE_GAME_STATUS, function (data: PushUpdateGameStatusData) {
-        if (playerOnGoingAction.action !== data.status) {
+        gameChannel.bind(UPDATE_GAME_STATUS, function(data: PushUpdateGameStatusData) {
             setPlayerActions({ action: data.status })
-        }
-    })
+        })
 
-    playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
-        if (playerOnGoingAction.action !== data.status) {
+        playerChannel.bind(UPDATE_PLAYER_STATUS, function(data: PushUpdatePlayerStatusData) {
             setPlayerActions({ action: data.status })
-        }
-    })
+        })
+    }, [gameId, playerId])
 
     const updatePlayerState = (action: PlayerActionsState): void => {
         setPlayerActions(action)
@@ -112,7 +110,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
                 return 'Choose the species you would like to feed'
             default:
                 console.warn(
-                    `Adding an action message has not been supported for the action ${playerOnGoingAction.action} `
+                    `Adding an action message has not been supported for the action ${playerOnGoingAction.action} `,
                 )
                 return ''
         }

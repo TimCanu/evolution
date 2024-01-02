@@ -1,5 +1,5 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
 import { Species } from '@/src/models/species.model'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/src/models/feature.model'
@@ -25,19 +25,20 @@ interface SpeciesContextProps {
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
 export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
-    children,
-    speciesInitialData,
-    gameId,
-    playerId,
-}) => {
+                                                                                               children,
+                                                                                               speciesInitialData,
+                                                                                               gameId,
+                                                                                               playerId,
+                                                                                           }) => {
     const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
     const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
 
-    const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
-
-    channel.bind(UPDATE_PLAYER_SPECIES, async function (data: PushUpdatePlayerSpeciesData) {
-        setSpeciesList(data.species)
-    })
+    useEffect(() => {
+        const channel = PusherInstance.getPlayerChannel(gameId, playerId)
+        channel.bind(UPDATE_PLAYER_SPECIES, async function(data: PushUpdatePlayerSpeciesData) {
+            setSpeciesList(data.species)
+        })
+    }, [gameId, playerId])
 
     const getSpecies = (speciesId: string): Species => {
         const speciesToReturn = speciesList.find((species) => species.id === speciesId)

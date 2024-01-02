@@ -1,5 +1,5 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useMemo, useState } from 'react'
+import { createContext, FunctionComponent, PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
 import { UPDATE_OPPONENT_STATUS } from '@/src/const/game-events.const'
 import { Opponent } from '@/src/models/opponent.model'
@@ -18,18 +18,20 @@ interface OpponentsContextProps {
 const OpponentsContext = createContext<OpponentsContextResult>({} as OpponentsContextResult)
 
 export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsContextProps>> = ({
-    children,
-    opponents: opponentsData,
-    gameId,
-    playerId,
-}) => {
+                                                                                                   children,
+                                                                                                   opponents: opponentsData,
+                                                                                                   gameId,
+                                                                                                   playerId,
+                                                                                               }) => {
     const [opponents, setOpponents] = useState<Opponent[]>(opponentsData)
 
-    const channel = useMemo(() => PusherInstance.getPlayerChannel(gameId, playerId), [gameId, playerId])
+    useEffect(() => {
+        const channel = PusherInstance.getPlayerChannel(gameId, playerId)
 
-    channel.bind(UPDATE_OPPONENT_STATUS, async function (data: PushUpdatePlayerOpponentsData) {
-        setOpponents(data.opponents)
-    })
+        channel.bind(UPDATE_OPPONENT_STATUS, async function(data: PushUpdatePlayerOpponentsData) {
+            setOpponents(data.opponents)
+        })
+    }, [gameId, playerId])
 
     const res = {
         opponents,

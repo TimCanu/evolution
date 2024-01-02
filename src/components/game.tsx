@@ -9,13 +9,14 @@ import { usePlayerActionsContext } from '@/src/providers/player-actions.provider
 import { useCardsContext } from '@/src/providers/cards.provider'
 import { useOpponentsContext } from '@/src/providers/opponents.provider'
 import { useParams, useSearchParams } from 'next/navigation'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { addFood } from '@/src/lib/foods.service'
 import { updatePlayer } from '@/src/lib/player.service'
 import { Game as GameModel } from '@/src/models/game.model'
 import { Player } from '@/src/models/player.model'
 import { useFoodsContext } from '../providers/foods.provider'
 import { GameStatus } from '../enums/game.events.enum'
+import { PusherInstance } from '@/src/lib/pusher.client.service'
 
 interface GameProps {
     game: GameModel
@@ -56,6 +57,13 @@ export function Game({ game }: GameProps) {
             updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
         }
     }
+
+    useEffect(() => {
+        return () => {
+            console.log('Closing channel')
+            PusherInstance.unsubscribeToAllChannels()
+        }
+    }, [gameId, playerId])
 
     return (
         <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">

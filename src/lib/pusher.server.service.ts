@@ -65,7 +65,7 @@ const pushUpdatedSpeciesToPlayer = async (gameId: string, playerId: string, spec
 export const pushUpdatedOpponents = async (
     gameId: string,
     players: Player[],
-    playerIdsToNotify: string[]
+    playerIdsToNotify: string[],
 ): Promise<void> => {
     for (const playerId of playerIdsToNotify) {
         const playerOpponents = getOpponents(players, playerId)
