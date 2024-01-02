@@ -2,25 +2,30 @@ import { FC } from 'react'
 import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
-import { GameStatus } from '../enums/game.events.enum'
-import { useFoodsContext } from '../providers/foods.provider'
-import { useSpeciesContext } from '../providers/species.provider'
+import { feedSpecies } from '@/src/lib/species.service'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
     canShowAddSpeciesRightButton: boolean
+    gameId: string
+    playerId: string
     species: Species
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
     canShowAddSpeciesLeftButton,
     canShowAddSpeciesRightButton,
+    gameId,
+    playerId,
     species,
 }) => {
     const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
-    const { decrementFood } = useFoodsContext()
-    const { incrementFoodEaten } = useSpeciesContext()
+
+    const feed = async (): Promise<void> => {
+        const { gameStatus } = await feedSpecies({ gameId, playerId, speciesId: species.id })
+        updatePlayerState({ action: gameStatus })
+    }
 
     return (
         <div className="flex flex-col self-end">
@@ -75,10 +80,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                     {isFeedingStage() && species.foodEaten < species.population && (
                         <button
                             className="border border-indigo-600 bg-amber-400 rounded-full w-8 h-8 flex justify-center items-center"
-                            onClick={() => {
-                                decrementFood()
-                                incrementFoodEaten(species.id)
-                            }}
+                            onClick={feed}
                         >
                             FEED
                         </button>

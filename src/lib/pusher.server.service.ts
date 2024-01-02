@@ -4,6 +4,7 @@ import {
     UPDATE_GAME_STATUS,
     UPDATE_OPPONENT_STATUS,
     UPDATE_PLAYER_CARDS,
+    UPDATE_PLAYER_SPECIES,
     UPDATE_PLAYER_STATUS,
 } from '@/src/const/game-events.const'
 import { Card } from '@/src/models/card.model'
@@ -12,12 +13,14 @@ import {
     PushUpdateGameStatusData,
     PushUpdatePlayerCardsData,
     PushUpdatePlayerOpponentsData,
+    PushUpdatePlayerSpeciesData,
     PushUpdatePlayerStatusData,
 } from '@/src/models/pusher.channels.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Opponent } from '@/src/models/opponent.model'
 import { getOpponents } from '@/src/repositories/games.repository'
 import { Player } from '@/src/models/player.model'
+import { Species } from '@/src/models/species.model'
 
 const updatePlayerCards = async (channelId: string, data: PushUpdatePlayerCardsData): Promise<void> => {
     await pusherServer.trigger(channelId, UPDATE_PLAYER_CARDS, data)
@@ -25,6 +28,10 @@ const updatePlayerCards = async (channelId: string, data: PushUpdatePlayerCardsD
 
 const updatePlayerOpponents = async (channelId: string, data: PushUpdatePlayerOpponentsData): Promise<void> => {
     await pusherServer.trigger(channelId, UPDATE_OPPONENT_STATUS, data)
+}
+
+const updatePlayerSpecies = async (channelId: string, data: PushUpdatePlayerSpeciesData): Promise<void> => {
+    await pusherServer.trigger(channelId, UPDATE_PLAYER_SPECIES, data)
 }
 
 const updatePlayerStatus = async (channelId: string, data: PushUpdatePlayerStatusData): Promise<void> => {
@@ -51,6 +58,10 @@ const pushUpdatedOpponentsToPlayer = async (gameId: string, playerId: string, op
     await updatePlayerOpponents(`game-${gameId}-player-${playerId}`, { opponents })
 }
 
+const pushUpdatedSpeciesToPlayer = async (gameId: string, playerId: string, species: Species[]): Promise<void> => {
+    await updatePlayerSpecies(`game-${gameId}-player-${playerId}`, { species })
+}
+
 export const pushUpdatedOpponents = async (
     gameId: string,
     players: Player[],
@@ -59,6 +70,13 @@ export const pushUpdatedOpponents = async (
     for (const playerId of playerIdsToNotify) {
         const playerOpponents = getOpponents(players, playerId)
         await pushUpdatedOpponentsToPlayer(gameId, playerId, playerOpponents)
+    }
+}
+
+export const pushUpdatedSpecies = async (gameId: string, players: Player[]): Promise<void> => {
+    for (const player of players) {
+        const playerSpecies = player.species
+        await pushUpdatedSpeciesToPlayer(gameId, player.id, playerSpecies)
     }
 }
 
