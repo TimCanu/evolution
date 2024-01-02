@@ -6,43 +6,30 @@ import { getGameEntity, getOpponents } from '@/src/repositories/games.repository
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
 import {
-    buildUpdateOpponentsEvent,
     buildUpdateFoodEvent,
     buildUpdateGameStatusEvent,
-    buildUpdatePlayerCardsEvent,
-    buildUpdatePlayerStatusEvent,
+    buildUpdateOpponentsEvent,
+    buildUpdatePlayerCardsEvent, buildUpdatePlayerStatusEvent,
 } from '@/src/lib/pusher.server.service'
-import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
+import { PusherEvent, PusherEventBase, PushUpdateFoodData } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
+import { Card } from '@/src/models/card.model'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
         const data: { playerId: string; cardId: string } = await request.json()
 
         const game: GameEntity = await getGameEntity(params.gameId)
+        const playerToUpdate: Player = getPlayer(game, data.playerId)
+        const cardPlayedAsFood = getCard(game._id.toString(), playerToUpdate, data.cardId)
 
-        const playerToUpdate = game.players.find((player) => player.id === data.playerId)
-        if (!playerToUpdate) {
-            console.error(`Player with id ${data.playerId} does not exists in game with id ${params.gameId}`)
-            return NextResponse.error()
-        }
-        const cardPlayedAsFood = playerToUpdate.cards.find((card) => card.id === data.cardId)
-        if (!cardPlayedAsFood) {
-            console.error(
-                `Player with id ${data.playerId} does not have a card with id ${data.cardId} in game with id ${params.gameId}`
-            )
-            return NextResponse.error()
-        }
-
-        const foodNumber = cardPlayedAsFood.foodNumber
-        const hiddenFoods = [...game.hiddenFoods, foodNumber]
+        const hiddenFoods = [...game.hiddenFoods, cardPlayedAsFood.foodNumber]
 
         const hasEveryPlayersAddedFood = game.nbOfPlayers === hiddenFoods.length
 
-        const cardsUpdated = playerToUpdate.cards.filter((card) => card.id !== data.cardId)
         const playerUpdated: Player = {
             ...playerToUpdate,
-            cards: cardsUpdated,
+            cards: playerToUpdate.cards.filter((card) => card.id !== data.cardId),
             status: hasEveryPlayersAddedFood
                 ? GameStatus.CHOOSING_EVOLVING_ACTION
                 : GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
@@ -66,7 +53,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         if (hasEveryPlayersAddedFood) {
             events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.CHOOSING_EVOLVING_ACTION))
         } else {
-            events.push(buildUpdatePlayerStatusEvent(params.gameId, data.playerId, GameStatus.CHOOSING_EVOLVING_ACTION))
+            events.push(buildUpdatePlayerStatusEvent(params.gameId, data.playerId, playerUpdated.status))
         }
         events.push(buildUpdatePlayerCardsEvent(params.gameId, data.playerId, playerUpdated.cards))
         playersUpdated
@@ -84,4 +71,22 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
     } catch (e) {
         console.error(e)
     }
+}
+
+const getPlayer = (game: GameEntity, playerId: string): Player => {
+    const player = game.players.find((player) => player.id === playerId)
+    if (!player) {
+        console.error(`Player with id ${playerId} does not exists in game with id ${game._id.toString()}`)
+        throw Error()
+    }
+    return player
+}
+
+const getCard = (gameId: string, player: Player, cardId: string): Card => {
+    const card = player.cards.find((card) => card.id === cardId)
+    if (!card) {
+        console.error(`Player with id ${player.id} does not have a card with id ${cardId} in game with id ${gameId}`)
+        throw Error()
+    }
+    return card
 }
