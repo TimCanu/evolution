@@ -55,7 +55,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .collection('games')
             .updateOne(
                 { _id: new ObjectId(params.gameId) },
-                { $set: { players: playersUpdated, remainingCards: gameCards } },
+                { $set: { players: playersUpdated, remainingCards: gameCards } }
             )
 
         const events: PusherEvent<PusherEventBase>[] = []
