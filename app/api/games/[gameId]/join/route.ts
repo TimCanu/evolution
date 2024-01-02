@@ -5,9 +5,11 @@ import { v4 as uuidv4 } from 'uuid'
 import { Player } from '@/src/models/player.model'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { getGameEntity } from '@/src/repositories/games.repository'
+import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { getDb } from '@/src/repositories/shared.repository'
-import { pushNewGameStatus, pushUpdatedOpponents } from '@/src/lib/pusher.server.service'
+import { buildUpdateGameStatusEvent, buildUpdateOpponentsEvent } from '@/src/lib/pusher.server.service'
+import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
+import pusherServer from '@/src/lib/pusher-server'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -53,15 +55,22 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .collection('games')
             .updateOne(
                 { _id: new ObjectId(params.gameId) },
-                { $set: { players: playersUpdated, remainingCards: gameCards } }
+                { $set: { players: playersUpdated, remainingCards: gameCards } },
             )
 
+        const events: PusherEvent<PusherEventBase>[] = []
         if (areAllPlayersConnected) {
-            await pushNewGameStatus(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN)
+            events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
         }
-        const playerIdsToNotify = playersUpdated.filter((player) => player.id !== playerId).map((player) => player.id)
+        playersUpdated
+            .filter((player) => player.id !== playerId)
+            .forEach((player) => {
+                const playerOpponents = getOpponents(playersUpdated, player.id)
+                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
+                events.push(event)
+            })
+        await pusherServer.triggerBatch(events)
 
-        await pushUpdatedOpponents(params.gameId, playersUpdated, playerIdsToNotify)
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {
         console.error(e)

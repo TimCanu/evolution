@@ -2,11 +2,17 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
-import { getGameEntity } from '@/src/repositories/games.repository'
+import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { ObjectId } from 'mongodb'
 import { Player } from '@/src/models/player.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { pushNewFood, pushNewGameStatus, pushUpdatedOpponents } from '@/src/lib/pusher.server.service'
+import {
+    buildUpdateFoodEvent,
+    buildUpdateGameStatusEvent,
+    buildUpdateOpponentsEvent,
+} from '@/src/lib/pusher.server.service'
+import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
+import pusherServer from '@/src/lib/pusher-server'
 
 export const PUT = async (
     request: NextRequest,
@@ -99,11 +105,21 @@ export const PUT = async (
             }
         )
 
+        const events: PusherEvent<PusherEventBase>[] = []
         if (haveAllPlayersFinishedEvolving) {
-            await pushNewGameStatus(params.gameId, GameStatus.FEEDING_SPECIES)
-            const playerIdsToNotify = playersUpdated.map((player) => player.id)
-            await pushUpdatedOpponents(params.gameId, playersUpdated, playerIdsToNotify)
-            await pushNewFood(params.gameId, { hiddenFoods: hiddenFoodsUpdated, amountOfFood: amountOfFoodUpdated })
+            events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.FEEDING_SPECIES))
+            playersUpdated.forEach((player) => {
+                const playerOpponents = getOpponents(playersUpdated, player.id)
+                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
+                events.push(event)
+            })
+            events.push(
+                buildUpdateFoodEvent(params.gameId, {
+                    hiddenFoods: hiddenFoodsUpdated,
+                    amountOfFood: amountOfFoodUpdated,
+                })
+            )
+            await pusherServer.triggerBatch(events)
         }
 
         return NextResponse.json({ gameStatus: playerToUpdate.status }, { status: 200 })

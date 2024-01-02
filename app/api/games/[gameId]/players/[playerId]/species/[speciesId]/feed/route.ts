@@ -2,17 +2,19 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
-import { getGameEntity } from '@/src/repositories/games.repository'
+import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { ObjectId } from 'mongodb'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import {
-    pushNewFood,
-    pushNewGameStatus,
-    pushUpdatedOpponents,
-    pushUpdatedSpecies,
+    buildUpdateFoodEvent,
+    buildUpdateGameStatusEvent,
+    buildUpdateOpponentsEvent,
+    buildUpdatePlayerSpeciesEvent,
 } from '@/src/lib/pusher.server.service'
 import { Player } from '@/src/models/player.model'
 import { Species } from '@/src/models/species.model'
+import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
+import pusherServer from '@/src/lib/pusher-server'
 
 export const POST = async (
     _: NextRequest,
@@ -97,6 +99,7 @@ export const POST = async (
 
         const db = await getDb()
 
+        const events: PusherEvent<PusherEventBase>[] = []
         if (noMoreFoodAvailable || haveAllPlayersFinishedFeeding) {
             const playersWithSpeciesPopComputed = playersUpdated.map((player: Player) => {
                 player.species = player.species.reduce((speciesUpdated: Species[], species: Species) => {
@@ -118,32 +121,43 @@ export const POST = async (
                 }
             )
 
-            const allPlayersId = playersWithSpeciesPopComputed.map((player) => player.id)
+            events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
+            playersWithSpeciesPopComputed.forEach((player) => {
+                const playerOpponents = getOpponents(playersWithSpeciesPopComputed, player.id)
+                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
+                events.push(event)
+                events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
+            })
+        } else {
+            await db.collection('games').updateOne(
+                { _id: new ObjectId(params.gameId) },
+                {
+                    $set: {
+                        amountOfFood: newAmountOfFood,
+                        players: playersUpdated,
+                    },
+                }
+            )
 
-            await pushNewGameStatus(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN)
-            await pushNewFood(params.gameId, { hiddenFoods: game.hiddenFoods, amountOfFood: newAmountOfFood })
-            await pushUpdatedOpponents(params.gameId, playersUpdated, allPlayersId)
-            await pushUpdatedSpecies(params.gameId, playersWithSpeciesPopComputed)
-
-            return NextResponse.json({ gameStatus: playerUpdated.status }, { status: 200 })
+            playersUpdated
+                .filter((player) => player.id !== playerToUpdate.id)
+                .forEach((player) => {
+                    const playerOpponents = getOpponents(playersUpdated, player.id)
+                    const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
+                    events.push(event)
+                })
+            playersUpdated.forEach((player) => {
+                events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
+            })
         }
 
-        await db.collection('games').updateOne(
-            { _id: new ObjectId(params.gameId) },
-            {
-                $set: {
-                    amountOfFood: newAmountOfFood,
-                    players: playersUpdated,
-                },
-            }
+        events.push(
+            buildUpdateFoodEvent(params.gameId, {
+                hiddenFoods: game.hiddenFoods,
+                amountOfFood: newAmountOfFood,
+            })
         )
-
-        const opponentsIds = playersUpdated
-            .filter((player) => player.id !== playerToUpdate.id)
-            .map((player) => player.id)
-        await pushUpdatedOpponents(params.gameId, playersUpdated, opponentsIds)
-        await pushUpdatedSpecies(params.gameId, playersUpdated)
-        await pushNewFood(params.gameId, { hiddenFoods: game.hiddenFoods, amountOfFood: newAmountOfFood })
+        await pusherServer.triggerBatch(events)
 
         return NextResponse.json({ gameStatus: playerUpdated.status }, { status: 200 })
     } catch (e) {
