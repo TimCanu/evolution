@@ -15,6 +15,7 @@ import { Player } from '@/src/models/player.model'
 import { Species } from '@/src/models/species.model'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
+import { getPlayer } from '@/src/lib/player.service.server'
 
 export const POST = async (
     _: NextRequest,
@@ -27,99 +28,33 @@ export const POST = async (
     try {
         const game: GameEntity = await getGameEntity(params.gameId)
 
-        const playerToUpdate = game.players.find((player) => player.id === params.playerId)
-        if (!playerToUpdate) {
-            console.error(`Player with id ${params.playerId} does not exists in game with id ${params.gameId}`)
-            return NextResponse.error()
-        }
-        const speciesToUpdate = playerToUpdate.species.find((species) => species.id === params.speciesId)
-        if (!speciesToUpdate) {
-            console.error(
-                `Species with id ${params.speciesId} in player with id ${params.playerId} does not exists in game with id ${params.gameId}`
-            )
-            return NextResponse.error()
-        }
+        const playerToUpdate: Player = getPlayer(game, params.playerId)
+        const speciesToUpdate = getSpecies(game._id.toString(), playerToUpdate, params.speciesId)
 
-        if (speciesToUpdate.foodEaten >= speciesToUpdate.population) {
-            console.error(
-                `Species with id ${params.speciesId} in player with id ${params.playerId} in game with id ${params.gameId} has already eaten`
-            )
-            return NextResponse.error()
-        }
-
-        if (game.amountOfFood <= 0) {
-            console.error(
-                `Species with id ${params.speciesId} in player with id ${params.playerId} in game with id ${params.gameId} cannot eat as there is no food left`
-            )
-            return NextResponse.error()
-        }
+        checkThatSpeciesCanEat(params.gameId, params.playerId, speciesToUpdate, game.amountOfFood)
 
         speciesToUpdate.foodEaten++
+
         const newAmountOfFood = game.amountOfFood - 1
-
         const noMoreFoodAvailable = newAmountOfFood <= 0
-
-        const playerSpeciesUpdated = playerToUpdate.species.map((species) => {
-            if (species.id === speciesToUpdate.id) {
-                return speciesToUpdate
-            }
-            return species
-        })
-
-        const hasPlayerFinishedFeeding = playerSpeciesUpdated.every(
-            (species) => species.foodEaten === species.population
-        )
-
+        const hasCurrentPlayerFinishedFeeding = hasPlayerFinishedFeeding(playerToUpdate)
         const haveAllPlayersFinishedFeeding =
-            hasPlayerFinishedFeeding &&
-            game.players.every((player) => {
-                return (
-                    player.id === playerToUpdate.id ||
-                    player.species.every((species) => species.foodEaten === species.population)
-                )
-            })
+            hasCurrentPlayerFinishedFeeding &&
+            game.players.every((player) => player.id === playerToUpdate.id || hasPlayerFinishedFeeding(player))
+        const endFeedingStage = noMoreFoodAvailable || haveAllPlayersFinishedFeeding
 
-        const playerUpdatedStatus =
-            noMoreFoodAvailable || haveAllPlayersFinishedFeeding
-                ? GameStatus.ADDING_FOOD_TO_WATER_PLAN
-                : hasPlayerFinishedFeeding
-                  ? GameStatus.WAITING_FOR_PLAYERS_TO_FEED
-                  : GameStatus.FEEDING_SPECIES
-
-        const playerUpdated = { ...playerToUpdate, species: playerSpeciesUpdated, status: playerUpdatedStatus }
-        const playersUpdated = game.players.map((player) => {
-            if (player.id === playerUpdated.id) {
-                return playerUpdated
-            }
-            if (noMoreFoodAvailable || haveAllPlayersFinishedFeeding) {
-                return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
-            }
-            return player
-        })
-
-        const db = await getDb()
+        const playerUpdated: Player = {
+            ...playerToUpdate,
+            species: computedSpeciesUpdated(playerToUpdate.species, speciesToUpdate),
+            status: computePlayerStatus(endFeedingStage, hasCurrentPlayerFinishedFeeding),
+        }
+        const playersUpdated = computePlayersStatus(endFeedingStage, game.players, playerUpdated)
 
         const events: PusherEvent<PusherEventBase>[] = []
-        if (noMoreFoodAvailable || haveAllPlayersFinishedFeeding) {
-            const playersWithSpeciesPopComputed = playersUpdated.map((player: Player) => {
-                player.species = player.species.reduce((speciesUpdated: Species[], species: Species) => {
-                    if (species.foodEaten === 0) {
-                        return speciesUpdated
-                    }
-                    return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
-                }, [])
-                return player
-            })
+        if (endFeedingStage) {
+            const playersWithSpeciesPopComputed = computePlayersSpeciesPopulation(playersUpdated)
 
-            await db.collection('games').updateOne(
-                { _id: new ObjectId(params.gameId) },
-                {
-                    $set: {
-                        amountOfFood: newAmountOfFood,
-                        players: playersWithSpeciesPopComputed,
-                    },
-                }
-            )
+            await updateGameInDb(params.gameId, newAmountOfFood, playersWithSpeciesPopComputed)
 
             events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
             playersWithSpeciesPopComputed.forEach((player) => {
@@ -129,15 +64,7 @@ export const POST = async (
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
             })
         } else {
-            await db.collection('games').updateOne(
-                { _id: new ObjectId(params.gameId) },
-                {
-                    $set: {
-                        amountOfFood: newAmountOfFood,
-                        players: playersUpdated,
-                    },
-                }
-            )
+            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdated)
 
             playersUpdated
                 .filter((player) => player.id !== playerToUpdate.id)
@@ -152,10 +79,7 @@ export const POST = async (
         }
 
         events.push(
-            buildUpdateFoodEvent(params.gameId, {
-                hiddenFoods: game.hiddenFoods,
-                amountOfFood: newAmountOfFood,
-            })
+            buildUpdateFoodEvent(params.gameId, { hiddenFoods: game.hiddenFoods, amountOfFood: newAmountOfFood })
         )
         await pusherServer.triggerBatch(events)
 
@@ -163,4 +87,99 @@ export const POST = async (
     } catch (e) {
         console.error(e)
     }
+}
+
+const hasPlayerFinishedFeeding = (player: Player): boolean => {
+    return player.species.every((species) => species.foodEaten === species.population)
+}
+
+const updateGameInDb = async (gameId: string, newAmountOfFood: number, playersUpdated: Player[]): Promise<void> => {
+    const db = await getDb()
+    await db.collection('games').updateOne(
+        { _id: new ObjectId(gameId) },
+        {
+            $set: {
+                amountOfFood: newAmountOfFood,
+                players: playersUpdated,
+            },
+        }
+    )
+}
+
+const computeSpeciesPopulation = (species: Species[]): Species[] => {
+    return species.reduce((speciesUpdated: Species[], species: Species) => {
+        if (species.foodEaten === 0) {
+            return speciesUpdated
+        }
+        return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
+    }, [])
+}
+
+const computePlayersSpeciesPopulation = (players: Player[]): Player[] => {
+    return players.map((player: Player) => {
+        player.species = computeSpeciesPopulation(player.species)
+        return player
+    })
+}
+
+const computePlayersStatus = (
+    endFeedingStage: boolean,
+    players: Player[],
+    playerCurrentlyFeeding: Player
+): Player[] => {
+    return players.map((player) => {
+        if (player.id === playerCurrentlyFeeding.id) {
+            return playerCurrentlyFeeding
+        }
+        if (endFeedingStage) {
+            return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
+        }
+        return player
+    })
+}
+
+const computePlayerStatus = (endFeedingStage: boolean, hasPlayerFinishedFeeding: boolean): GameStatus => {
+    if (endFeedingStage) {
+        return GameStatus.ADDING_FOOD_TO_WATER_PLAN
+    }
+    if (hasPlayerFinishedFeeding) {
+        return GameStatus.WAITING_FOR_PLAYERS_TO_FEED
+    }
+    return GameStatus.FEEDING_SPECIES
+}
+
+const checkThatSpeciesCanEat = (
+    gameId: string,
+    playerId: string,
+    species: Species,
+    amountOfFoodRemaining: number
+): void => {
+    if (species.foodEaten >= species.population) {
+        console.error(`Species has already eaten | Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`)
+        throw Error()
+    }
+    if (amountOfFoodRemaining <= 0) {
+        console.error(`Species has no food left | Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`)
+        throw Error()
+    }
+}
+
+const computedSpeciesUpdated = (speciesList: Species[], speciesToUpdate: Species): Species[] => {
+    return speciesList.map((species) => {
+        if (species.id === speciesToUpdate.id) {
+            return speciesToUpdate
+        }
+        return species
+    })
+}
+
+const getSpecies = (gameId: string, player: Player, speciesId: string): Species => {
+    const species = player.species.find((species) => species.id === speciesId)
+    if (!species) {
+        console.error(
+            `Species with id ${speciesId} in player with id ${player.id} does not exists in game with id ${gameId}`
+        )
+        throw Error()
+    }
+    return species
 }

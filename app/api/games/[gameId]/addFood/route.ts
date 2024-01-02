@@ -9,11 +9,13 @@ import {
     buildUpdateFoodEvent,
     buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
-    buildUpdatePlayerCardsEvent, buildUpdatePlayerStatusEvent,
+    buildUpdatePlayerCardsEvent,
+    buildUpdatePlayerStatusEvent,
 } from '@/src/lib/pusher.server.service'
-import { PusherEvent, PusherEventBase, PushUpdateFoodData } from '@/src/models/pusher.channels.model'
+import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
 import { Card } from '@/src/models/card.model'
+import { getPlayer } from '@/src/lib/player.service.server'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -71,15 +73,6 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
     } catch (e) {
         console.error(e)
     }
-}
-
-const getPlayer = (game: GameEntity, playerId: string): Player => {
-    const player = game.players.find((player) => player.id === playerId)
-    if (!player) {
-        console.error(`Player with id ${playerId} does not exists in game with id ${game._id.toString()}`)
-        throw Error()
-    }
-    return player
 }
 
 const getCard = (gameId: string, player: Player, cardId: string): Card => {
