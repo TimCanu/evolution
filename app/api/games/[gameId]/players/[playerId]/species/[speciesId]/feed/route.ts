@@ -55,23 +55,25 @@ export const POST = async (
 
         const events: PusherEvent<PusherEventBase>[] = []
         if (endFeedingStage) {
-            const playersUpdatedForEndOfFeedingStage = computePlayerForEndOfFeedingStage(
-                playersUpdated,
-                game.remainingCards
+            const endOfFeedingStageData = computeEndOfFeedingStageData(playersUpdated, game.remainingCards)
+
+            await updateGameInDb(
+                params.gameId,
+                newAmountOfFood,
+                endOfFeedingStageData.players,
+                endOfFeedingStageData.remainingCards
             )
 
-            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdatedForEndOfFeedingStage)
-
             events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
-            playersUpdatedForEndOfFeedingStage.forEach((player) => {
-                const playerOpponents = getOpponents(playersUpdatedForEndOfFeedingStage, player.id)
+            endOfFeedingStageData.players.forEach((player) => {
+                const playerOpponents = getOpponents(endOfFeedingStageData.players, player.id)
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
                 events.push(buildUpdatePlayerCardsEvent(params.gameId, player.id, player.cards))
             })
         } else {
-            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdated)
+            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdated, game.remainingCards)
 
             playersUpdated
                 .filter((player) => player.id !== playerToUpdate.id)
@@ -96,8 +98,14 @@ export const POST = async (
     }
 }
 
-const computePlayerForEndOfFeedingStage = (players: Player[], cards: Card[]): Player[] => {
-    return players.map((player: Player) => {
+const computeEndOfFeedingStageData = (
+    players: Player[],
+    cards: Card[]
+): {
+    players: Player[]
+    remainingCards: Card[]
+} => {
+    const playersUpdated = players.map((player: Player) => {
         player.species = computeSpeciesPopulation(player.species)
         if (player.species.length === 0) {
             player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
@@ -114,13 +122,19 @@ const computePlayerForEndOfFeedingStage = (players: Player[], cards: Card[]): Pl
         )
         return player
     })
+    return { players: playersUpdated, remainingCards: cards }
 }
 
 const hasPlayerFinishedFeeding = (player: Player): boolean => {
     return player.species.every((species) => species.foodEaten === species.population)
 }
 
-const updateGameInDb = async (gameId: string, newAmountOfFood: number, playersUpdated: Player[]): Promise<void> => {
+const updateGameInDb = async (
+    gameId: string,
+    newAmountOfFood: number,
+    playersUpdated: Player[],
+    remainingCards: Card[]
+): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
         { _id: new ObjectId(gameId) },
@@ -128,6 +142,7 @@ const updateGameInDb = async (gameId: string, newAmountOfFood: number, playersUp
             $set: {
                 amountOfFood: newAmountOfFood,
                 players: playersUpdated,
+                remainingCards: remainingCards,
             },
         }
     )
@@ -140,16 +155,6 @@ const computeSpeciesPopulation = (species: Species[]): Species[] => {
         }
         return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
     }, [])
-}
-
-const computePlayersSpeciesPopulation = (players: Player[]): Player[] => {
-    return players.map((player: Player) => {
-        player.species = computeSpeciesPopulation(player.species)
-        if (player.species.length === 0) {
-            player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
-        }
-        return player
-    })
 }
 
 const computePlayersStatus = (
