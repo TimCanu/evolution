@@ -18,18 +18,18 @@ interface FoodsContextResult {
 const FoodsContext = createContext<FoodsContextResult>({} as FoodsContextResult)
 
 export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProps>> = ({
-                                                                                           children,
-                                                                                           initialAmountOfFood,
-                                                                                           initialHiddenFoods,
-                                                                                           gameId,
-                                                                                       }) => {
+    children,
+    initialAmountOfFood,
+    initialHiddenFoods,
+    gameId,
+}) => {
     const [hiddenFoods, setHiddenFoods] = useState<number[]>(initialHiddenFoods)
     const [amountOfFood, setAmountOfFood] = useState(initialAmountOfFood)
 
     useEffect(() => {
         const channel = PusherInstance.getGameChannel(gameId)
 
-        channel.bind(UPDATE_FOOD_STATUS, function(data: PushUpdateFoodData) {
+        channel.bind(UPDATE_FOOD_STATUS, function (data: PushUpdateFoodData) {
             setHiddenFoods(data.hiddenFoods)
             setAmountOfFood(data.amountOfFood)
         })

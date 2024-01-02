@@ -25,17 +25,17 @@ interface SpeciesContextProps {
 const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
 
 export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
-                                                                                               children,
-                                                                                               speciesInitialData,
-                                                                                               gameId,
-                                                                                               playerId,
-                                                                                           }) => {
+    children,
+    speciesInitialData,
+    gameId,
+    playerId,
+}) => {
     const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
     const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
 
     useEffect(() => {
         const channel = PusherInstance.getPlayerChannel(gameId, playerId)
-        channel.bind(UPDATE_PLAYER_SPECIES, async function(data: PushUpdatePlayerSpeciesData) {
+        channel.bind(UPDATE_PLAYER_SPECIES, async function (data: PushUpdatePlayerSpeciesData) {
             setSpeciesList(data.species)
         })
     }, [gameId, playerId])

@@ -5,8 +5,7 @@ export class PusherInstance {
     private static gameChannels: Map<string, Channel> = new Map<string, Channel>()
     private static playerChannels: Map<string, Channel> = new Map<string, Channel>()
 
-    private constructor() {
-    }
+    private constructor() {}
 
     public static getPusher(): Pusher {
         if (!PusherInstance.pusher) {
@@ -41,10 +40,10 @@ export class PusherInstance {
     }
 
     public static unsubscribeToAllChannels(): void {
-        PusherInstance.gameChannels.forEach(channel => {
+        PusherInstance.gameChannels.forEach((channel) => {
             PusherInstance.getPusher().unsubscribe(channel.name)
         })
-        PusherInstance.playerChannels.forEach(channel => {
+        PusherInstance.playerChannels.forEach((channel) => {
             PusherInstance.getPusher().unsubscribe(channel.name)
         })
         PusherInstance.gameChannels = new Map<string, Channel>()

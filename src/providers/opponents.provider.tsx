@@ -18,17 +18,17 @@ interface OpponentsContextProps {
 const OpponentsContext = createContext<OpponentsContextResult>({} as OpponentsContextResult)
 
 export const OpponentsProvider: FunctionComponent<PropsWithChildren<OpponentsContextProps>> = ({
-                                                                                                   children,
-                                                                                                   opponents: opponentsData,
-                                                                                                   gameId,
-                                                                                                   playerId,
-                                                                                               }) => {
+    children,
+    opponents: opponentsData,
+    gameId,
+    playerId,
+}) => {
     const [opponents, setOpponents] = useState<Opponent[]>(opponentsData)
 
     useEffect(() => {
         const channel = PusherInstance.getPlayerChannel(gameId, playerId)
 
-        channel.bind(UPDATE_OPPONENT_STATUS, async function(data: PushUpdatePlayerOpponentsData) {
+        channel.bind(UPDATE_OPPONENT_STATUS, async function (data: PushUpdatePlayerOpponentsData) {
             setOpponents(data.opponents)
         })
     }, [gameId, playerId])

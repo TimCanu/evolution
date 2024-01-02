@@ -20,16 +20,16 @@ interface CardsContextProps {
 const CardsContext = createContext<CardsContextResult>({} as CardsContextResult)
 
 export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProps>> = ({
-                                                                                           children,
-                                                                                           cards: cardsData,
-                                                                                           gameId,
-                                                                                           playerId,
-                                                                                       }) => {
+    children,
+    cards: cardsData,
+    gameId,
+    playerId,
+}) => {
     const [cards, setCards] = useState<Card[]>(cardsData)
 
     useEffect(() => {
         const channel = PusherInstance.getPlayerChannel(gameId, playerId)
-        channel.bind(UPDATE_PLAYER_CARDS, async function(data: PushUpdatePlayerCardsData) {
+        channel.bind(UPDATE_PLAYER_CARDS, async function (data: PushUpdatePlayerCardsData) {
             setCards(data.cards)
         })
     }, [gameId, playerId])
