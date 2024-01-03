@@ -9,6 +9,7 @@ import {
     buildUpdateFoodEvent,
     buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
+    buildUpdatePlayerCardsEvent,
     buildUpdatePlayerSpeciesEvent,
 } from '@/src/lib/pusher.server.service'
 import { Player } from '@/src/models/player.model'
@@ -16,6 +17,8 @@ import { Species } from '@/src/models/species.model'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
 import { getPlayer } from '@/src/lib/player.service.server'
+import { v4 as uuidv4 } from 'uuid'
+import { Card } from '@/src/models/card.model'
 
 export const POST = async (
     _: NextRequest,
@@ -52,19 +55,25 @@ export const POST = async (
 
         const events: PusherEvent<PusherEventBase>[] = []
         if (endFeedingStage) {
-            const playersWithSpeciesPopComputed = computePlayersSpeciesPopulation(playersUpdated)
+            const endOfFeedingStageData = computeEndOfFeedingStageData(playersUpdated, game.remainingCards)
 
-            await updateGameInDb(params.gameId, newAmountOfFood, playersWithSpeciesPopComputed)
+            await updateGameInDb(
+                params.gameId,
+                newAmountOfFood,
+                endOfFeedingStageData.players,
+                endOfFeedingStageData.remainingCards
+            )
 
             events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
-            playersWithSpeciesPopComputed.forEach((player) => {
-                const playerOpponents = getOpponents(playersWithSpeciesPopComputed, player.id)
+            endOfFeedingStageData.players.forEach((player) => {
+                const playerOpponents = getOpponents(endOfFeedingStageData.players, player.id)
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
+                events.push(buildUpdatePlayerCardsEvent(params.gameId, player.id, player.cards))
             })
         } else {
-            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdated)
+            await updateGameInDb(params.gameId, newAmountOfFood, playersUpdated, game.remainingCards)
 
             playersUpdated
                 .filter((player) => player.id !== playerToUpdate.id)
@@ -89,11 +98,43 @@ export const POST = async (
     }
 }
 
+const computeEndOfFeedingStageData = (
+    players: Player[],
+    cards: Card[]
+): {
+    players: Player[]
+    remainingCards: Card[]
+} => {
+    const playersUpdated = players.map((player: Player) => {
+        player.species = computeSpeciesPopulation(player.species)
+        if (player.species.length === 0) {
+            player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
+        }
+        const numberOfCardsToAdd = player.species.length + 3
+        player.cards = player.cards.concat(
+            [...Array(numberOfCardsToAdd)].map((_) => {
+                const card = cards.pop()
+                if (!card) {
+                    throw Error('No cards left... Maybe add some more in the DB?')
+                }
+                return card
+            })
+        )
+        return player
+    })
+    return { players: playersUpdated, remainingCards: cards }
+}
+
 const hasPlayerFinishedFeeding = (player: Player): boolean => {
     return player.species.every((species) => species.foodEaten === species.population)
 }
 
-const updateGameInDb = async (gameId: string, newAmountOfFood: number, playersUpdated: Player[]): Promise<void> => {
+const updateGameInDb = async (
+    gameId: string,
+    newAmountOfFood: number,
+    playersUpdated: Player[],
+    remainingCards: Card[]
+): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
         { _id: new ObjectId(gameId) },
@@ -101,6 +142,7 @@ const updateGameInDb = async (gameId: string, newAmountOfFood: number, playersUp
             $set: {
                 amountOfFood: newAmountOfFood,
                 players: playersUpdated,
+                remainingCards: remainingCards,
             },
         }
     )
@@ -113,13 +155,6 @@ const computeSpeciesPopulation = (species: Species[]): Species[] => {
         }
         return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
     }, [])
-}
-
-const computePlayersSpeciesPopulation = (players: Player[]): Player[] => {
-    return players.map((player: Player) => {
-        player.species = computeSpeciesPopulation(player.species)
-        return player
-    })
 }
 
 const computePlayersStatus = (
