@@ -53,7 +53,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         onClick={() => {
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
-                                speciesId: species.id,
+                                species,
                             })
                         }}
                     >
@@ -70,7 +70,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             onClick={() => {
                                 updatePlayerState({
                                     action: EVOLVING_STAGES.ADD_SPECIES_FEATURE,
-                                    speciesId: species.id,
+                                    species,
                                 })
                             }}
                         >
@@ -101,7 +101,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         onClick={() =>
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
-                                speciesId: species.id,
+                                species,
                             })
                         }
                     >

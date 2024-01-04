@@ -23,7 +23,7 @@ export const CardLayout: FC<CardProps> = ({ card, playCard }) => {
                     Add as food
                 </button>
             )}
-            {canDiscardCard() && (
+            {canDiscardCard(card) && (
                 <button
                     className="bg-cyan-500 invisible group-hover:visible"
                     onClick={() => {

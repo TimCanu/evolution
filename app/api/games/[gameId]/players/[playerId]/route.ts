@@ -10,9 +10,13 @@ import {
     buildUpdateFoodEvent,
     buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
+    buildUpdatePlayerSpeciesEvent,
 } from '@/src/lib/pusher.server.service'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
+import { FeatureKey } from '@/src/enums/feature-key.enum'
+import { Feature } from '@/src/models/feature.model'
+import { Species } from '@/src/models/species.model'
 
 export const PUT = async (
     request: NextRequest,
@@ -37,6 +41,17 @@ export const PUT = async (
                 console.error(
                     `ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${params.playerId}, Game ID=${params.gameId}`
                 )
+                return NextResponse.error()
+            }
+            try {
+                species.features.reduce((previousFeatureKeys: FeatureKey[], feature: Feature) => {
+                    if (previousFeatureKeys.includes(feature.key)) {
+                        throw Error('Cannot add twice a feature to the same species')
+                    }
+                    return [...previousFeatureKeys, feature.key]
+                }, [])
+            } catch (error) {
+                console.log(error)
                 return NextResponse.error()
             }
             if (species.size > 6) {
@@ -72,6 +87,13 @@ export const PUT = async (
             : GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING
 
         const playersUpdated = game.players.map((player) => {
+            if (haveAllPlayersFinishedEvolving) {
+                if (player.id === playerToUpdate.id) {
+                    return applySpecialCardAction(playerToUpdate)
+                }
+                const playerUpdatedWithSPecialActions = applySpecialCardAction(player)
+                return { ...playerUpdatedWithSPecialActions, status: GameStatus.FEEDING_SPECIES }
+            }
             if (player.id === playerToUpdate.id) {
                 return {
                     ...player,
@@ -79,9 +101,6 @@ export const PUT = async (
                     status: playerToUpdate.status,
                     cards: playerToUpdate.cards,
                 }
-            }
-            if (haveAllPlayersFinishedEvolving) {
-                return { ...player, status: GameStatus.FEEDING_SPECIES }
             }
             return player
         })
@@ -110,8 +129,12 @@ export const PUT = async (
             events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.FEEDING_SPECIES))
             playersUpdated.forEach((player) => {
                 const playerOpponents = getOpponents(playersUpdated, player.id)
-                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
-                events.push(event)
+                const updateOpponentsEvent = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
+                const updateSpeciesEvent = buildUpdatePlayerSpeciesEvent(params.gameId, player.id, {
+                    species: player.species,
+                })
+                events.push(updateOpponentsEvent)
+                events.push(updateSpeciesEvent)
             })
             events.push(
                 buildUpdateFoodEvent(params.gameId, {
@@ -126,4 +149,18 @@ export const PUT = async (
     } catch (e) {
         console.error(e)
     }
+}
+
+const applySpecialCardAction = (player: Player): Player => {
+    player.species = applyLongNeckActions(player.species)
+    return player
+}
+
+const applyLongNeckActions = (speciesList: Species[]): Species[] => {
+    return speciesList.map((species) => {
+        if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
+            species.foodEaten = 1
+        }
+        return species
+    })
 }

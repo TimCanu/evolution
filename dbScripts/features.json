@@ -1,14 +1,7 @@
 [
     {
-        "name": "Feature 1",
-        "description": "This feature does nothing for now :("
-    },
-    {
-        "name": "Feature 2",
-        "description": "This feature also does nothing for now..."
-    },
-    {
-        "name": "Feature 3",
-        "description": "This feature also does nothing for now..."
+        "key": "LONG_NECK",
+        "name": "Long neck",
+        "description": "Before revealing food cards, pick one food from the food stash."
     }
 ]

@@ -49,10 +49,10 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
     }
 
     const getSpeciesForOnGoingAction = (): Species => {
-        if (!playerOnGoingAction.speciesId) {
+        if (!playerOnGoingAction.species) {
             throw Error('Cannot get species for on going action as no species id has been saved')
         }
-        return getSpecies(playerOnGoingAction.speciesId)
+        return getSpecies(playerOnGoingAction.species.id)
     }
 
     const updateSpecies = (speciesToUpdate: Species): void => {
@@ -67,7 +67,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
 
     const removeFeature = (speciesId: string, featureId: string): void => {
         const speciesToUpdate = getSpecies(speciesId)
-        const newFeatures = speciesToUpdate.features.filter((feature) => feature.id !== featureId)
+        const newFeatures = speciesToUpdate.features.filter((feature) => feature.cardId !== featureId)
         updateSpecies({ ...speciesToUpdate, features: newFeatures })
     }
 
@@ -111,7 +111,8 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
 
     const addSpeciesFeature = (card: Card): void => {
         const feature: Feature = {
-            id: card.id,
+            key: card.featureKey,
+            cardId: card.id,
             name: card.name,
             description: card.description,
         }

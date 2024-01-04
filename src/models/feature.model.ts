@@ -1,5 +1,8 @@
+import { FeatureKey } from '@/src/enums/feature-key.enum'
+
 export interface Feature {
-    id: string
+    cardId: string
+    key: FeatureKey
     name: string
     description: string
 }
