@@ -25,7 +25,7 @@ export const PUT = async (
         params,
     }: {
         params: { gameId: string; playerId: string }
-    },
+    }
 ) => {
     try {
         const data: { player: Player } = await request.json()
@@ -37,14 +37,16 @@ export const PUT = async (
         const playerToUpdate = data.player
         playerToUpdate.status = GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING
 
-        const players = game.players.map(player => {
+        const players = game.players.map((player) => {
             if (player.id === playerToUpdate.id) {
                 return playerToUpdate
             }
             return player
         })
 
-        const haveAllPlayersFinishedEvolving = players.every((player) => player.status === GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING)
+        const haveAllPlayersFinishedEvolving = players.every(
+            (player) => player.status === GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING
+        )
 
         if (!haveAllPlayersFinishedEvolving) {
             const db = await getDb()
@@ -54,7 +56,7 @@ export const PUT = async (
                     $set: {
                         players: players,
                     },
-                },
+                }
             )
             return NextResponse.json({ gameStatus: playerToUpdate.status }, { status: 200 })
         }
@@ -68,7 +70,12 @@ export const PUT = async (
     }
 }
 
-const updateDataForSwitchingToFeedingStage = async (gameId: string, players: Player[], hiddenFoods: number[], amountOfFood: number): Promise<void> => {
+const updateDataForSwitchingToFeedingStage = async (
+    gameId: string,
+    players: Player[],
+    hiddenFoods: number[],
+    amountOfFood: number
+): Promise<void> => {
     const { playersUpdated, amountOfFoodUpdated } = computeDataForFeedingStage(players, hiddenFoods, amountOfFood)
     const hiddenFoodsUpdated: number[] = []
 
@@ -81,7 +88,7 @@ const updateDataForSwitchingToFeedingStage = async (gameId: string, players: Pla
                 amountOfFood: amountOfFoodUpdated,
                 players: playersUpdated,
             },
-        },
+        }
     )
 
     const events: PusherEvent<PusherEventBase>[] = []
@@ -100,13 +107,17 @@ const updateDataForSwitchingToFeedingStage = async (gameId: string, players: Pla
         buildUpdateFoodEvent(gameId, {
             hiddenFoods: hiddenFoodsUpdated,
             amountOfFood: amountOfFoodUpdated,
-        }),
+        })
     )
     await pusherServer.triggerBatch(events)
 }
 
-const computeDataForFeedingStage = (players: Player[], hiddenFoods: number[], amountOfFood: number): {
-    playersUpdated: Player[],
+const computeDataForFeedingStage = (
+    players: Player[],
+    hiddenFoods: number[],
+    amountOfFood: number
+): {
+    playersUpdated: Player[]
     amountOfFoodUpdated: number
 } => {
     const playersUpdated = players.map((player) => {
@@ -123,7 +134,9 @@ const computeDataForFeedingStage = (players: Player[], hiddenFoods: number[], am
 const checkForIncorrectActions = (gameId: string, playerId: string, speciesList: Species[]): void => {
     speciesList.forEach((species) => {
         if (species.features.length > 3) {
-            throw Error(`ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`)
+            throw Error(
+                `ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
+            )
         }
         species.features.reduce((previousFeatureKeys: FeatureKey[], feature: Feature) => {
             if (previousFeatureKeys.includes(feature.key)) {
@@ -133,17 +146,17 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
         }, [])
         if (species.size > 6) {
             throw Error(
-                `ERROR: Species size > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Species size > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
         if (species.population > 6) {
             throw Error(
-                `ERROR: Species population > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Species population > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
         if (species.population < 1 || species.size < 1) {
             throw Error(
-                `ERROR: Other species error ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Other species error ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
     })
