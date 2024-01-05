@@ -63,7 +63,7 @@ export const PUT = async (
 
         await updateDataForSwitchingToFeedingStage(params.gameId, players, game.hiddenFoods, game.amountOfFood)
 
-        return NextResponse.json({ gameStatus: playerToUpdate.status }, { status: 200 })
+        return NextResponse.json({ gameStatus: GameStatus.FEEDING_SPECIES }, { status: 200 })
     } catch (e) {
         console.error(e)
         return NextResponse.error()
@@ -121,7 +121,7 @@ const computeDataForFeedingStage = (
     amountOfFoodUpdated: number
 } => {
     const playersUpdated = players.map((player) => {
-        const playerUpdatedWithSpecialActions = applySpecialCardAction(player)
+        const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
         return { ...playerUpdatedWithSpecialActions, status: GameStatus.FEEDING_SPECIES }
     })
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
@@ -162,8 +162,11 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
     })
 }
 
-const applySpecialCardAction = (player: Player): Player => {
+const applySpecialCardAction = (player: Player, amountOfFood: number): Player => {
     player.species = applyLongNeckActions(player.species)
+    if (amountOfFood > 0) {
+        player.species = applyFertileActions(player.species)
+    }
     return player
 }
 
@@ -171,6 +174,15 @@ const applyLongNeckActions = (speciesList: Species[]): Species[] => {
     return speciesList.map((species) => {
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
+        }
+        return species
+    })
+}
+
+const applyFertileActions = (speciesList: Species[]): Species[] => {
+    return speciesList.map((species) => {
+        if (species.population < 6 && species.features.some((feature) => feature.key === FeatureKey.FERTILE)) {
+            species.population++
         }
         return species
     })
