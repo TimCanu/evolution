@@ -6,7 +6,7 @@ import { NextRequest } from 'next/server.js'
 import { CreateGameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Player } from '@/src/models/player.model'
-import { shuffleCards } from '@/src/lib/card.utils'
+import { shuffleCards } from '@/src/lib/card.service.server'
 import { getDb } from '@/src/repositories/shared.repository'
 
 const NB_OF_CARDS_PER_FEATURE = 11
