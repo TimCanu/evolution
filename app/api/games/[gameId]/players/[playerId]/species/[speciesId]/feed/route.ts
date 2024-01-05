@@ -95,6 +95,7 @@ export const POST = async (
         return NextResponse.json({ gameStatus: playerUpdated.status }, { status: 200 })
     } catch (e) {
         console.error(e)
+        return NextResponse.error()
     }
 }
 
