@@ -10,6 +10,7 @@ import {
     buildUpdateFoodEvent,
     buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
+    buildUpdatePlayerCardsEvent,
     buildUpdatePlayerSpeciesEvent,
 } from '@/src/lib/pusher.server.service'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
@@ -18,6 +19,8 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 import { Species } from '@/src/models/species.model'
 import { checkPlayerExists } from '@/src/lib/player.service.server'
+import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
+import { Card } from '@/src/models/card.model'
 
 export const PUT = async (
     request: NextRequest,
@@ -58,57 +61,99 @@ export const PUT = async (
                     },
                 }
             )
-            return NextResponse.json({ gameStatus: playerToUpdate.status }, { status: 200 })
+            return NextResponse.json({ gameStatus: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING }, { status: 200 })
         }
 
-        await updateDataForSwitchingToFeedingStage(params.gameId, players, game.hiddenFoods, game.amountOfFood)
+        const newGameStatus = await updateDataForSwitchingToNextStage(
+            params.gameId,
+            players,
+            game.hiddenFoods,
+            game.amountOfFood,
+            game.remainingCards
+        )
 
-        return NextResponse.json({ gameStatus: GameStatus.FEEDING_SPECIES }, { status: 200 })
+        return NextResponse.json({ gameStatus: newGameStatus }, { status: 200 })
     } catch (e) {
         console.error(e)
         return NextResponse.error()
     }
 }
 
-const updateDataForSwitchingToFeedingStage = async (
+const updateDataForSwitchingToNextStage = async (
     gameId: string,
     players: Player[],
     hiddenFoods: number[],
-    amountOfFood: number
-): Promise<void> => {
+    amountOfFood: number,
+    remainingCards: Card[]
+): Promise<GameStatus> => {
     const { playersUpdated, amountOfFoodUpdated } = computeDataForFeedingStage(players, hiddenFoods, amountOfFood)
-    const hiddenFoodsUpdated: number[] = []
+    const haveAllPlayersFed = playersUpdated.every((player) =>
+        player.species.every((species) => species.population === species.foodEaten)
+    )
 
+    if (haveAllPlayersFed) {
+        const playersWithNewStatus = players.map((player) => ({
+            ...player,
+            status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+        }))
+        const endOfFeedingStageData = computeEndOfFeedingStageData(playersWithNewStatus, remainingCards)
+        await updateDataForSwitchingToStage(
+            gameId,
+            endOfFeedingStageData.players,
+            amountOfFoodUpdated,
+            GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+            remainingCards
+        )
+        return GameStatus.ADDING_FOOD_TO_WATER_PLAN
+    }
+    await updateDataForSwitchingToStage(
+        gameId,
+        playersUpdated,
+        amountOfFoodUpdated,
+        GameStatus.FEEDING_SPECIES,
+        remainingCards
+    )
+    return GameStatus.FEEDING_SPECIES
+}
+
+const updateDataForSwitchingToStage = async (
+    gameId: string,
+    players: Player[],
+    amountOfFood: number,
+    gameStatus: GameStatus,
+    remainingCards: Card[]
+): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
         { _id: new ObjectId(gameId) },
         {
             $set: {
-                hiddenFoods: hiddenFoodsUpdated,
-                amountOfFood: amountOfFoodUpdated,
-                players: playersUpdated,
+                hiddenFoods: [],
+                amountOfFood: amountOfFood,
+                players: players,
+                remainingCards,
             },
         }
     )
 
     const events: PusherEvent<PusherEventBase>[] = []
-
-    events.push(buildUpdateGameStatusEvent(gameId, GameStatus.FEEDING_SPECIES))
-    playersUpdated.forEach((player) => {
-        const playerOpponents = getOpponents(playersUpdated, player.id)
+    events.push(
+        buildUpdateFoodEvent(gameId, {
+            hiddenFoods: [],
+            amountOfFood: amountOfFood,
+        })
+    )
+    events.push(buildUpdateGameStatusEvent(gameId, gameStatus))
+    players.forEach((player) => {
+        const playerOpponents = getOpponents(players, player.id)
         const updateOpponentsEvent = buildUpdateOpponentsEvent(gameId, player.id, playerOpponents)
         const updateSpeciesEvent = buildUpdatePlayerSpeciesEvent(gameId, player.id, {
             species: player.species,
         })
         events.push(updateOpponentsEvent)
         events.push(updateSpeciesEvent)
+        events.push(buildUpdatePlayerCardsEvent(gameId, player.id, player.cards))
     })
-    events.push(
-        buildUpdateFoodEvent(gameId, {
-            hiddenFoods: hiddenFoodsUpdated,
-            amountOfFood: amountOfFoodUpdated,
-        })
-    )
     await pusherServer.triggerBatch(events)
 }
 
