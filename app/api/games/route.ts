@@ -9,7 +9,7 @@ import { Player } from '@/src/models/player.model'
 import { shuffleCards } from '@/src/lib/card.service.server'
 import { getDb } from '@/src/repositories/shared.repository'
 
-const NB_OF_CARDS_PER_FEATURE = 21
+const NB_OF_CARDS_PER_FEATURE = 11
 
 export const POST = async (request: NextRequest) => {
     try {

@@ -2,6 +2,11 @@
     {
         "key": "LONG_NECK",
         "name": "Long neck",
-        "description": "Before revealing food cards, pick one food from the food stash."
+        "description": "Before revealing food cards, pick one food from the food stash (not the water plan)."
+    },
+    {
+        "key": "FERTILE",
+        "name": "Fertile",
+        "description": "Before revealing food cards, this species population increases by one if there is food left in the water plan."
     }
 ]
