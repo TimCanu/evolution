@@ -72,6 +72,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         return NextResponse.json(null, { status: 200 })
     } catch (e) {
         console.error(e)
+        return NextResponse.error()
     }
 }
 

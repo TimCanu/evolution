@@ -17,8 +17,8 @@ import { Species } from '@/src/models/species.model'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
 import { getPlayer } from '@/src/lib/player.service.server'
-import { v4 as uuidv4 } from 'uuid'
 import { Card } from '@/src/models/card.model'
+import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
 
 export const POST = async (
     _: NextRequest,
@@ -95,34 +95,8 @@ export const POST = async (
         return NextResponse.json({ gameStatus: playerUpdated.status }, { status: 200 })
     } catch (e) {
         console.error(e)
+        return NextResponse.error()
     }
-}
-
-const computeEndOfFeedingStageData = (
-    players: Player[],
-    cards: Card[]
-): {
-    players: Player[]
-    remainingCards: Card[]
-} => {
-    const playersUpdated = players.map((player: Player) => {
-        player.species = computeSpeciesPopulation(player.species)
-        if (player.species.length === 0) {
-            player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
-        }
-        const numberOfCardsToAdd = player.species.length + 3
-        player.cards = player.cards.concat(
-            [...Array(numberOfCardsToAdd)].map((_) => {
-                const card = cards.pop()
-                if (!card) {
-                    throw Error('No cards left... Maybe add some more in the DB?')
-                }
-                return card
-            })
-        )
-        return player
-    })
-    return { players: playersUpdated, remainingCards: cards }
 }
 
 const hasPlayerFinishedFeeding = (player: Player): boolean => {
@@ -146,15 +120,6 @@ const updateGameInDb = async (
             },
         }
     )
-}
-
-const computeSpeciesPopulation = (species: Species[]): Species[] => {
-    return species.reduce((speciesUpdated: Species[], species: Species) => {
-        if (species.foodEaten === 0) {
-            return speciesUpdated
-        }
-        return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
-    }, [])
 }
 
 const computePlayersStatus = (

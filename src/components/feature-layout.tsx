@@ -20,7 +20,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId }) => {
                     <button
                         className="border-l border-b border-indigo-600 h-6 w-6"
                         onClick={() => {
-                            removeFeature(speciesId, feature.id)
+                            removeFeature(speciesId, feature.cardId)
                         }}
                     >
                         X

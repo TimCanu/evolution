@@ -4,13 +4,15 @@ import { UPDATE_GAME_STATUS, UPDATE_PLAYER_STATUS } from '@/src/const/game-event
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
 import { PushUpdateGameStatusData, PushUpdatePlayerStatusData } from '@/src/models/pusher.channels.model'
+import { Species } from '@/src/models/species.model'
+import { Card } from '@/src/models/card.model'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
     isAddingFoodStage: () => boolean
     isEvolvingStage: () => boolean
     isFeedingStage: () => boolean
-    canDiscardCard: () => boolean
+    canDiscardCard: (card: Card) => boolean
     getCardDiscardMessage: () => string
     updatePlayerState: (action: PlayerActionsState) => void
 }
@@ -42,7 +44,7 @@ const ALL_EVOLVING_STAGE_STEPS = [
 
 export interface PlayerActionsState {
     action: ActionState
-    speciesId?: string
+    species?: Species
 }
 
 const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as PlayerActionsContextResult)
@@ -86,7 +88,10 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
         return playerOnGoingAction.action === GameStatus.FEEDING_SPECIES
     }
 
-    const canDiscardCard = (): boolean => {
+    const canDiscardCard = (card: Card): boolean => {
+        if (playerOnGoingAction.action === EVOLVING_STAGES.ADD_SPECIES_FEATURE && playerOnGoingAction.species) {
+            return !playerOnGoingAction.species.features.some((feature) => feature.key === card.featureKey)
+        }
         return isEvolvingStage() && playerOnGoingAction.action !== GameStatus.CHOOSING_EVOLVING_ACTION
     }
 

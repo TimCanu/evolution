@@ -6,10 +6,10 @@ import { NextRequest } from 'next/server.js'
 import { CreateGameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Player } from '@/src/models/player.model'
-import { shuffleCards } from '@/src/lib/card.utils'
+import { shuffleCards } from '@/src/lib/card.service.server'
 import { getDb } from '@/src/repositories/shared.repository'
 
-const NB_OF_CARDS_PER_FEATURE = 7
+const NB_OF_CARDS_PER_FEATURE = 21
 
 export const POST = async (request: NextRequest) => {
     try {
@@ -22,7 +22,13 @@ export const POST = async (request: NextRequest) => {
         const resultingCards = features.reduce((cards: Card[], feature: Feature) => {
             for (let nbOfCard = 0; nbOfCard < NB_OF_CARDS_PER_FEATURE; nbOfCard++) {
                 const foodNumber = Math.floor(Math.random() * (8 - -2 + 1) + -2)
-                const card: Card = { id: uuidv4(), name: feature.name, description: feature.description, foodNumber }
+                const card: Card = {
+                    id: uuidv4(),
+                    featureKey: feature.key,
+                    name: feature.name,
+                    description: feature.description,
+                    foodNumber,
+                }
                 cards.push(card)
             }
             return cards
