@@ -68,7 +68,7 @@ export function Game({ game }: GameProps) {
         <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">
             <div className="mt-1 row-span-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
-                    return <OpponentLayout key={index} name={opponent.name} />
+                    return <OpponentLayout key={index} opponent={opponent} />
                 })}
             </div>
             <div className="flex justify-center row-span-1">
