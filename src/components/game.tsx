@@ -34,13 +34,15 @@ export function Game({ game }: GameProps) {
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
         usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
-    const { cards, getCard, removeCard } = useCardsContext()
+    const { cards, getCard, removeCard, updateCards } = useCardsContext()
     const { hiddenFoods } = useFoodsContext()
 
     const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
         if (isAddingFoodStage()) {
-            await addFood({ gameId, playerId, cardId })
+            const { status, cards: cardsUpdated } = await addFood({ gameId, playerId, cardId })
+            updatePlayerState({ action: status })
+            updateCards(cardsUpdated)
         } else if (isEvolvingStage()) {
             playEvolvingAction(card)
         } else if (isFeedingStage()) {
