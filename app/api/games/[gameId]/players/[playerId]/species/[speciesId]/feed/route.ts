@@ -19,6 +19,7 @@ import pusherServer from '@/src/lib/pusher-server'
 import { getPlayer } from '@/src/lib/player.service.server'
 import { Card } from '@/src/models/card.model'
 import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
+import { FeatureKey } from '@/src/enums/feature-key.enum'
 
 export const POST = async (
     _: NextRequest,
@@ -35,10 +36,15 @@ export const POST = async (
         const speciesToUpdate = getSpecies(game._id.toString(), playerToUpdate, params.speciesId)
 
         checkThatSpeciesCanEat(params.gameId, params.playerId, speciesToUpdate, game.amountOfFood)
+        let newAmountOfFood = game.amountOfFood - 1
 
-        speciesToUpdate.foodEaten++
+        if (speciesToUpdate.features.some((feature) => feature.key === FeatureKey.FORAGER) && speciesToUpdate.population > speciesToUpdate.foodEaten+1 && game.amountOfFood > 1) {
+            speciesToUpdate.foodEaten+=2 
+            newAmountOfFood  = newAmountOfFood - 1
+        }  else {
+            speciesToUpdate.foodEaten++
+        }
 
-        const newAmountOfFood = game.amountOfFood - 1
         const noMoreFoodAvailable = newAmountOfFood <= 0
         const hasCurrentPlayerFinishedFeeding = hasPlayerFinishedFeeding(playerToUpdate)
         const haveAllPlayersFinishedFeeding =

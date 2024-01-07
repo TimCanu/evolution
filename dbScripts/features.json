@@ -8,5 +8,10 @@
         "key": "FERTILE",
         "name": "Fertile",
         "description": "Before revealing food cards, this species population increases by one if there is food left in the water plan."
+    },
+    {
+        "key": "FORAGER",
+        "name": "Forager",
+        "description": "Each time this species eats one or more Plants, it takes 1 additional Plant from the same source."
     }
 ]
