@@ -1,17 +1,26 @@
 'use client'
 import { joinGame } from '@/src/lib/game.service'
 import { useRouter } from 'next/navigation'
-import { FormEvent } from 'react'
+import { FormEvent, useState } from 'react'
+import LoadingSpinner from '@/src/components/loading'
 
 export default function Home() {
     const router = useRouter()
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        setIsLoading(true)
         const gameId = String(event.currentTarget.gameId.value)
         const playerName = String(event.currentTarget.playerName.value)
-        const { playerId } = await joinGame({ playerName, gameId })
-        router.push(`/games/${gameId}?playerId=${playerId}`)
+        try {
+            const { playerId } = await joinGame({ playerName, gameId })
+            router.push(`/games/${gameId}?playerId=${playerId}`)
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -32,6 +41,7 @@ export default function Home() {
                     Join game
                 </button>
             </form>
+            {isLoading && <LoadingSpinner label="Joining game..."></LoadingSpinner>}
         </div>
     )
 }
