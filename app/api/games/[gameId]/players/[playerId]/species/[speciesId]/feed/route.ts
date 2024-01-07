@@ -38,7 +38,7 @@ export const POST = async (
         checkThatSpeciesCanEat(params.gameId, params.playerId, speciesToUpdate, game.amountOfFood)
         let newAmountOfFood = game.amountOfFood - 1
 
-        if (speciesToUpdate.population > speciesToUpdate.foodEaten+1 && game.amountOfFood > 1 && speciesToUpdate.features.some((feature) => feature.key === FeatureKey.FORAGER) ) {
+        if (speciesToUpdate.features.some((feature) => feature.key === FeatureKey.FORAGER) && speciesToUpdate.population > speciesToUpdate.foodEaten+1 && game.amountOfFood > 1) {
             speciesToUpdate.foodEaten+=2 
             newAmountOfFood  = newAmountOfFood - 1
         }  else {
