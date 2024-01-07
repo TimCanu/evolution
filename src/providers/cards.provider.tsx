@@ -9,6 +9,7 @@ interface CardsContextResult {
     cards: Card[]
     getCard: (cardId: string) => Card
     removeCard: (cardId: string) => void
+    updateCards: (cardsUpdated: Card[]) => void
 }
 
 interface CardsContextProps {
@@ -47,10 +48,15 @@ export const CardsProvider: FunctionComponent<PropsWithChildren<CardsContextProp
         return card
     }
 
+    const updateCards = (cardsUpdated: Card[]): void => {
+        setCards(cardsUpdated)
+    }
+
     const res = {
         cards,
         getCard,
         removeCard,
+        updateCards,
     }
 
     return <CardsContext.Provider value={res}>{children}</CardsContext.Provider>

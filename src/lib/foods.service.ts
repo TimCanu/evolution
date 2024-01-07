@@ -1,3 +1,6 @@
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { Card } from '@/src/models/card.model'
+
 export const addFood = async ({
     gameId,
     playerId,
@@ -6,7 +9,7 @@ export const addFood = async ({
     gameId: string
     playerId: string
     cardId: string
-}): Promise<void> => {
+}): Promise<{ status: GameStatus; cards: Card[] }> => {
     const res = await fetch(`http://localhost:3000/api/games/${gameId}/addFood`, {
         next: { revalidate: 0 },
         method: 'POST',

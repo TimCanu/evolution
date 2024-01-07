@@ -7,10 +7,8 @@ import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
 import {
     buildUpdateFoodEvent,
-    buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
     buildUpdatePlayerCardsEvent,
-    buildUpdatePlayerStatusEvent,
 } from '@/src/lib/pusher.server.service'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
@@ -27,19 +25,12 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
 
         const hiddenFoods = [...game.hiddenFoods, cardPlayedAsFood.foodNumber]
 
-        const hasEveryPlayersAddedFood = game.nbOfPlayers === hiddenFoods.length
-
         const playerUpdated: Player = {
             ...playerToUpdate,
             cards: playerToUpdate.cards.filter((card) => card.id !== data.cardId),
-            status: hasEveryPlayersAddedFood
-                ? GameStatus.CHOOSING_EVOLVING_ACTION
-                : GameStatus.WAITING_FOR_PLAYERS_TO_ADD_FOOD,
+            status: GameStatus.CHOOSING_EVOLVING_ACTION,
         }
         const playersUpdated: Player[] = game.players.map((player) => {
-            if (hasEveryPlayersAddedFood) {
-                player.status = GameStatus.CHOOSING_EVOLVING_ACTION
-            }
             if (player.id === playerToUpdate.id) {
                 return playerUpdated
             }
@@ -52,24 +43,14 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, hiddenFoods } })
 
         const events: PusherEvent<PusherEventBase>[] = []
-        if (hasEveryPlayersAddedFood) {
-            events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.CHOOSING_EVOLVING_ACTION))
-        } else {
-            events.push(buildUpdatePlayerStatusEvent(params.gameId, data.playerId, playerUpdated.status))
-        }
-        events.push(buildUpdatePlayerCardsEvent(params.gameId, data.playerId, playerUpdated.cards))
-        playersUpdated
-            .filter((player) => player.id !== data.playerId)
-            .forEach((player) => {
-                const playerOpponents = getOpponents(playersUpdated, player.id)
-                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
-                events.push(event)
-            })
         events.push(buildUpdateFoodEvent(params.gameId, { hiddenFoods, amountOfFood: game.amountOfFood }))
 
         await pusherServer.triggerBatch(events)
 
-        return NextResponse.json(null, { status: 200 })
+        return NextResponse.json(
+            { status: GameStatus.CHOOSING_EVOLVING_ACTION, cards: playerUpdated.cards },
+            { status: 200 }
+        )
     } catch (e) {
         console.error(e)
         return NextResponse.error()
