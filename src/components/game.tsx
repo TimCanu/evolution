@@ -31,8 +31,15 @@ export function Game({ game }: GameProps) {
         throw Error('Player ID must be provided')
     }
     const { opponents } = useOpponentsContext()
-    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
-        usePlayerActionsContext()
+    const {
+        isAddingFoodStage,
+        isEvolvingStage,
+        isFeedingStage,
+        getCardDiscardMessage,
+        updatePlayerState,
+        feedingStatus,
+        playerOnGoingAction,
+    } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
     const { hiddenFoods } = useFoodsContext()
@@ -53,8 +60,7 @@ export function Game({ game }: GameProps) {
 
     const finishEvolvingStage = async (): Promise<void> => {
         const player: Player = { ...game.player, species: speciesList, cards }
-        const { gameStatus } = await updatePlayer({ gameId, player })
-        updatePlayerState({ action: gameStatus })
+        await updatePlayer({ gameId, player })
         if (hiddenFoods.length <= 0) {
             updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
         }
@@ -75,6 +81,8 @@ export function Game({ game }: GameProps) {
             </div>
             <div className="flex justify-center row-span-1">
                 <FoodArea />
+                {feedingStatus.isFeedingFirst && <>IS FEEDING FIRST</>}
+                {playerOnGoingAction.action === GameStatus.FEEDING_SPECIES && <>IS CURRENTLY FEEDING</>}
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">

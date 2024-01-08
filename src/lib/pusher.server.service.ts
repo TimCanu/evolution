@@ -1,6 +1,5 @@
 import {
     UPDATE_FOOD_STATUS,
-    UPDATE_GAME_STATUS,
     UPDATE_OPPONENT_STATUS,
     UPDATE_PLAYER_CARDS,
     UPDATE_PLAYER_SPECIES,
@@ -10,7 +9,6 @@ import { Card } from '@/src/models/card.model'
 import {
     PusherEvent,
     PushUpdateFoodData,
-    PushUpdateGameStatusData,
     PushUpdatePlayerCardsData,
     PushUpdatePlayerOpponentsData,
     PushUpdatePlayerSpeciesData,
@@ -51,17 +49,6 @@ export const buildUpdateFoodEvent = (gameId: string, data: PushUpdateFoodData): 
     }
 }
 
-export const buildUpdateGameStatusEvent = (
-    gameId: string,
-    status: GameStatus
-): PusherEvent<PushUpdateGameStatusData> => {
-    return {
-        channel: `game-${gameId}`,
-        name: UPDATE_GAME_STATUS,
-        data: { status },
-    }
-}
-
 export const buildUpdatePlayerSpeciesEvent = (
     gameId: string,
     playerId: string,
@@ -77,11 +64,13 @@ export const buildUpdatePlayerSpeciesEvent = (
 export const buildUpdatePlayerStatusEvent = (
     gameId: string,
     playerId: string,
-    status: GameStatus
+    status: GameStatus,
+    playerFeedingFirstId: string
 ): PusherEvent<PushUpdatePlayerStatusData> => {
+    const isFeedingFirst = playerId === playerFeedingFirstId
     return {
         channel: `game-${gameId}-player-${playerId}`,
         name: UPDATE_PLAYER_STATUS,
-        data: { status },
+        data: { status, isFeedingFirst },
     }
 }

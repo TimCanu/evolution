@@ -3,6 +3,7 @@ import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { feedSpecies } from '@/src/lib/species.service'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -19,7 +20,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     playerId,
     species,
 }) => {
-    const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
+    const { updatePlayerState, isEvolvingStage, isFeedingStage, playerOnGoingAction } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
 
     const feed = async (): Promise<void> => {
@@ -87,12 +88,13 @@ export const SpeciesLayout: FC<CardProps> = ({
                     )}
 
                     <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                        {isFeedingStage() && (
+                        {isFeedingStage() || playerOnGoingAction.action === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                             <>
                                 {species.foodEaten} / {species.population}
                             </>
+                        ) : (
+                            <> {species.population}</>
                         )}
-                        {!isFeedingStage() && <> {species.population}</>}
                     </span>
                 </div>
                 {canActionsBeShown && species.population < 6 && (

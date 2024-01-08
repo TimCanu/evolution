@@ -1,14 +1,15 @@
 'use client'
 import { createContext, FunctionComponent, PropsWithChildren, useContext, useEffect, useState } from 'react'
-import { UPDATE_GAME_STATUS, UPDATE_PLAYER_STATUS } from '@/src/const/game-events.const'
+import { UPDATE_PLAYER_STATUS } from '@/src/const/game-events.const'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
-import { PushUpdateGameStatusData, PushUpdatePlayerStatusData } from '@/src/models/pusher.channels.model'
+import { PushUpdatePlayerStatusData } from '@/src/models/pusher.channels.model'
 import { Species } from '@/src/models/species.model'
 import { Card } from '@/src/models/card.model'
 
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
+    feedingStatus: PlayerFeedingState
     isAddingFoodStage: () => boolean
     isEvolvingStage: () => boolean
     isFeedingStage: () => boolean
@@ -21,6 +22,7 @@ interface PlayerActionsContextProps {
     status: GameStatus
     gameId: string
     playerId: string
+    isFeedingFirst: boolean
 }
 
 export enum EVOLVING_STAGES {
@@ -47,6 +49,10 @@ export interface PlayerActionsState {
     species?: Species
 }
 
+export interface PlayerFeedingState {
+    isFeedingFirst: boolean
+}
+
 const PlayerActionsContext = createContext<PlayerActionsContextResult>({} as PlayerActionsContextResult)
 
 export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerActionsContextProps>> = ({
@@ -54,21 +60,25 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     status,
     gameId,
     playerId,
+    isFeedingFirst,
 }) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
         action: status,
     })
+    const [feedingStatus, setFeedingStatus] = useState<PlayerFeedingState>({
+        isFeedingFirst,
+    })
 
     useEffect(() => {
         const playerChannel = PusherInstance.getPlayerChannel(gameId, playerId)
-        const gameChannel = PusherInstance.getGameChannel(gameId)
-
-        gameChannel.bind(UPDATE_GAME_STATUS, function (data: PushUpdateGameStatusData) {
-            setPlayerActions({ action: data.status })
-        })
 
         playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
-            setPlayerActions({ action: data.status })
+            setPlayerActions({
+                action: data.status,
+            })
+            setFeedingStatus({
+                isFeedingFirst: data.isFeedingFirst,
+            })
         })
     }, [gameId, playerId])
 
@@ -123,6 +133,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
 
     const res = {
         playerOnGoingAction,
+        feedingStatus,
         canDiscardCard,
         getCardDiscardMessage,
         isAddingFoodStage,

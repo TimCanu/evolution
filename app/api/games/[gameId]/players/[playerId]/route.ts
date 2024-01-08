@@ -8,10 +8,10 @@ import { Player } from '@/src/models/player.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import {
     buildUpdateFoodEvent,
-    buildUpdateGameStatusEvent,
     buildUpdateOpponentsEvent,
     buildUpdatePlayerCardsEvent,
     buildUpdatePlayerSpeciesEvent,
+    buildUpdatePlayerStatusEvent,
 } from '@/src/lib/pusher.server.service'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
@@ -21,6 +21,7 @@ import { Species } from '@/src/models/species.model'
 import { checkPlayerExists } from '@/src/lib/player.service.server'
 import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export const PUT = async (
     request: NextRequest,
@@ -61,67 +62,52 @@ export const PUT = async (
                     },
                 }
             )
-            return NextResponse.json({ gameStatus: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING }, { status: 200 })
+            await pusherServer.triggerBatch([
+                buildUpdatePlayerStatusEvent(
+                    params.gameId,
+                    playerToUpdate.id,
+                    playerToUpdate.status,
+                    game.firstPlayerToFeedId
+                ),
+            ])
+            return NextResponse.json(null, { status: 200 })
         }
 
-        const newGameStatus = await updateDataForSwitchingToNextStage(
-            params.gameId,
+        const { playersUpdated, amountOfFoodUpdated } = computeDataForFeedingStage(
             players,
             game.hiddenFoods,
             game.amountOfFood,
-            game.remainingCards
+            game.firstPlayerToFeedId
+        )
+        const haveAllPlayersFed = playersUpdated.every((player) =>
+            player.species.every((species) => species.population === species.foodEaten)
         )
 
-        return NextResponse.json({ gameStatus: newGameStatus }, { status: 200 })
+        if (haveAllPlayersFed) {
+            await updateDataForAddingFoodStage(
+                params.gameId,
+                playersUpdated,
+                amountOfFoodUpdated,
+                game.remainingCards,
+                game.firstPlayerToFeedId
+            )
+            return
+        }
+
+        await updateDataForFeedingStage(params.gameId, amountOfFoodUpdated, playersUpdated, game.firstPlayerToFeedId)
+
+        return NextResponse.json(null, { status: 200 })
     } catch (e) {
         console.error(e)
         return NextResponse.error()
     }
 }
 
-const updateDataForSwitchingToNextStage = async (
+const updateDataForFeedingStage = async (
     gameId: string,
-    players: Player[],
-    hiddenFoods: number[],
     amountOfFood: number,
-    remainingCards: Card[]
-): Promise<GameStatus> => {
-    const { playersUpdated, amountOfFoodUpdated } = computeDataForFeedingStage(players, hiddenFoods, amountOfFood)
-    const haveAllPlayersFed = playersUpdated.every((player) =>
-        player.species.every((species) => species.population === species.foodEaten)
-    )
-
-    if (haveAllPlayersFed) {
-        const playersWithNewStatus = players.map((player) => ({
-            ...player,
-            status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-        }))
-        const endOfFeedingStageData = computeEndOfFeedingStageData(playersWithNewStatus, remainingCards)
-        await updateDataForSwitchingToStage(
-            gameId,
-            endOfFeedingStageData.players,
-            amountOfFoodUpdated,
-            GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-            remainingCards
-        )
-        return GameStatus.ADDING_FOOD_TO_WATER_PLAN
-    }
-    await updateDataForSwitchingToStage(
-        gameId,
-        playersUpdated,
-        amountOfFoodUpdated,
-        GameStatus.FEEDING_SPECIES,
-        remainingCards
-    )
-    return GameStatus.FEEDING_SPECIES
-}
-
-const updateDataForSwitchingToStage = async (
-    gameId: string,
-    players: Player[],
-    amountOfFood: number,
-    gameStatus: GameStatus,
-    remainingCards: Card[]
+    players: PlayerEntity[],
+    firstPlayerToFeedId: string
 ): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
@@ -129,13 +115,52 @@ const updateDataForSwitchingToStage = async (
         {
             $set: {
                 hiddenFoods: [],
-                amountOfFood: amountOfFood,
-                players: players,
-                remainingCards,
+                amountOfFood,
+                players,
             },
         }
     )
+    await notifyUsersOfNewData(gameId, players, amountOfFood, firstPlayerToFeedId)
+}
 
+const updateDataForAddingFoodStage = async (
+    gameId: string,
+    players: PlayerEntity[],
+    amountOfFood: number,
+    remainingCards: Card[],
+    firstPlayerToFeedId: string
+): Promise<void> => {
+    const playersWithNewStatus = players.map((player) => ({
+        ...player,
+        status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+    }))
+    const endOfFeedingStageData = computeEndOfFeedingStageData(
+        playersWithNewStatus,
+        remainingCards,
+        firstPlayerToFeedId
+    )
+
+    const db = await getDb()
+    await db.collection('games').updateOne(
+        { _id: new ObjectId(gameId) },
+        {
+            $set: {
+                hiddenFoods: [],
+                amountOfFood: amountOfFood,
+                players: endOfFeedingStageData.players,
+                firstPlayerToFeedId: endOfFeedingStageData.firstPlayerToFeedId,
+            },
+        }
+    )
+    await notifyUsersOfNewData(gameId, endOfFeedingStageData.players, amountOfFood, firstPlayerToFeedId)
+}
+
+const notifyUsersOfNewData = async (
+    gameId: string,
+    players: PlayerEntity[],
+    amountOfFood: number,
+    firstPlayerToFeedId: string
+): Promise<void> => {
     const events: PusherEvent<PusherEventBase>[] = []
     events.push(
         buildUpdateFoodEvent(gameId, {
@@ -143,13 +168,13 @@ const updateDataForSwitchingToStage = async (
             amountOfFood: amountOfFood,
         })
     )
-    events.push(buildUpdateGameStatusEvent(gameId, gameStatus))
     players.forEach((player) => {
-        const playerOpponents = getOpponents(players, player.id)
+        const playerOpponents = getOpponents(players, player.id, firstPlayerToFeedId)
         const updateOpponentsEvent = buildUpdateOpponentsEvent(gameId, player.id, playerOpponents)
         const updateSpeciesEvent = buildUpdatePlayerSpeciesEvent(gameId, player.id, {
             species: player.species,
         })
+        events.push(buildUpdatePlayerStatusEvent(gameId, player.id, player.status, firstPlayerToFeedId))
         events.push(updateOpponentsEvent)
         events.push(updateSpeciesEvent)
         events.push(buildUpdatePlayerCardsEvent(gameId, player.id, player.cards))
@@ -158,16 +183,19 @@ const updateDataForSwitchingToStage = async (
 }
 
 const computeDataForFeedingStage = (
-    players: Player[],
+    players: PlayerEntity[],
     hiddenFoods: number[],
-    amountOfFood: number
+    amountOfFood: number,
+    firstPlayerToFeedId: string
 ): {
-    playersUpdated: Player[]
+    playersUpdated: PlayerEntity[]
     amountOfFoodUpdated: number
 } => {
     const playersUpdated = players.map((player) => {
         const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
-        return { ...playerUpdatedWithSpecialActions, status: GameStatus.FEEDING_SPECIES }
+        const status =
+            player.id === firstPlayerToFeedId ? GameStatus.FEEDING_SPECIES : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
+        return { ...playerUpdatedWithSpecialActions, status }
     })
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
         return previousValue + currentAmountOfFoods
@@ -207,7 +235,7 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
     })
 }
 
-const applySpecialCardAction = (player: Player, amountOfFood: number): Player => {
+const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {
     player.species = applyLongNeckActions(player.species)
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
