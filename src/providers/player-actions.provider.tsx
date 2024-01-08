@@ -73,6 +73,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
         const playerChannel = PusherInstance.getPlayerChannel(gameId, playerId)
 
         playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
+            console.log(data)
             setPlayerActions({
                 action: data.status,
             })
@@ -123,6 +124,10 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
                 return 'Choose the card to add as a feature for the selected species'
             case GameStatus.FEEDING_SPECIES:
                 return 'Choose the species you would like to feed'
+            case GameStatus.WAITING_FOR_PLAYERS_TO_FEED:
+                return 'Waiting for other players to feed'
+            case GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING:
+                return 'Waiting for other players to finish evolving'
             default:
                 console.warn(
                     `Adding an action message has not been supported for the action ${playerOnGoingAction.action} `

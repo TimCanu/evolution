@@ -111,12 +111,7 @@ export const POST = async (
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
                 events.push(
-                    buildUpdatePlayerStatusEvent(
-                        params.gameId,
-                        player.id,
-                        GameStatus.FEEDING_SPECIES,
-                        game.firstPlayerToFeedId
-                    )
+                    buildUpdatePlayerStatusEvent(params.gameId, player.id, player.status, game.firstPlayerToFeedId)
                 )
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
             })
@@ -127,7 +122,7 @@ export const POST = async (
         )
         await pusherServer.triggerBatch(events)
 
-        return NextResponse.json({ gameStatus: playerUpdated.status }, { status: 200 })
+        return NextResponse.json(null, { status: 200 })
     } catch (e) {
         console.error(e)
         return NextResponse.error()

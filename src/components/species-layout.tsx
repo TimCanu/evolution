@@ -24,8 +24,7 @@ export const SpeciesLayout: FC<CardProps> = ({
     const canActionsBeShown = isEvolvingStage()
 
     const feed = async (): Promise<void> => {
-        const { gameStatus } = await feedSpecies({ gameId, playerId, speciesId: species.id })
-        updatePlayerState({ action: gameStatus })
+        await feedSpecies({ gameId, playerId, speciesId: species.id })
     }
 
     return (
