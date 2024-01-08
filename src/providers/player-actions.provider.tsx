@@ -73,7 +73,6 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
         const playerChannel = PusherInstance.getPlayerChannel(gameId, playerId)
 
         playerChannel.bind(UPDATE_PLAYER_STATUS, function (data: PushUpdatePlayerStatusData) {
-            console.log(data)
             setPlayerActions({
                 action: data.status,
             })
