@@ -17,6 +17,8 @@ import { Player } from '@/src/models/player.model'
 import { useFoodsContext } from '../providers/foods.provider'
 import { GameStatus } from '../enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
+import playerTurnDino from '../assets/images/player-turn-dyno.png'
+import Image from 'next/image'
 
 interface GameProps {
     game: GameModel
@@ -38,7 +40,6 @@ export function Game({ game }: GameProps) {
         getCardDiscardMessage,
         updatePlayerState,
         feedingStatus,
-        playerOnGoingAction,
     } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
@@ -81,8 +82,6 @@ export function Game({ game }: GameProps) {
             </div>
             <div className="flex justify-center row-span-1">
                 <FoodArea />
-                {feedingStatus.isFeedingFirst && <>IS FEEDING FIRST</>}
-                {playerOnGoingAction.action === GameStatus.FEEDING_SPECIES && <>IS CURRENTLY FEEDING</>}
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
@@ -109,7 +108,10 @@ export function Game({ game }: GameProps) {
                         Finish turn
                     </button>
                 )}
-                <p className="self-center ">{getCardDiscardMessage()}</p>
+                <div className="self-center flex">
+                    {feedingStatus.isFeedingFirst && <Image src={playerTurnDino} alt="" height={35} />}
+                    <p>{getCardDiscardMessage()}</p>
+                </div>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return <CardLayout key={index} card={card} playCard={playCard} />
