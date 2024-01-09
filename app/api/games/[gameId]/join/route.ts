@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
-import { Player } from '@/src/models/player.model'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { getDb } from '@/src/repositories/shared.repository'
-import { buildUpdateGameStatusEvent, buildUpdateOpponentsEvent } from '@/src/lib/pusher.server.service'
+import { buildUpdateOpponentsEvent, buildUpdatePlayerStatusEvent } from '@/src/lib/pusher.server.service'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -33,7 +33,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             return card
         })
 
-        const newPlayer: Player = {
+        const newPlayer: PlayerEntity = {
             id: playerId,
             name: data.playerName,
             species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
@@ -50,22 +50,39 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             return player
         })
 
+        const firstPlayerToFeedId = areAllPlayersConnected
+            ? playersUpdated[Math.floor(Math.random() * game.nbOfPlayers)].id
+            : ''
+
         const db = await getDb()
-        await db
-            .collection('games')
-            .updateOne(
-                { _id: new ObjectId(params.gameId) },
-                { $set: { players: playersUpdated, remainingCards: gameCards } }
-            )
+        await db.collection('games').updateOne(
+            { _id: new ObjectId(params.gameId) },
+            {
+                $set: {
+                    players: playersUpdated,
+                    remainingCards: gameCards,
+                    firstPlayerToFeedId,
+                },
+            }
+        )
 
         const events: PusherEvent<PusherEventBase>[] = []
         if (areAllPlayersConnected) {
-            events.push(buildUpdateGameStatusEvent(params.gameId, GameStatus.ADDING_FOOD_TO_WATER_PLAN))
+            playersUpdated.forEach((player) => {
+                events.push(
+                    buildUpdatePlayerStatusEvent(
+                        params.gameId,
+                        player.id,
+                        GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+                        firstPlayerToFeedId
+                    )
+                )
+            })
         }
         playersUpdated
             .filter((player) => player.id !== playerId)
             .forEach((player) => {
-                const playerOpponents = getOpponents(playersUpdated, player.id)
+                const playerOpponents = getOpponents(playersUpdated, player.id, firstPlayerToFeedId)
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
             })

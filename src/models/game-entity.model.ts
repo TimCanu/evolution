@@ -1,11 +1,11 @@
 import { Card } from '@/src/models/card.model'
-import { Player } from '@/src/models/player.model'
 import { ObjectId } from 'mongodb'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export interface CreateGameEntity {
     nbOfPlayers: number
     remainingCards: Card[]
-    players: Player[]
+    players: PlayerEntity[]
     hiddenFoods: number[]
     amountOfFood: number
 }
@@ -13,4 +13,5 @@ export interface CreateGameEntity {
 // This is the struct that we have in the database
 export interface GameEntity extends CreateGameEntity {
     _id: ObjectId
+    firstPlayerToFeedId: string
 }

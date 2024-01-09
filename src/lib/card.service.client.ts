@@ -14,7 +14,7 @@ export const getCardImage = (card: Card): StaticImageData => {
         case FeatureKey.FERTILE:
             return fertile
         case FeatureKey.FORAGER:
-                return forager
+            return forager
         case FeatureKey.CARNIVORE:
             return carnivore
         default:

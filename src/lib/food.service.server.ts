@@ -1,16 +1,18 @@
-import { Player } from '@/src/models/player.model'
 import { Card } from '@/src/models/card.model'
 import { v4 as uuidv4 } from 'uuid'
 import { Species } from '@/src/models/species.model'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export const computeEndOfFeedingStageData = (
-    players: Player[],
-    cards: Card[]
+    players: PlayerEntity[],
+    cards: Card[],
+    firstPlayerToFeedId: string
 ): {
-    players: Player[]
+    players: PlayerEntity[]
     remainingCards: Card[]
+    firstPlayerToFeedId: string
 } => {
-    const playersUpdated = players.map((player: Player) => {
+    const playersUpdated = players.map((player: PlayerEntity) => {
         player.species = computeSpeciesPopulation(player.species)
         if (player.species.length === 0) {
             player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
@@ -27,7 +29,13 @@ export const computeEndOfFeedingStageData = (
         )
         return player
     })
-    return { players: playersUpdated, remainingCards: cards }
+    const firstPlayerToFeedIndex = playersUpdated.findIndex((player) => player.id === firstPlayerToFeedId)
+    const newFirstPlayerToFeedId =
+        firstPlayerToFeedIndex === playersUpdated.length - 1
+            ? playersUpdated[0].id
+            : playersUpdated[firstPlayerToFeedIndex + 1].id
+
+    return { players: playersUpdated, remainingCards: cards, firstPlayerToFeedId: newFirstPlayerToFeedId }
 }
 
 const computeSpeciesPopulation = (species: Species[]): Species[] => {

@@ -17,6 +17,8 @@ import { Player } from '@/src/models/player.model'
 import { useFoodsContext } from '../providers/foods.provider'
 import { GameStatus } from '../enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
+import playerTurnDino from '../assets/images/player-turn-dyno.png'
+import Image from 'next/image'
 
 interface GameProps {
     game: GameModel
@@ -31,8 +33,14 @@ export function Game({ game }: GameProps) {
         throw Error('Player ID must be provided')
     }
     const { opponents } = useOpponentsContext()
-    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage, updatePlayerState } =
-        usePlayerActionsContext()
+    const {
+        isAddingFoodStage,
+        isEvolvingStage,
+        isFeedingStage,
+        getCardDiscardMessage,
+        updatePlayerState,
+        feedingStatus,
+    } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
     const { hiddenFoods } = useFoodsContext()
@@ -53,8 +61,7 @@ export function Game({ game }: GameProps) {
 
     const finishEvolvingStage = async (): Promise<void> => {
         const player: Player = { ...game.player, species: speciesList, cards }
-        const { gameStatus } = await updatePlayer({ gameId, player })
-        updatePlayerState({ action: gameStatus })
+        await updatePlayer({ gameId, player })
         if (hiddenFoods.length <= 0) {
             updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
         }
@@ -101,7 +108,10 @@ export function Game({ game }: GameProps) {
                         Finish turn
                     </button>
                 )}
-                <p className="self-center ">{getCardDiscardMessage()}</p>
+                <div className="self-center flex">
+                    {feedingStatus.isFeedingFirst && <Image src={playerTurnDino} alt="" height={35} />}
+                    <p>{getCardDiscardMessage()}</p>
+                </div>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return <CardLayout key={index} card={card} playCard={playCard} />
