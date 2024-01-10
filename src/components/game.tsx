@@ -40,7 +40,6 @@ export function Game({ game }: GameProps) {
         getCardDiscardMessage,
         updatePlayerState,
         feedingStatus,
-        playerOnGoingAction
     } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
@@ -83,8 +82,6 @@ export function Game({ game }: GameProps) {
             </div>
             <div className="flex justify-center row-span-1">
                 <FoodArea />
-                {feedingStatus.isFeedingFirst && <>IS FEEDING FIRST</>}
-                {playerOnGoingAction.action === GameStatus.FEEDING_SPECIES && <>IS CURRENTLY FEEDING</>}
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex flex-row justify-center ">
