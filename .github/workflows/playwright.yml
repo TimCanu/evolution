@@ -19,6 +19,11 @@ jobs:
               run: npx playwright install --with-deps
             - name: Run Playwright tests
               run: npx playwright test
+              env:
+                DB_USERNAME: ${{ secrets.DB_USERNAME }}
+                DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+                DB_CLUSTER: ${{ secrets.DB_CLUSTER }}
+                DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
             - uses: actions/upload-artifact@v3
               if: always()
               with:
