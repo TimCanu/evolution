@@ -2,7 +2,9 @@ import { PlayerEntity } from '@/src/models/player-entity.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { expect, Page } from '@playwright/test'
-import { Card } from '@/src/models/card.model'
+import { assertNumberOfCards } from '@/tests/utils/cards.util'
+import { assertNumberOfSpecies } from '@/tests/utils/species.util'
+import { assertNumberOfHiddenFood } from '@/tests/utils/food.util'
 
 export const createPlayer1 = (): PlayerEntity => {
     return {
@@ -83,46 +85,32 @@ export const createPlayer2 = (): PlayerEntity => {
 }
 
 export const checkFirstPlayerInitialLayout = async (firstPlayerPage: Page): Promise<void> => {
+    await assertNumberOfCards(firstPlayerPage, 4)
+    await assertNumberOfSpecies(firstPlayerPage, 1)
+    await assertNumberOfHiddenFood(firstPlayerPage, 0)
     await expect(firstPlayerPage.getByText('Tim')).toBeVisible()
     await expect(firstPlayerPage.getByAltText('You are the first player to feed')).toBeVisible()
-    await expect(firstPlayerPage.getByTestId('card-3')).toBeVisible()
-    await expect(firstPlayerPage.getByTestId('card-4')).not.toBeAttached()
-    await expect(firstPlayerPage.getByTestId('species-0')).toBeVisible()
     await expect(firstPlayerPage.getByTestId('species-0')).toHaveText('1 1')
-    await expect(firstPlayerPage.getByTestId('species-1')).not.toBeAttached()
     await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
 }
 
-export const hoverCard = async (page: Page, card: Card): Promise<void> => {
-    await expect(page.getByRole('button', { name: 'Add as food' })).toBeHidden()
-    await page.getByText(`${card.name}Add as food${card.description}`).hover()
-    await expect(page.getByRole('button', { name: 'Add as food' })).toBeVisible()
+export const checkSecondPlayerInitialLayout = async (secondPlayerPage: Page): Promise<void> => {
+    await assertNumberOfCards(secondPlayerPage, 4)
+    await assertNumberOfSpecies(secondPlayerPage, 1)
+    await assertNumberOfHiddenFood(secondPlayerPage, 0)
+    await expect(secondPlayerPage.getByText('Aude')).toBeVisible()
+    await expect(secondPlayerPage.getByAltText('The player Aude is the first player to feed')).toBeVisible()
+    await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
 }
 
-export const addCardAsFood = async (
-    page: Page,
-    numberOfSpecies: number,
-    numberOfAddedFood: number,
-    numberOfCards: number
-): Promise<void> => {
-    await expect(page.getByTestId(`hidden-food-${numberOfAddedFood}`)).not.toBeAttached()
+export const finishTurnEvolving = async (page: Page): Promise<void> => {
+    await page.getByRole('button', { name: 'Finish turn' }).click()
 
-    await page.getByRole('button', { name: 'Add as food' }).click()
-
-    await expect(page.getByTestId(`hidden-food-${numberOfAddedFood}`)).toBeVisible()
-    await expect(page.getByText('Choose an action to evolve your species or finish your turn')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Finish turn' })).toBeVisible()
-    await expect(
-        page.getByRole('button', { name: `Increase size of species at position ${numberOfSpecies}` })
-    ).toBeVisible()
-    await expect(
-        page.getByRole('button', { name: `Increase population of species at position ${numberOfSpecies}` })
-    ).toBeVisible()
-    await expect(
-        page.getByRole('button', { name: `Add feature to species at position ${numberOfSpecies}` })
-    ).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Add a new species to the left' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Add a new species to the right' })).toBeVisible()
-    await expect(page.getByTestId(`card-${numberOfCards - 2}`)).toBeVisible()
-    await expect(page.getByTestId(`card-${numberOfCards - 1}`)).not.toBeAttached()
+    await expect(page.getByRole('button', { name: 'Finish turn' })).not.toBeAttached()
+    await expect(page.getByRole('button', { name: /Increase size of species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: /Increase population of species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: /Add feature to species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('button', { name: 'Add a new species to the left' })).not.toBeAttached()
+    await expect(page.getByRole('button', { name: 'Add a new species to the right' })).not.toBeAttached()
+    await expect(page.getByText('Waiting for other players to finish evolving')).toBeVisible()
 }
