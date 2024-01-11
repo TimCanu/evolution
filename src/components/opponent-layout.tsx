@@ -13,7 +13,13 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent }) => {
     return (
         <div className="border border-indigo-600 w-80 h-44 ml-5 text-center">
             <div className="flex gap-4">
-                {opponent.isFirstPlayerToFeed && <Image src={playerTurnDino} alt="" height={35} />}
+                {opponent.isFirstPlayerToFeed && (
+                    <Image
+                        src={playerTurnDino}
+                        alt={`The player ${opponent.name} is the first player to feed`}
+                        height={35}
+                    />
+                )}
                 <div className="mb-2">
                     {opponent.name} {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
                 </div>

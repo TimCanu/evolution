@@ -6,16 +6,20 @@ import { getCardImage } from '@/src/lib/card.service.client'
 
 interface CardProps {
     card: Card
+    index: number
     playCard: (cardId: string) => void
 }
 
-export const CardLayout: FC<CardProps> = ({ card, playCard }) => {
+export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const { canDiscardCard, isAddingFoodStage } = usePlayerActionsContext()
 
     const cardImage = getCardImage(card)
 
     return (
-        <div className="border border-indigo-600 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group">
+        <div
+            data-testid={`card-${index}`}
+            className="border border-indigo-600 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
+        >
             <span className="mb-auto">{card.name}</span>
             <div className="relative self-center">
                 {cardImage && <Image src={cardImage} alt="" height={85} />}

@@ -6,7 +6,13 @@ export const FoodArea: FC = () => {
     return (
         <div className="place-self-center h-64 w-1/3 bg-cyan-500 rounded-[50%] flex flex-row">
             {hiddenFoods.map((_, index) => {
-                return <div data-testid={`hidden-food-${index}`} className="w-10 h-10 bg-sky-800 border mr-5" key={index} />
+                return (
+                    <div
+                        data-testid={`hidden-food-${index}`}
+                        className="w-10 h-10 bg-sky-800 border mr-5"
+                        key={index}
+                    />
+                )
             })}
             {amountOfFood > 0 &&
                 [...Array(amountOfFood)].map((_, index) => {

@@ -9,6 +9,7 @@ interface CardProps {
     canShowAddSpeciesLeftButton: boolean
     canShowAddSpeciesRightButton: boolean
     gameId: string
+    index: number
     playerId: string
     species: Species
 }
@@ -16,6 +17,7 @@ interface CardProps {
 export const SpeciesLayout: FC<CardProps> = ({
     canShowAddSpeciesLeftButton,
     canShowAddSpeciesRightButton,
+    index,
     gameId,
     playerId,
     species,
@@ -44,12 +46,13 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        Add a new species here
+                        Add a new species to the left
                     </button>
                 )}
                 {canActionsBeShown && species.size < 6 && (
                     <button
                         className="mb-5 mx-2"
+                        aria-label={`Increase size of species at position ${index + 1}`}
                         onClick={() => {
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
@@ -57,16 +60,30 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        +
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 30 30"
+                            fill="#FA5252"
+                        >
+                            <path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M21,16h-5v5 c0,0.553-0.448,1-1,1s-1-0.447-1-1v-5H9c-0.552,0-1-0.447-1-1s0.448-1,1-1h5V9c0-0.553,0.448-1,1-1s1,0.447,1,1v5h5 c0.552,0,1,0.447,1,1S21.552,16,21,16z"></path>
+                        </svg>
                     </button>
                 )}
-                <div className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center">
-                    <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
+                <div
+                    data-testid={`species-${index}`}
+                    className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center"
+                >
+                    <span className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
                         {species.size}
                     </span>
                     {canActionsBeShown && species.features.length < 3 && (
                         <button
-                            className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            className="flex justify-center items-center"
+                            aria-label={`Add feature to species at position ${index + 1}`}
                             onClick={() => {
                                 updatePlayerState({
                                     action: EVOLVING_STAGES.ADD_SPECIES_FEATURE,
@@ -74,7 +91,17 @@ export const SpeciesLayout: FC<CardProps> = ({
                                 })
                             }}
                         >
-                            +
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                x="0px"
+                                y="0px"
+                                width="32"
+                                height="32"
+                                viewBox="0 0 50 50"
+                                fill="#737373"
+                            >
+                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"></path>
+                            </svg>
                         </button>
                     )}
                     {isFeedingStage() && species.foodEaten < species.population && (
@@ -99,6 +126,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                 {canActionsBeShown && species.population < 6 && (
                     <button
                         className="mb-5 mx-2"
+                        aria-label={`Increase population of species at position ${index + 1}`}
                         onClick={() =>
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
@@ -106,7 +134,17 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }
                     >
-                        +
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            x="0px"
+                            y="0px"
+                            width="32"
+                            height="32"
+                            viewBox="0 0 30 30"
+                            fill="#12B886"
+                        >
+                            <path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M21,16h-5v5 c0,0.553-0.448,1-1,1s-1-0.447-1-1v-5H9c-0.552,0-1-0.447-1-1s0.448-1,1-1h5V9c0-0.553,0.448-1,1-1s1,0.447,1,1v5h5 c0.552,0,1,0.447,1,1S21.552,16,21,16z"></path>
+                        </svg>
                     </button>
                 )}
                 {canActionsBeShown && canShowAddSpeciesRightButton && (
@@ -118,7 +156,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        Add a new species here
+                        Add a new species to the right
                     </button>
                 )}
             </div>
