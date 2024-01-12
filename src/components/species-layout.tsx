@@ -4,6 +4,8 @@ import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { feedSpecies } from '@/src/lib/species.service'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
+import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -68,17 +70,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0px"
-                            y="0px"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 30 30"
-                            fill="#FA5252"
-                        >
-                            <path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M21,16h-5v5 c0,0.553-0.448,1-1,1s-1-0.447-1-1v-5H9c-0.552,0-1-0.447-1-1s0.448-1,1-1h5V9c0-0.553,0.448-1,1-1s1,0.447,1,1v5h5 c0.552,0,1,0.447,1,1S21.552,16,21,16z"></path>
-                        </svg>
+                        <PlusIcon colorHex="#FA5252" />
                     </button>
                 )}
                 <div
@@ -99,25 +91,16 @@ export const SpeciesLayout: FC<CardProps> = ({
                                 })
                             }}
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0px"
-                                y="0px"
-                                width="32"
-                                height="32"
-                                viewBox="0 0 50 50"
-                                fill="#737373"
-                            >
-                                <path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 24 13 L 24 24 L 13 24 L 13 26 L 24 26 L 24 37 L 26 37 L 26 26 L 37 26 L 37 24 L 26 24 L 26 13 L 24 13 z"></path>
-                            </svg>
+                            <PlusIcon colorHex="#737373" />
                         </button>
                     )}
                     {isFeedingStage() && species.foodEaten < species.population && (
                         <button
-                            className="border border-indigo-600 bg-amber-400 rounded-full w-8 h-8 flex justify-center items-center"
+                            className="flex justify-center items-center"
+                            aria-label="Feed plants to this species"
                             onClick={feed}
                         >
-                            FEED
+                            <FeedPlantsIcon />
                         </button>
                     )}
 
@@ -142,17 +125,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            x="0px"
-                            y="0px"
-                            width="32"
-                            height="32"
-                            viewBox="0 0 30 30"
-                            fill="#12B886"
-                        >
-                            <path d="M15,3C8.373,3,3,8.373,3,15c0,6.627,5.373,12,12,12s12-5.373,12-12C27,8.373,21.627,3,15,3z M21,16h-5v5 c0,0.553-0.448,1-1,1s-1-0.447-1-1v-5H9c-0.552,0-1-0.447-1-1s0.448-1,1-1h5V9c0-0.553,0.448-1,1-1s1,0.447,1,1v5h5 c0.552,0,1,0.447,1,1S21.552,16,21,16z"></path>
-                        </svg>
+                        <PlusIcon colorHex="#12B886" />
                     </button>
                 )}
                 {canActionsBeShown && canShowAddSpeciesRightButton && (
