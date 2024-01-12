@@ -32,8 +32,16 @@ export const SpeciesLayout: FC<CardProps> = ({
     return (
         <div className="flex flex-col self-end">
             <div className="flex self-center mb-2">
-                {species.features.map((feature, index) => {
-                    return <FeatureLayout key={index} feature={feature} speciesId={species.id} />
+                {species.features.map((feature, featureIndex) => {
+                    return (
+                        <FeatureLayout
+                            key={featureIndex}
+                            speciesIndex={index}
+                            featureIndex={featureIndex}
+                            feature={feature}
+                            speciesId={species.id}
+                        />
+                    )
                 })}
             </div>
             <div className="flex">

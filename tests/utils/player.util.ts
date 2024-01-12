@@ -103,7 +103,7 @@ export const checkSecondPlayerInitialLayout = async (secondPlayerPage: Page): Pr
     await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
 }
 
-export const finishTurnEvolving = async (page: Page): Promise<void> => {
+const finishTurnEvolving = async (page: Page): Promise<void> => {
     await page.getByRole('button', { name: 'Finish turn' }).click()
 
     await expect(page.getByRole('button', { name: 'Finish turn' })).not.toBeAttached()
@@ -112,5 +112,14 @@ export const finishTurnEvolving = async (page: Page): Promise<void> => {
     await expect(page.getByRole('button', { name: /Add feature to species at position */ })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Add a new species to the left' })).not.toBeAttached()
     await expect(page.getByRole('button', { name: 'Add a new species to the right' })).not.toBeAttached()
+}
+
+export const finishTurnEvolvingAndWaitForOthersToEvolve = async (page: Page): Promise<void> => {
+    await finishTurnEvolving(page)
     await expect(page.getByText('Waiting for other players to finish evolving')).toBeVisible()
+}
+
+export const finishTurnEvolvingAndWaitForOthersToFeed = async (page: Page): Promise<void> => {
+    await finishTurnEvolving(page)
+    await expect(page.getByText('Waiting for other players to feed')).toBeVisible()
 }

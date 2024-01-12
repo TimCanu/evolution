@@ -6,9 +6,17 @@ import {
     createPlayer1,
     createPlayer2,
     finishTurnEvolving,
+    finishTurnEvolvingAndWaitForOthersToEvolve,
+    finishTurnEvolvingAndWaitForOthersToFeed,
 } from '@/tests/utils/player.util'
 import { addCardAsFood } from '@/tests/utils/cards.util'
-import { addSpeciesToTheLeft, increaseSpeciesSize } from '@/tests/utils/species.util'
+import {
+    addSpeciesFeature,
+    addSpeciesToTheLeft,
+    addSpeciesToTheRight,
+    increaseSpeciesPopulation,
+    increaseSpeciesSize,
+} from '@/tests/utils/species.util'
 import { assertNumberOfHiddenFood } from '@/tests/utils/food.util'
 import { createGame } from '@/tests/utils/game.util'
 
@@ -30,5 +38,13 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
 
     await addSpeciesToTheLeft(firstPlayerPage, 1, 3, firstPlayer.cards[1])
     await increaseSpeciesSize(firstPlayerPage, 1, 2, 2, firstPlayer.cards[2])
-    await finishTurnEvolving(firstPlayerPage)
+    await increaseSpeciesPopulation(firstPlayerPage, 1, 2, 1, firstPlayer.cards[3])
+    await finishTurnEvolvingAndWaitForOthersToEvolve(firstPlayerPage)
+
+    await addCardAsFood(secondPlayerPage, 1, 1, 4, secondPlayer.cards[3])
+    await assertNumberOfHiddenFood(firstPlayerPage, 2)
+
+    await addSpeciesToTheRight(secondPlayerPage, 1, 3, secondPlayer.cards[1])
+    await addSpeciesFeature(secondPlayerPage, 1, 2, 2, secondPlayer.cards[0])
+    await finishTurnEvolvingAndWaitForOthersToFeed(secondPlayerPage)
 })

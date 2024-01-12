@@ -43,7 +43,7 @@ export const PUT = async (
 
         const players = game.players.map((player) => {
             if (player.id === playerToUpdate.id) {
-                return playerToUpdate
+                return { ...playerToUpdate, newSpeciesList: playerToUpdate.species, species: player.species }
             }
             return player
         })
@@ -195,7 +195,8 @@ const computeDataForFeedingStage = (
         const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
         const status =
             player.id === firstPlayerToFeedId ? GameStatus.FEEDING_SPECIES : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
-        return { ...playerUpdatedWithSpecialActions, status }
+        const species = player.newSpeciesList ?? player.species
+        return { ...playerUpdatedWithSpecialActions, status, species: species, newSpeciesList: undefined }
     })
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
         return previousValue + currentAmountOfFoods
