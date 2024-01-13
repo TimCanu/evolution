@@ -1,8 +1,13 @@
 import { PlayerEntity } from '@/src/models/player-entity.model'
-import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { expect, Page } from '@playwright/test'
-import { assertNumberOfCards } from '@/tests/utils/cards.util'
+import {
+    assertNumberOfCards,
+    buildCarnivoreCard,
+    buildFertileCard,
+    buildForagerCard,
+    buildLongNeckCard,
+} from '@/tests/utils/cards.util'
 import { assertNumberOfSpecies } from '@/tests/utils/species.util'
 import { assertNumberOfHiddenFood } from '@/tests/utils/food.util'
 
@@ -12,34 +17,10 @@ export const createPlayer1 = (): PlayerEntity => {
         name: 'Aude',
         species: [{ id: 'specie1', size: 1, population: 1, features: [], foodEaten: 0 }],
         cards: [
-            {
-                id: 'firstPlayerCard1',
-                name: 'Long neck',
-                featureKey: FeatureKey.LONG_NECK,
-                description: 'Long neck card description',
-                foodNumber: 4,
-            },
-            {
-                id: 'firstPlayerCard2',
-                name: 'Fertile',
-                featureKey: FeatureKey.FERTILE,
-                description: 'Fertile card description',
-                foodNumber: 3,
-            },
-            {
-                id: 'firstPlayerCard3',
-                name: 'Forager',
-                featureKey: FeatureKey.FORAGER,
-                description: 'Forager card description',
-                foodNumber: 2,
-            },
-            {
-                id: 'firstPlayerCard4',
-                name: 'Carnivore',
-                featureKey: FeatureKey.CARNIVORE,
-                description: 'Carnivore card description',
-                foodNumber: -1,
-            },
+            buildLongNeckCard('firstPlayerCard1', 4),
+            buildFertileCard('firstPlayerCard2', 3),
+            buildForagerCard('firstPlayerCard3', 2),
+            buildCarnivoreCard('firstPlayerCard4', -1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
     }
@@ -51,34 +32,10 @@ export const createPlayer2 = (): PlayerEntity => {
         name: 'Tim',
         species: [{ id: 'specie2', size: 1, population: 1, features: [], foodEaten: 0 }],
         cards: [
-            {
-                id: 'secondPlayerCard1',
-                name: 'Long neck',
-                featureKey: FeatureKey.LONG_NECK,
-                description: 'Long neck card description',
-                foodNumber: 1,
-            },
-            {
-                id: 'secondPlayerCard2',
-                name: 'Fertile',
-                featureKey: FeatureKey.FERTILE,
-                description: 'Fertile card description',
-                foodNumber: 1,
-            },
-            {
-                id: 'secondPlayerCard3',
-                name: 'Forager',
-                featureKey: FeatureKey.FORAGER,
-                description: 'Forager card description',
-                foodNumber: 1,
-            },
-            {
-                id: 'secondPlayerCard4',
-                name: 'Carnivore',
-                featureKey: FeatureKey.CARNIVORE,
-                description: 'Carnivore card description',
-                foodNumber: 1,
-            },
+            buildLongNeckCard('secondPlayerCard1', 1),
+            buildFertileCard('secondPlayerCard2', 1),
+            buildForagerCard('secondPlayerCard3', 1),
+            buildCarnivoreCard('secondPlayerCard4', 1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
     }
@@ -122,4 +79,6 @@ export const finishTurnEvolvingAndWaitForOthersToEvolve = async (page: Page): Pr
 export const finishTurnEvolvingAndWaitForOthersToFeed = async (page: Page): Promise<void> => {
     await finishTurnEvolving(page)
     await expect(page.getByText('Waiting for other players to feed')).toBeVisible()
+    await expect(page.getByTestId('species-0').getByText('0 / 1')).toBeVisible()
+    await expect(page.getByTestId('species-1').getByText('0 / 1')).toBeVisible()
 }
