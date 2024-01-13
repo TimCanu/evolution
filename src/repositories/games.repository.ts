@@ -27,6 +27,7 @@ export const getOpponents = (players: PlayerEntity[], playerId: string, firstPla
                     cards: player.cards,
                     isFirstPlayerToFeed,
                     status: player.status,
+                    numberOfFoodEaten: player.numberOfFoodEaten
                 },
             ]
         }

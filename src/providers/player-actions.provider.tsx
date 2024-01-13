@@ -10,6 +10,7 @@ import { Card } from '@/src/models/card.model'
 interface PlayerActionsContextResult {
     playerOnGoingAction: PlayerActionsState
     feedingStatus: PlayerFeedingState
+    numberOfFoodEaten: number
     isAddingFoodStage: () => boolean
     isEvolvingStage: () => boolean
     isFeedingStage: () => boolean
@@ -23,6 +24,7 @@ interface PlayerActionsContextProps {
     gameId: string
     playerId: string
     isFeedingFirst: boolean
+    numberOfFoodEatenByPlayer: number
 }
 
 export enum EVOLVING_STAGES {
@@ -60,6 +62,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     status,
     gameId,
     playerId,
+                                                                                                           numberOfFoodEatenByPlayer,
     isFeedingFirst,
 }) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({
@@ -68,6 +71,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     const [feedingStatus, setFeedingStatus] = useState<PlayerFeedingState>({
         isFeedingFirst,
     })
+    const [numberOfFoodEaten, setNumberOfFoodEaten] = useState<number>(numberOfFoodEatenByPlayer)
 
     useEffect(() => {
         const playerChannel = PusherInstance.getPlayerChannel(gameId, playerId)
@@ -79,6 +83,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
             setFeedingStatus({
                 isFeedingFirst: data.isFeedingFirst,
             })
+            setNumberOfFoodEaten(data.numberOfFoodEaten)
         })
     }, [gameId, playerId])
 
@@ -123,6 +128,8 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
                 return 'Choose the card to add as a feature for the selected species'
             case GameStatus.FEEDING_SPECIES:
                 return 'Choose the species you would like to feed'
+            case GameStatus.WAITING_FOR_PLAYERS_TO_JOIN:
+                return 'Waiting for other players to join'
             case GameStatus.WAITING_FOR_PLAYERS_TO_FEED:
                 return 'Waiting for other players to feed'
             case GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING:
@@ -138,6 +145,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     const res = {
         playerOnGoingAction,
         feedingStatus,
+        numberOfFoodEaten,
         canDiscardCard,
         getCardDiscardMessage,
         isAddingFoodStage,

@@ -6,7 +6,8 @@ export interface PlayerEntity {
     id: string
     name: string
     species: Species[]
-    newSpeciesList?: Species[]
+    newSpeciesList: Species[]
     cards: Card[]
     status: GameStatus
+    numberOfFoodEaten: number
 }

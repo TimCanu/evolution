@@ -45,8 +45,10 @@ export const POST = async (
         ) {
             speciesToUpdate.foodEaten += 2
             newAmountOfFood = newAmountOfFood - 1
+            playerToUpdate.numberOfFoodEaten += 2
         } else {
             speciesToUpdate.foodEaten++
+            playerToUpdate.numberOfFoodEaten += 1
         }
 
         const noMoreFoodAvailable = newAmountOfFood <= 0
@@ -91,7 +93,8 @@ export const POST = async (
                         params.gameId,
                         player.id,
                         GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-                        endOfFeedingStageData.firstPlayerToFeedId
+                        endOfFeedingStageData.firstPlayerToFeedId,
+                        player.numberOfFoodEaten
                     )
                 )
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
@@ -111,7 +114,7 @@ export const POST = async (
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
                 events.push(
-                    buildUpdatePlayerStatusEvent(params.gameId, player.id, player.status, game.firstPlayerToFeedId)
+                    buildUpdatePlayerStatusEvent(params.gameId, player.id, player.status, game.firstPlayerToFeedId, player.numberOfFoodEaten)
                 )
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
             })

@@ -39,6 +39,8 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
             cards: newPlayerCards,
             status: GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
+            newSpeciesList: [],
+            numberOfFoodEaten: 0
         }
 
         const areAllPlayersConnected = game.nbOfPlayers === game.players.length + 1
@@ -74,7 +76,8 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
                         params.gameId,
                         player.id,
                         GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-                        firstPlayerToFeedId
+                        firstPlayerToFeedId,
+                        player.numberOfFoodEaten
                     )
                 )
             })

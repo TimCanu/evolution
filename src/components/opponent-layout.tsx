@@ -21,7 +21,8 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent }) => {
                     />
                 )}
                 <div className="mb-2">
-                    {opponent.name} {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
+                    <span>{opponent.name} - Number of points: {opponent.numberOfFoodEaten} {opponent.status === GameStatus.FEEDING_SPECIES && <> -
+                        Is feeding</>}</span>
                 </div>
             </div>
 
@@ -30,10 +31,12 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent }) => {
                     return (
                         <div key={index} className="flex flex-col w-36">
                             <div className="flex justify-around">
-                                <div className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
+                                <div
+                                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
                                     {species.size}
                                 </div>
-                                <div className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
+                                <div
+                                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
                                     {species.population}
                                 </div>
                             </div>
