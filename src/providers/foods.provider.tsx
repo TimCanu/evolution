@@ -30,7 +30,6 @@ export const FoodsProvider: FunctionComponent<PropsWithChildren<FoodsContextProp
         const channel = PusherInstance.getGameChannel(gameId)
 
         channel.bind(UPDATE_FOOD_STATUS, function (data: PushUpdateFoodData) {
-            console.log(data)
             setHiddenFoods(data.hiddenFoods)
             setAmountOfFood(data.amountOfFood)
         })
