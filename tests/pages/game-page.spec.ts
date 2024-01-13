@@ -12,7 +12,7 @@ import { addCardAsFood } from '@/tests/utils/cards.util'
 import {
     addSpeciesFeature,
     addSpeciesToTheLeft,
-    addSpeciesToTheRight,
+    addSpeciesToTheRight, feedLastSpecies,
     feedSpecies,
     increaseSpeciesPopulation,
     increaseSpeciesSize,
@@ -55,19 +55,18 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
     await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
     await feedSpecies(secondPlayerPage, 1, 2, 1, 0)
 
-    // await expect(secondPlayerPage.getByTestId('species-0').getByText('0 / 1')).toBeVisible()
-    // await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
-    // await expect(firstPlayerPage.getByTestId('species-1').getByText('0 / 2')).toBeVisible()
-    // await feedSpecies(firstPlayerPage, 0, 2, 2, 0)
-    //
-    // await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
-    // await expect(firstPlayerPage.getByTestId('species-1').getByText('1 / 2')).toBeVisible()
-    // await feedSpecies(secondPlayerPage, 0, 2, 1, 0)
-    //
-    // await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
-    // await expect(firstPlayerPage.getByTestId('species-1').getByText('1 / 2')).toBeVisible()
-    // await feedSpecies(firstPlayerPage, 0, 2, 2, 1)
-    //
-    // await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
-    // await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
+    await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
+    await expect(secondPlayerPage.getByTestId('species-0').getByText('0 / 1')).toBeVisible()
+    await feedSpecies(firstPlayerPage, 1, 1, 2, 0)
+
+    await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
+    await expect(firstPlayerPage.getByTestId('species-1').getByText('1 / 2')).toBeVisible()
+    await feedSpecies(secondPlayerPage, 0, 1, 1, 0)
+
+    await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
+    await expect(firstPlayerPage.getByTestId('species-1').getByText('1 / 2')).toBeVisible()
+    await feedLastSpecies(firstPlayerPage, 1, 1, 2, 1)
+
+    await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
+    await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
 })
