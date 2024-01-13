@@ -195,8 +195,7 @@ const computeDataForFeedingStage = (
         const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
         const status =
             player.id === firstPlayerToFeedId ? GameStatus.FEEDING_SPECIES : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
-        const species = player.newSpeciesList ?? player.species
-        return { ...playerUpdatedWithSpecialActions, status, species: species, newSpeciesList: undefined }
+        return { ...playerUpdatedWithSpecialActions, status }
     })
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
         return previousValue + currentAmountOfFoods
@@ -237,10 +236,11 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
 }
 
 const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {
-    player.species = applyLongNeckActions(player.species)
+    player.species = applyLongNeckActions(player.newSpeciesList)
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
     }
+    player.newSpeciesList = []
     return player
 }
 
