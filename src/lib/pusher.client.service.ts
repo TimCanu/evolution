@@ -29,9 +29,6 @@ export class PusherInstance {
     public static getPlayerChannel(gameId: string, playerId: string): Channel {
         const channel = PusherInstance.playerChannels.get(playerId)
         if (!channel) {
-            const pusher = new Pusher('74ece9a39852df583f3d', {
-                cluster: 'eu',
-            })
             const newChannel = PusherInstance.getPusher().subscribe(`game-${gameId}-player-${playerId}`)
             PusherInstance.playerChannels.set(playerId, newChannel)
             return newChannel

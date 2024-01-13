@@ -6,14 +6,19 @@ import { usePlayerActionsContext } from '@/src/providers/player-actions.provider
 interface CardProps {
     feature: Feature
     speciesId: string
+    speciesIndex: number
+    featureIndex: number
 }
 
-export const FeatureLayout: FC<CardProps> = ({ feature, speciesId }) => {
+export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex, featureIndex }) => {
     const { removeFeature } = useSpeciesContext()
     const { isEvolvingStage } = usePlayerActionsContext()
 
     return (
-        <div className="border border-indigo-600 w-24 h-36 ml-2 flex flex-col">
+        <div
+            data-testid={`s-${speciesIndex}-feature-${featureIndex}`}
+            className="border border-indigo-600 w-24 h-36 ml-2 flex flex-col"
+        >
             <div className="mb-auto flex justify-between">
                 <span>{feature.name}</span>
                 {isEvolvingStage() && (

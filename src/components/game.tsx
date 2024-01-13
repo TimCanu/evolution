@@ -91,6 +91,7 @@ export function Game({ game }: GameProps) {
                         return (
                             <SpeciesLayout
                                 key={index}
+                                index={index}
                                 canShowAddSpeciesLeftButton={isFirstSpecies}
                                 canShowAddSpeciesRightButton={isLastSpecies}
                                 species={species}
@@ -109,12 +110,14 @@ export function Game({ game }: GameProps) {
                     </button>
                 )}
                 <div className="self-center flex">
-                    {feedingStatus.isFeedingFirst && <Image src={playerTurnDino} alt="" height={35} />}
+                    {feedingStatus.isFeedingFirst && (
+                        <Image src={playerTurnDino} alt="You are the first player to feed" height={35} />
+                    )}
                     <p>{getCardDiscardMessage()}</p>
                 </div>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
-                        return <CardLayout key={index} card={card} playCard={playCard} />
+                        return <CardLayout key={index} index={index} card={card} playCard={playCard} />
                     })}
                 </div>
             </div>
