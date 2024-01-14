@@ -23,6 +23,7 @@ export const createPlayer1 = (): PlayerEntity => {
             buildCarnivoreCard('firstPlayerCard4', -1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+        newSpeciesList: []
     }
 }
 
@@ -38,6 +39,7 @@ export const createPlayer2 = (): PlayerEntity => {
             buildCarnivoreCard('secondPlayerCard4', 1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+        newSpeciesList: []
     }
 }
 
@@ -80,5 +82,5 @@ export const finishTurnEvolvingAndWaitForOthersToFeed = async (page: Page): Prom
     await finishTurnEvolving(page)
     await expect(page.getByText('Waiting for other players to feed')).toBeVisible()
     await expect(page.getByTestId('species-0').getByText('0 / 1')).toBeVisible()
-    await expect(page.getByTestId('species-1').getByText('0 / 1')).toBeVisible()
+    await expect(page.getByTestId('species-1').getByText('1 / 1')).toBeVisible()
 }

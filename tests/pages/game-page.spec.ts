@@ -59,24 +59,23 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
 
     await feedSpecies(firstPlayerPage, 0, 2, 1, 0)
     await expect(firstPlayerPage.getByTestId('opponent-0')).toHaveText('Tim - Is feeding1111Long neck')
+    await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
     await assertNumberOfFoodInWaterPlan(firstPlayerPage, 4)
     await assertNumberOfFoodInWaterPlan(secondPlayerPage, 4)
 
-    await feedSpecies(secondPlayerPage, 1, 2, 1, 0)
+    await feedSpecies(secondPlayerPage, 0, 1, 1, 0)
+    await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
     await assertNumberOfFoodInWaterPlan(firstPlayerPage, 3)
     await assertNumberOfFoodInWaterPlan(secondPlayerPage, 3)
 
     await feedSpecies(firstPlayerPage, 1, 1, 2, 0)
+    await expect(firstPlayerPage.getByText('Choose the species you would like to feed')).toBeVisible()
     await assertNumberOfFoodInWaterPlan(firstPlayerPage, 2)
     await assertNumberOfFoodInWaterPlan(secondPlayerPage, 2)
 
-    await feedSpecies(secondPlayerPage, 0, 1, 1, 0)
+    await feedLastSpecies(firstPlayerPage, 1, 1, 2, 1)
     await assertNumberOfFoodInWaterPlan(firstPlayerPage, 1)
     await assertNumberOfFoodInWaterPlan(secondPlayerPage, 1)
-
-    await feedLastSpecies(firstPlayerPage, 1, 1, 2, 1)
-    await assertNumberOfFoodInWaterPlan(firstPlayerPage, 0)
-    await assertNumberOfFoodInWaterPlan(secondPlayerPage, 0)
 
     await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
     await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
