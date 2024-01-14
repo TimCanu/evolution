@@ -23,7 +23,8 @@ export const createPlayer1 = (): PlayerEntity => {
             buildCarnivoreCard('firstPlayerCard4', -1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-        newSpeciesList: []
+        newSpeciesList: [],
+        numberOfFoodEaten: 0
     }
 }
 
@@ -39,7 +40,8 @@ export const createPlayer2 = (): PlayerEntity => {
             buildCarnivoreCard('secondPlayerCard4', 1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-        newSpeciesList: []
+        newSpeciesList: [],
+        numberOfFoodEaten: 0
     }
 }
 
