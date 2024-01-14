@@ -114,7 +114,13 @@ export const POST = async (
                 const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
                 events.push(event)
                 events.push(
-                    buildUpdatePlayerStatusEvent(params.gameId, player.id, player.status, game.firstPlayerToFeedId, player.numberOfFoodEaten)
+                    buildUpdatePlayerStatusEvent(
+                        params.gameId,
+                        player.id,
+                        player.status,
+                        game.firstPlayerToFeedId,
+                        player.numberOfFoodEaten
+                    )
                 )
                 events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
             })

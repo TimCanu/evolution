@@ -24,7 +24,7 @@ export const createPlayer1 = (): PlayerEntity => {
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
         newSpeciesList: [],
-        numberOfFoodEaten: 0
+        numberOfFoodEaten: 0,
     }
 }
 
@@ -41,7 +41,7 @@ export const createPlayer2 = (): PlayerEntity => {
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
         newSpeciesList: [],
-        numberOfFoodEaten: 0
+        numberOfFoodEaten: 0,
     }
 }
 

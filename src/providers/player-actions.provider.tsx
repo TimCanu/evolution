@@ -62,7 +62,7 @@ export const PlayerActionsProvider: FunctionComponent<PropsWithChildren<PlayerAc
     status,
     gameId,
     playerId,
-                                                                                                           numberOfFoodEatenByPlayer,
+    numberOfFoodEatenByPlayer,
     isFeedingFirst,
 }) => {
     const [playerOnGoingAction, setPlayerActions] = useState<PlayerActionsState>({

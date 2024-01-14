@@ -6,7 +6,12 @@ export const assertNumberOfSpecies = async (page: Page, numberOfSpecies: number)
     await expect(page.getByTestId(/species-*/)).toHaveCount(numberOfSpecies)
 }
 
-export const assertSpeciesFoodEaten = async (page: Page, speciesIndex: number, population: number, foodEaten: number): Promise<void> => {
+export const assertSpeciesFoodEaten = async (
+    page: Page,
+    speciesIndex: number,
+    population: number,
+    foodEaten: number
+): Promise<void> => {
     await expect(page.getByTestId(`species-${speciesIndex}`).getByText(`${foodEaten} / ${population}`)).toBeVisible()
 }
 

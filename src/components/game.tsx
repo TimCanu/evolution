@@ -40,7 +40,7 @@ export function Game({ game }: GameProps) {
         getCardDiscardMessage,
         updatePlayerState,
         feedingStatus,
-        numberOfFoodEaten
+        numberOfFoodEaten,
     } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
