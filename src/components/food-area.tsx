@@ -18,6 +18,7 @@ export const FoodArea: FC = () => {
                 [...Array(amountOfFood)].map((_, index) => {
                     return (
                         <div
+                            data-testid="food-element"
                             className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
                             key={index}
                         />

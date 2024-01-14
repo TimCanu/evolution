@@ -145,6 +145,7 @@ export const feedSpecies = async (
     await expect(page.getByRole('button', { name: 'Feed plants to this species' })).toHaveCount(numberOfSpeciesNotFed)
     await page.getByTestId(`species-${speciesIndex}`).getByRole('button', { name: 'Feed plants to this species' }).click()
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten + 1)
+    await expect(page.getByText('Waiting for other players to feed')).toBeVisible()
 }
 
 export const feedLastSpecies = async (
