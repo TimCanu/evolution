@@ -22,10 +22,10 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, index }) => 
                     />
                 )}
                 <div className="mb-2">
-                    <span>
+                    <p>
                         {opponent.name} - Number of points: {opponent.numberOfFoodEaten}{' '}
                         {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
-                    </span>
+                    </p>
                 </div>
             </div>
 

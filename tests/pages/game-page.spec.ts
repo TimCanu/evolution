@@ -12,7 +12,8 @@ import { addCardAsFood } from '@/tests/utils/cards.util'
 import {
     addSpeciesFeature,
     addSpeciesToTheLeft,
-    addSpeciesToTheRight, feedLastSpecies,
+    addSpeciesToTheRight,
+    feedLastSpecies,
     feedSpecies,
     increaseSpeciesPopulation,
     increaseSpeciesSize,
