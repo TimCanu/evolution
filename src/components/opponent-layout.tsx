@@ -7,11 +7,12 @@ import Image from 'next/image'
 
 interface OpponentLayoutProps {
     opponent: Opponent
+    index: number
 }
 
-export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent }) => {
+export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, index }) => {
     return (
-        <div className="border border-indigo-600 w-80 h-44 ml-5 text-center">
+        <div data-testid={`opponent-${index}`} className="border border-indigo-600 w-80 h-44 ml-5 text-center">
             <div className="flex gap-4">
                 {opponent.isFirstPlayerToFeed && (
                     <Image

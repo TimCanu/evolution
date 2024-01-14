@@ -49,7 +49,7 @@ export const checkFirstPlayerInitialLayout = async (firstPlayerPage: Page): Prom
     await assertNumberOfCards(firstPlayerPage, 4)
     await assertNumberOfSpecies(firstPlayerPage, 1)
     await assertNumberOfHiddenFood(firstPlayerPage, 0)
-    await expect(firstPlayerPage.getByText('Tim')).toBeVisible()
+    await expect(firstPlayerPage.getByTestId('opponent-0')).toHaveText('Tim 11')
     await expect(firstPlayerPage.getByAltText('You are the first player to feed')).toBeVisible()
     await expect(firstPlayerPage.getByTestId('species-0')).toHaveText('1 1')
     await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
@@ -59,7 +59,7 @@ export const checkSecondPlayerInitialLayout = async (secondPlayerPage: Page): Pr
     await assertNumberOfCards(secondPlayerPage, 4)
     await assertNumberOfSpecies(secondPlayerPage, 1)
     await assertNumberOfHiddenFood(secondPlayerPage, 0)
-    await expect(secondPlayerPage.getByText('Aude')).toBeVisible()
+    await expect(secondPlayerPage.getByTestId('opponent-0')).toHaveText('Aude 11')
     await expect(secondPlayerPage.getByAltText('The player Aude is the first player to feed')).toBeVisible()
     await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
 }
