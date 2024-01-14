@@ -196,8 +196,7 @@ const computeDataForFeedingStage = (
         const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
         const status =
             player.id === firstPlayerToFeedId ? GameStatus.FEEDING_SPECIES : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
-        const species = player.newSpeciesList ?? player.species
-        return { ...playerUpdatedWithSpecialActions, status, species: species, newSpeciesList: [] }
+        return { ...playerUpdatedWithSpecialActions, status }
     })
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
         return previousValue + currentAmountOfFoods
@@ -244,6 +243,7 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
     }
+    player.newSpeciesList = []
     return player
 }
 
