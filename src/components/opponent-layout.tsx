@@ -21,35 +21,44 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                         height={20}
                     />
                 )}
-                <span
-                    aria-label={`Opponent's at index ${opponentIndex} name is ${opponent.name}`}>{opponent.name}</span>
-                <span role="status"
-                      className="mx-4">Number of points: {opponent.numberOfFoodEaten} {opponent.status === GameStatus.FEEDING_SPECIES && <> -
-                    Is feeding</>}</span>
+                <span aria-label={`Opponent's at index ${opponentIndex} name is ${opponent.name}`}>
+                    {opponent.name}
+                </span>
+                <span role="status" className="mx-4">
+                    Number of points: {opponent.numberOfFoodEaten}{' '}
+                    {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
+                </span>
             </h1>
 
             <ul className="flex justify-around">
                 {opponent.species.map((species, speciesIndex) => {
                     return (
-                        <li key={speciesIndex}
-                            className="flex flex-col w-36">
+                        <li key={speciesIndex} className="flex flex-col w-36">
                             <p className="flex justify-around mb-2">
                                 <span
                                     aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${species.size}`}
-                                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
+                                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center"
+                                >
                                     {species.size}
                                 </span>
                                 <span
                                     aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${species.population}`}
-                                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
+                                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                                >
                                     {species.population}
                                 </span>
                             </p>
                             <ul>
                                 {species.features.map((feature, index) => {
-                                    return <OpponentFeatureLayout key={index} opponentIndex={opponentIndex}
-                                                                  speciesIndex={speciesIndex} index={index}
-                                                                  feature={feature} />
+                                    return (
+                                        <OpponentFeatureLayout
+                                            key={index}
+                                            opponentIndex={opponentIndex}
+                                            speciesIndex={speciesIndex}
+                                            index={index}
+                                            feature={feature}
+                                        />
+                                    )
                                 })}
                             </ul>
                         </li>

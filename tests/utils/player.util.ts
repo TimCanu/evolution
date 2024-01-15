@@ -45,17 +45,27 @@ export const createPlayer2 = (): PlayerEntity => {
     }
 }
 
-export const checkPlayerInitialLayout = async (page: Page, opponentName: string, isFirstPlayerToFeed: boolean): Promise<void> => {
+export const checkPlayerInitialLayout = async (
+    page: Page,
+    opponentName: string,
+    isFirstPlayerToFeed: boolean
+): Promise<void> => {
     await assertNumberOfCards(page, 4)
     await assertNumberOfSpecies(page, 1)
     await assertNumberOfHiddenFood(page, 0)
 
     const opponent = page.getByRole('list').nth(0).getByRole('listitem').nth(0)
-    await expect(opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)).toHaveText(opponentName)
+    await expect(
+        opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)
+    ).toHaveText(opponentName)
     if (isFirstPlayerToFeed) {
         await expect(opponent.getByRole('heading').getByRole('img')).not.toBeAttached()
     } else {
-        await expect(opponent.getByRole('heading').getByRole('img', { name: `The player ${opponentName} is the first player to feed` })).toBeVisible()
+        await expect(
+            opponent
+                .getByRole('heading')
+                .getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+        ).toBeVisible()
     }
     await expect(opponent.getByRole('status')).toHaveText('Number of points: 0')
     await checkOpponentSpecies(page, 0, 0, 1, 1)
@@ -63,13 +73,26 @@ export const checkPlayerInitialLayout = async (page: Page, opponentName: string,
 }
 
 export const checkOpponentStatus = async (page: Page, numberOfPoints: number, isFeeding: boolean): Promise<void> => {
-    await expect(page.getByRole('list').nth(0).getByRole('listitem').nth(0).getByRole('status'))
-        .toHaveText(`Number of points: ${numberOfPoints}${isFeeding ? ' - Is feeding' : ''}`)
+    await expect(page.getByRole('list').nth(0).getByRole('listitem').nth(0).getByRole('status')).toHaveText(
+        `Number of points: ${numberOfPoints}${isFeeding ? ' - Is feeding' : ''}`
+    )
 }
 
-export const checkOpponentSpecies = async (page: Page, opponentIndex: number, speciesIndex: number, speciesSize: number, speciesPopulation: number): Promise<void> => {
-    await expect(page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${speciesSize}`)).toHaveText(speciesSize.toString())
-    await expect(page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${speciesPopulation}`)).toHaveText(speciesPopulation.toString())
+export const checkOpponentSpecies = async (
+    page: Page,
+    opponentIndex: number,
+    speciesIndex: number,
+    speciesSize: number,
+    speciesPopulation: number
+): Promise<void> => {
+    await expect(
+        page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${speciesSize}`)
+    ).toHaveText(speciesSize.toString())
+    await expect(
+        page.getByLabel(
+            `Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${speciesPopulation}`
+        )
+    ).toHaveText(speciesPopulation.toString())
 }
 
 const finishTurnEvolving = async (page: Page): Promise<void> => {
