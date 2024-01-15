@@ -219,6 +219,9 @@ const applyLongNeckActions = (speciesList: Species[]): Species[] => {
     return speciesList.map((species) => {
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
+            if(species.features.some((feature) => feature.key === FeatureKey.FORAGER)){
+                species.foodEaten = 2
+            }
         }
         return species
     })
