@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { NextRequest } from 'next/server.js'
 import { CreateGameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { Player } from '@/src/models/player.model'
 import { shuffleCards } from '@/src/lib/card.service.server'
 import { getDb } from '@/src/repositories/shared.repository'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 const NB_OF_CARDS_PER_FEATURE = 11
 
@@ -45,11 +45,12 @@ export const POST = async (request: NextRequest) => {
             return card
         })
 
-        const firstPlayer: Player = {
+        const firstPlayer: PlayerEntity = {
             id: playerId,
             name: data.playerName,
             species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
             cards: firstPlayerCards,
+            newSpeciesList: [],
             status:
                 data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
         }

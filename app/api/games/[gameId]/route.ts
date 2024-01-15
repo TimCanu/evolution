@@ -18,13 +18,20 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
             return NextResponse.error()
         }
 
-        const opponents: Opponent[] = getOpponents(gameEntity.players, playerId)
+        const opponents: Opponent[] = getOpponents(gameEntity.players, playerId, gameEntity.firstPlayerToFeedId)
 
         const game: Game = {
             hiddenFoods: gameEntity.hiddenFoods,
             amountOfFood: gameEntity.amountOfFood,
             opponents,
-            player,
+            player: {
+                id: player.id,
+                name: player.name,
+                species: player.species,
+                cards: player.cards,
+                status: player.status,
+                isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
+            },
         }
         return NextResponse.json(game, { status: 200 })
     } catch (e) {

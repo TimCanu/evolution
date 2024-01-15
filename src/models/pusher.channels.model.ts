@@ -17,6 +17,7 @@ export interface PushUpdatePlayerCardsData extends PusherEventBase {
 
 export interface PushUpdatePlayerStatusData extends PusherEventBase {
     status: GameStatus
+    isFeedingFirst: boolean
 }
 
 export interface PushUpdatePlayerOpponentsData extends PusherEventBase {

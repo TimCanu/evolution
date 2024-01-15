@@ -8,4 +8,5 @@ export interface Player {
     species: Species[]
     cards: Card[]
     status: GameStatus
+    isFirstPlayerToFeed: boolean
 }
