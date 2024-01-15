@@ -76,11 +76,11 @@ export function Game({ game }: GameProps) {
 
     return (
         <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">
-            <div className="mt-1 row-span-1 flex flex-row justify-around">
+            <ul aria-label="Opponents" className="mt-1 row-span-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
-                    return <OpponentLayout key={index} index={index} opponent={opponent} />
+                    return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
                 })}
-            </div>
+            </ul>
             <div className="flex justify-center row-span-1">
                 <FoodArea />
             </div>
