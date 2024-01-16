@@ -65,12 +65,13 @@ export const buildUpdatePlayerStatusEvent = (
     gameId: string,
     playerId: string,
     status: GameStatus,
-    playerFeedingFirstId: string
+    playerFeedingFirstId: string,
+    numberOfFoodEaten: number
 ): PusherEvent<PushUpdatePlayerStatusData> => {
     const isFeedingFirst = playerId === playerFeedingFirstId
     return {
         channel: `game-${gameId}-player-${playerId}`,
         name: UPDATE_PLAYER_STATUS,
-        data: { status, isFeedingFirst },
+        data: { status, isFeedingFirst, numberOfFoodEaten },
     }
 }

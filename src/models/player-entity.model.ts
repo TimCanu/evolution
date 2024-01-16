@@ -9,4 +9,5 @@ export interface PlayerEntity {
     newSpeciesList: Species[]
     cards: Card[]
     status: GameStatus
+    numberOfFoodEaten: number
 }

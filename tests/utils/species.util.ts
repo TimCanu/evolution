@@ -6,7 +6,12 @@ export const assertNumberOfSpecies = async (page: Page, numberOfSpecies: number)
     await expect(page.getByTestId(/species-*/)).toHaveCount(numberOfSpecies)
 }
 
-export const assertSpeciesFoodEaten = async (page: Page, speciesIndex: number, population: number, foodEaten: number): Promise<void> => {
+export const assertSpeciesFoodEaten = async (
+    page: Page,
+    speciesIndex: number,
+    population: number,
+    foodEaten: number
+): Promise<void> => {
     await expect(page.getByTestId(`species-${speciesIndex}`).getByText(`${foodEaten} / ${population}`)).toBeVisible()
 }
 
@@ -143,7 +148,10 @@ export const feedSpecies = async (
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten)
     await expect(page.getByText('Choose the species you would like to feed')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Feed plants to this species' })).toHaveCount(numberOfSpeciesNotFed)
-    await page.getByTestId(`species-${speciesIndex}`).getByRole('button', { name: 'Feed plants to this species' }).click()
+    await page
+        .getByTestId(`species-${speciesIndex}`)
+        .getByRole('button', { name: 'Feed plants to this species' })
+        .click()
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten + 1)
 }
 
@@ -157,5 +165,8 @@ export const feedLastSpecies = async (
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten)
     await expect(page.getByText('Choose the species you would like to feed')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Feed plants to this species' })).toHaveCount(numberOfSpeciesNotFed)
-    await page.getByTestId(`species-${speciesIndex}`).getByRole('button', { name: 'Feed plants to this species' }).click()
+    await page
+        .getByTestId(`species-${speciesIndex}`)
+        .getByRole('button', { name: 'Feed plants to this species' })
+        .click()
 }

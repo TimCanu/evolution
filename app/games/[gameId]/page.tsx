@@ -26,6 +26,7 @@ export default async function Home({
             gameId={params.gameId}
             playerId={playerId}
             isFeedingFirst={game.player.isFirstPlayerToFeed}
+            numberOfFoodEatenByPlayer={game.player.numberOfFoodEaten}
         >
             <CardsProvider cards={game.player.cards} gameId={params.gameId} playerId={playerId}>
                 <SpeciesProvider gameId={params.gameId} playerId={playerId} speciesInitialData={game.player.species}>

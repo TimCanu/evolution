@@ -31,6 +31,7 @@ export const GET = async (request: NextRequest, { params }: { params: { gameId: 
                 cards: player.cards,
                 status: player.status,
                 isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
+                numberOfFoodEaten: player.numberOfFoodEaten,
             },
         }
         return NextResponse.json(game, { status: 200 })

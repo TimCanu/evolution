@@ -7,46 +7,64 @@ import Image from 'next/image'
 
 interface OpponentLayoutProps {
     opponent: Opponent
-    index: number
+    opponentIndex: number
 }
 
-export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, index }) => {
+export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentIndex }) => {
     return (
-        <div data-testid={`opponent-${index}`} className="border border-indigo-600 w-80 h-44 ml-5 text-center">
-            <div className="flex gap-4">
+        <li className="border border-indigo-600 w-80 h-44 ml-5 text-center">
+            <h1 className="mx-4 flex justify-between mb-2">
                 {opponent.isFirstPlayerToFeed && (
                     <Image
                         src={playerTurnDino}
                         alt={`The player ${opponent.name} is the first player to feed`}
-                        height={35}
+                        height={20}
                     />
                 )}
-                <div className="mb-2">
-                    {opponent.name} {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
-                </div>
-            </div>
+                <span aria-label={`Opponent's at index ${opponentIndex} name is ${opponent.name}`}>
+                    {opponent.name}
+                </span>
+                <span role="status" className="mx-4">
+                    Number of points: {opponent.numberOfFoodEaten}{' '}
+                    {opponent.status === GameStatus.FEEDING_SPECIES && <> - Is feeding</>}
+                </span>
+            </h1>
 
-            <div className="flex justify-around">
-                {opponent.species.map((species, index) => {
+            <ul className="flex justify-around">
+                {opponent.species.map((species, speciesIndex) => {
                     return (
-                        <div key={index} className="flex flex-col w-36">
-                            <div className="flex justify-around">
-                                <div className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
+                        <li key={speciesIndex} className="flex flex-col w-36">
+                            <p className="flex justify-around mb-2">
+                                <span
+                                    aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${species.size}`}
+                                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center"
+                                >
                                     {species.size}
-                                </div>
-                                <div className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
+                                </span>
+                                <span
+                                    aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${species.population}`}
+                                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                                >
                                     {species.population}
-                                </div>
-                            </div>
-                            <div>
+                                </span>
+                            </p>
+                            <ul>
                                 {species.features.map((feature, index) => {
-                                    return <OpponentFeatureLayout key={index} feature={feature} />
+                                    return (
+                                        <OpponentFeatureLayout
+                                            key={index}
+                                            opponentIndex={opponentIndex}
+                                            speciesIndex={speciesIndex}
+                                            index={index}
+                                            feature={feature}
+                                        />
+                                    )
                                 })}
-                            </div>
-                        </div>
+                            </ul>
+                        </li>
                     )
                 })}
-            </div>
-        </div>
+            </ul>
+        </li>
     )
 }

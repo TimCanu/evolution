@@ -40,6 +40,7 @@ export function Game({ game }: GameProps) {
         getCardDiscardMessage,
         updatePlayerState,
         feedingStatus,
+        numberOfFoodEaten,
     } = usePlayerActionsContext()
     const { speciesList, playEvolvingAction } = useSpeciesContext()
     const { cards, getCard, removeCard, updateCards } = useCardsContext()
@@ -75,11 +76,11 @@ export function Game({ game }: GameProps) {
 
     return (
         <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">
-            <div className="mt-1 row-span-1 flex flex-row justify-around">
+            <ul aria-label="Opponents" className="mt-1 row-span-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
-                    return <OpponentLayout key={index} index={index} opponent={opponent} />
+                    return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
                 })}
-            </div>
+            </ul>
             <div className="flex justify-center row-span-1">
                 <FoodArea />
             </div>
@@ -113,7 +114,10 @@ export function Game({ game }: GameProps) {
                     {feedingStatus.isFeedingFirst && (
                         <Image src={playerTurnDino} alt="You are the first player to feed" height={35} />
                     )}
-                    <p>{getCardDiscardMessage()}</p>
+                    <div className="flex flex-col">
+                        <p>{getCardDiscardMessage()}</p>
+                        <p>Your number of points: {numberOfFoodEaten}</p>
+                    </div>
                 </div>
                 <div className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
