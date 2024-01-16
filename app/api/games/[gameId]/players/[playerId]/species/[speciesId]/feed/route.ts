@@ -2,24 +2,17 @@ import { NextResponse } from 'next/server'
 import { NextRequest } from 'next/server.js'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
-import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
+import { getGameEntity } from '@/src/repositories/games.repository'
 import { ObjectId } from 'mongodb'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import {
-    buildUpdateFoodEvent,
-    buildUpdateOpponentsEvent,
-    buildUpdatePlayerCardsEvent,
-    buildUpdatePlayerSpeciesEvent,
-    buildUpdatePlayerStatusEvent,
-} from '@/src/lib/pusher.server.service'
 import { Species } from '@/src/models/species.model'
 import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
-import pusherServer from '@/src/lib/pusher-server'
 import { getPlayer } from '@/src/lib/player.service.server'
 import { Card } from '@/src/models/card.model'
 import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { PlayerEntity } from '@/src/models/player-entity.model'
+import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 
 export const POST = async (
     _: NextRequest,
@@ -64,7 +57,6 @@ export const POST = async (
         }
         const playersUpdated = computePlayersStatus(endFeedingStage, game.players, playerUpdated)
 
-        const events: PusherEvent<PusherEventBase>[] = []
         if (endFeedingStage) {
             const endOfFeedingStageData = computeEndOfFeedingStageData(
                 playersUpdated,
@@ -79,27 +71,6 @@ export const POST = async (
                 endOfFeedingStageData.remainingCards,
                 endOfFeedingStageData.firstPlayerToFeedId
             )
-
-            endOfFeedingStageData.players.forEach((player) => {
-                const playerOpponents = getOpponents(
-                    endOfFeedingStageData.players,
-                    player.id,
-                    endOfFeedingStageData.firstPlayerToFeedId
-                )
-                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
-                events.push(event)
-                events.push(
-                    buildUpdatePlayerStatusEvent(
-                        params.gameId,
-                        player.id,
-                        GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-                        endOfFeedingStageData.firstPlayerToFeedId,
-                        player.numberOfFoodEaten
-                    )
-                )
-                events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
-                events.push(buildUpdatePlayerCardsEvent(params.gameId, player.id, player.cards))
-            })
         } else {
             await updateGameInDb(
                 params.gameId,
@@ -108,28 +79,8 @@ export const POST = async (
                 game.remainingCards,
                 game.firstPlayerToFeedId
             )
-
-            playersUpdated.forEach((player) => {
-                const playerOpponents = getOpponents(playersUpdated, player.id, game.firstPlayerToFeedId)
-                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
-                events.push(event)
-                events.push(
-                    buildUpdatePlayerStatusEvent(
-                        params.gameId,
-                        player.id,
-                        player.status,
-                        game.firstPlayerToFeedId,
-                        player.numberOfFoodEaten
-                    )
-                )
-                events.push(buildUpdatePlayerSpeciesEvent(params.gameId, player.id, { species: player.species }))
-            })
         }
-
-        events.push(
-            buildUpdateFoodEvent(params.gameId, { hiddenFoods: game.hiddenFoods, amountOfFood: newAmountOfFood })
-        )
-        await pusherServer.triggerBatch(events)
+        await sendUpdateGameEvents(params.gameId, playersUpdated, true, true)
 
         return NextResponse.json(null, { status: 200 })
     } catch (e) {

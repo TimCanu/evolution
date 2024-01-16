@@ -4,11 +4,9 @@ import { ObjectId } from 'mongodb'
 import { v4 as uuidv4 } from 'uuid'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
+import { getGameEntity } from '@/src/repositories/games.repository'
 import { getDb } from '@/src/repositories/shared.repository'
-import { buildUpdateOpponentsEvent, buildUpdatePlayerStatusEvent } from '@/src/lib/pusher.server.service'
-import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
-import pusherServer from '@/src/lib/pusher-server'
+import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
@@ -67,29 +65,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
                 },
             }
         )
-
-        const events: PusherEvent<PusherEventBase>[] = []
-        if (areAllPlayersConnected) {
-            playersUpdated.forEach((player) => {
-                events.push(
-                    buildUpdatePlayerStatusEvent(
-                        params.gameId,
-                        player.id,
-                        GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-                        firstPlayerToFeedId,
-                        player.numberOfFoodEaten
-                    )
-                )
-            })
-        }
-        playersUpdated
-            .filter((player) => player.id !== playerId)
-            .forEach((player) => {
-                const playerOpponents = getOpponents(playersUpdated, player.id, firstPlayerToFeedId)
-                const event = buildUpdateOpponentsEvent(params.gameId, player.id, playerOpponents)
-                events.push(event)
-            })
-        await pusherServer.triggerBatch(events)
+        await sendUpdateGameEvents(params.gameId, playersUpdated, true, true)
 
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {

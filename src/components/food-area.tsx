@@ -1,8 +1,8 @@
 import { FC } from 'react'
-import { useFoodsContext } from '@/src/providers/foods.provider'
+import { useGameContext } from '@/src/providers/game.provider'
 
 export const FoodArea: FC = () => {
-    const { hiddenFoods, amountOfFood } = useFoodsContext()
+    const { hiddenFoods, amountOfFood } = useGameContext()
     return (
         <div className="place-self-center h-64 w-1/3 bg-cyan-500 rounded-[50%] flex flex-row">
             {hiddenFoods.map((_, index) => {

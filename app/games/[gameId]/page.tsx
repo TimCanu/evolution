@@ -1,10 +1,6 @@
 import { Game } from '@/src/components/game'
-import { SpeciesProvider } from '@/src/providers/species.provider'
-import { PlayerActionsProvider } from '@/src/providers/player-actions.provider'
-import { CardsProvider } from '@/src/providers/cards.provider'
-import { FoodsProvider } from '@/src/providers/foods.provider'
 import { getGame } from '@/src/lib/game.service'
-import { OpponentsProvider } from '@/src/providers/opponents.provider'
+import { GameProvider } from '@/src/providers/game.provider'
 
 export default async function Home({
     params,
@@ -21,26 +17,8 @@ export default async function Home({
     }
 
     return (
-        <PlayerActionsProvider
-            status={game.player.status}
-            gameId={params.gameId}
-            playerId={playerId}
-            isFeedingFirst={game.player.isFirstPlayerToFeed}
-            numberOfFoodEatenByPlayer={game.player.numberOfFoodEaten}
-        >
-            <CardsProvider cards={game.player.cards} gameId={params.gameId} playerId={playerId}>
-                <SpeciesProvider gameId={params.gameId} playerId={playerId} speciesInitialData={game.player.species}>
-                    <FoodsProvider
-                        initialAmountOfFood={game.amountOfFood}
-                        initialHiddenFoods={game.hiddenFoods}
-                        gameId={params.gameId}
-                    >
-                        <OpponentsProvider opponents={game.opponents} gameId={params.gameId} playerId={playerId}>
-                            <Game game={game} />
-                        </OpponentsProvider>
-                    </FoodsProvider>
-                </SpeciesProvider>
-            </CardsProvider>
-        </PlayerActionsProvider>
+        <GameProvider gameId={params.gameId} game={game}>
+            <Game game={game} />
+        </GameProvider>
     )
 }
