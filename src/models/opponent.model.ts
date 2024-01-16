@@ -8,4 +8,5 @@ export interface Opponent {
     cards: Card[]
     isFirstPlayerToFeed: boolean
     status: GameStatus
+    numberOfFoodEaten: number
 }

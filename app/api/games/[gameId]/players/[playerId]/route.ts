@@ -67,7 +67,8 @@ export const PUT = async (
                     params.gameId,
                     playerToUpdate.id,
                     playerToUpdate.status,
-                    game.firstPlayerToFeedId
+                    game.firstPlayerToFeedId,
+                    playerToUpdate.numberOfFoodEaten
                 ),
             ])
             return NextResponse.json(null, { status: 200 })
@@ -174,7 +175,15 @@ const notifyUsersOfNewData = async (
         const updateSpeciesEvent = buildUpdatePlayerSpeciesEvent(gameId, player.id, {
             species: player.species,
         })
-        events.push(buildUpdatePlayerStatusEvent(gameId, player.id, player.status, firstPlayerToFeedId))
+        events.push(
+            buildUpdatePlayerStatusEvent(
+                gameId,
+                player.id,
+                player.status,
+                firstPlayerToFeedId,
+                player.numberOfFoodEaten
+            )
+        )
         events.push(updateOpponentsEvent)
         events.push(updateSpeciesEvent)
         events.push(buildUpdatePlayerCardsEvent(gameId, player.id, player.cards))
@@ -236,7 +245,9 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
 }
 
 const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {
-    player.species = applyLongNeckActions(player.newSpeciesList)
+    const longNeckActionsAppliedData = applyLongNeckActions(player.newSpeciesList)
+    player.species = longNeckActionsAppliedData.fedSpecies
+    player.numberOfFoodEaten += longNeckActionsAppliedData.numberOfFoodEaten
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
     }
@@ -244,13 +255,16 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
     return player
 }
 
-const applyLongNeckActions = (speciesList: Species[]): Species[] => {
-    return speciesList.map((species) => {
+const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; numberOfFoodEaten: number } => {
+    let numberOfFoodEaten = 0
+    const fedSpecies = speciesList.map((species) => {
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
+            numberOfFoodEaten++
         }
         return species
     })
+    return { fedSpecies, numberOfFoodEaten }
 }
 
 const applyFertileActions = (speciesList: Species[]): Species[] => {

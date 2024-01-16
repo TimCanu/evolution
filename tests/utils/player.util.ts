@@ -23,7 +23,8 @@ export const createPlayer1 = (): PlayerEntity => {
             buildCarnivoreCard('firstPlayerCard4', -1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-        newSpeciesList: []
+        newSpeciesList: [],
+        numberOfFoodEaten: 0,
     }
 }
 
@@ -39,27 +40,59 @@ export const createPlayer2 = (): PlayerEntity => {
             buildCarnivoreCard('secondPlayerCard4', 1),
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
-        newSpeciesList: []
+        newSpeciesList: [],
+        numberOfFoodEaten: 0,
     }
 }
 
-export const checkFirstPlayerInitialLayout = async (firstPlayerPage: Page): Promise<void> => {
-    await assertNumberOfCards(firstPlayerPage, 4)
-    await assertNumberOfSpecies(firstPlayerPage, 1)
-    await assertNumberOfHiddenFood(firstPlayerPage, 0)
-    await expect(firstPlayerPage.getByTestId('opponent-0')).toHaveText('Tim 11')
-    await expect(firstPlayerPage.getByAltText('You are the first player to feed')).toBeVisible()
-    await expect(firstPlayerPage.getByTestId('species-0')).toHaveText('1 1')
-    await expect(firstPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
+export const checkPlayerInitialLayout = async (
+    page: Page,
+    opponentName: string,
+    isFirstPlayerToFeed: boolean
+): Promise<void> => {
+    await assertNumberOfCards(page, 4)
+    await assertNumberOfSpecies(page, 1)
+    await assertNumberOfHiddenFood(page, 0)
+
+    const opponent = page.getByRole('list').nth(0).getByRole('listitem').nth(0)
+    await expect(
+        opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)
+    ).toHaveText(opponentName)
+    if (isFirstPlayerToFeed) {
+        await expect(opponent.getByRole('heading').getByRole('img')).not.toBeAttached()
+    } else {
+        await expect(
+            opponent
+                .getByRole('heading')
+                .getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+        ).toBeVisible()
+    }
+    await expect(opponent.getByRole('status')).toHaveText('Number of points: 0')
+    await checkOpponentSpecies(page, 0, 0, 1, 1)
+    await expect(page.getByText('Discard a card to add food to the water plan')).toBeVisible()
 }
 
-export const checkSecondPlayerInitialLayout = async (secondPlayerPage: Page): Promise<void> => {
-    await assertNumberOfCards(secondPlayerPage, 4)
-    await assertNumberOfSpecies(secondPlayerPage, 1)
-    await assertNumberOfHiddenFood(secondPlayerPage, 0)
-    await expect(secondPlayerPage.getByTestId('opponent-0')).toHaveText('Aude 11')
-    await expect(secondPlayerPage.getByAltText('The player Aude is the first player to feed')).toBeVisible()
-    await expect(secondPlayerPage.getByText('Discard a card to add food to')).toBeVisible()
+export const checkOpponentStatus = async (page: Page, numberOfPoints: number, isFeeding: boolean): Promise<void> => {
+    await expect(page.getByRole('list').nth(0).getByRole('listitem').nth(0).getByRole('status')).toHaveText(
+        `Number of points: ${numberOfPoints}${isFeeding ? ' - Is feeding' : ''}`
+    )
+}
+
+export const checkOpponentSpecies = async (
+    page: Page,
+    opponentIndex: number,
+    speciesIndex: number,
+    speciesSize: number,
+    speciesPopulation: number
+): Promise<void> => {
+    await expect(
+        page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${speciesSize}`)
+    ).toHaveText(speciesSize.toString())
+    await expect(
+        page.getByLabel(
+            `Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${speciesPopulation}`
+        )
+    ).toHaveText(speciesPopulation.toString())
 }
 
 const finishTurnEvolving = async (page: Page): Promise<void> => {

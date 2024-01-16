@@ -53,6 +53,7 @@ export const POST = async (request: NextRequest) => {
             newSpeciesList: [],
             status:
                 data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
+            numberOfFoodEaten: 0,
         }
         const game: CreateGameEntity = {
             remainingCards: shuffledCards,

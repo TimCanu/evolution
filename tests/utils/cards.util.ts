@@ -19,7 +19,7 @@ export const addCardAsFood = async (
     numberOfSpecies: number,
     numberOfAddedFood: number,
     numberOfCards: number,
-    card: Card,
+    card: Card
 ): Promise<void> => {
     await expect(page.getByRole('button', { name: 'Add as food' })).toBeHidden()
 
@@ -33,13 +33,13 @@ export const addCardAsFood = async (
     await expect(page.getByText('Choose an action to evolve your species or finish your turn')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Finish turn' })).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Increase size of species at position ${numberOfSpecies}` }),
+        page.getByRole('button', { name: `Increase size of species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Increase population of species at position ${numberOfSpecies}` }),
+        page.getByRole('button', { name: `Increase population of species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Add feature to species at position ${numberOfSpecies}` }),
+        page.getByRole('button', { name: `Add feature to species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the left' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the right' })).toBeVisible()
