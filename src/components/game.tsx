@@ -4,21 +4,20 @@ import { OpponentLayout } from '@/src/components/opponent-layout'
 import { FoodArea } from '@/src/components/food-area'
 import { CardLayout } from '@/src/components/card-layout'
 import { SpeciesLayout } from '@/src/components/species-layout'
-import { useSpeciesContext } from '@/src/providers/species.provider'
-import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
-import { useCardsContext } from '@/src/providers/cards.provider'
-import { useOpponentsContext } from '@/src/providers/opponents.provider'
+import { useSpecies } from '@/src/hooks/species.hook'
+import { usePlayerStatus } from '@/src/hooks/player-status.hook'
+import { useCards } from '@/src/hooks/cards.hook'
 import { useParams, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo } from 'react'
 import { addFood } from '@/src/lib/foods.service'
 import { updatePlayer } from '@/src/lib/player.service.client'
 import { Game as GameModel } from '@/src/models/game.model'
 import { Player } from '@/src/models/player.model'
-import { useFoodsContext } from '../providers/foods.provider'
 import { GameStatus } from '../enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
 import playerTurnDino from '../assets/images/player-turn-dyno.png'
 import Image from 'next/image'
+import { useGameContext } from '@/src/providers/game.provider'
 
 interface GameProps {
     game: GameModel
@@ -32,25 +31,25 @@ export function Game({ game }: GameProps) {
     if (!playerId) {
         throw Error('Player ID must be provided')
     }
-    const { opponents } = useOpponentsContext()
     const {
-        isAddingFoodStage,
-        isEvolvingStage,
-        isFeedingStage,
-        getCardDiscardMessage,
-        updatePlayerState,
-        feedingStatus,
+        cards,
+        hiddenFoods,
+        isPlayerFeedingFirst,
         numberOfFoodEaten,
-    } = usePlayerActionsContext()
-    const { speciesList, playEvolvingAction } = useSpeciesContext()
-    const { cards, getCard, removeCard, updateCards } = useCardsContext()
-    const { hiddenFoods } = useFoodsContext()
+        opponents,
+        speciesList,
+        updateCards,
+        updateStatus,
+    } = useGameContext()
+    const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerStatus()
+    const { playEvolvingAction } = useSpecies()
+    const { getCard, removeCard } = useCards()
 
     const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
         if (isAddingFoodStage()) {
             const { status, cards: cardsUpdated } = await addFood({ gameId, playerId, cardId })
-            updatePlayerState({ action: status })
+            updateStatus(status)
             updateCards(cardsUpdated)
         } else if (isEvolvingStage()) {
             playEvolvingAction(card)
@@ -64,7 +63,7 @@ export function Game({ game }: GameProps) {
         const player: Player = { ...game.player, species: speciesList, cards }
         await updatePlayer({ gameId, player })
         if (hiddenFoods.length <= 0) {
-            updatePlayerState({ action: GameStatus.ADDING_FOOD_TO_WATER_PLAN })
+            updateStatus(GameStatus.ADDING_FOOD_TO_WATER_PLAN)
         }
     }
 
@@ -111,7 +110,7 @@ export function Game({ game }: GameProps) {
                     </button>
                 )}
                 <div className="self-center flex">
-                    {feedingStatus.isFeedingFirst && (
+                    {isPlayerFeedingFirst && (
                         <Image src={playerTurnDino} alt="You are the first player to feed" height={35} />
                     )}
                     <div className="flex flex-col">

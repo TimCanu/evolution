@@ -4,12 +4,10 @@ import { GameStatus } from '@/src/enums/game.events.enum'
 import { getGameEntity } from '@/src/repositories/games.repository'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getDb } from '@/src/repositories/shared.repository'
-import { buildUpdateFoodEvent } from '@/src/lib/pusher.server.service'
-import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
-import pusherServer from '@/src/lib/pusher-server'
 import { Card } from '@/src/models/card.model'
 import { getPlayer } from '@/src/lib/player.service.server'
 import { PlayerEntity } from '@/src/models/player-entity.model'
+import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 
 export const POST = async (request: NextRequest, { params }: { params: { gameId: string } }) => {
     try {
@@ -38,9 +36,8 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .collection('games')
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, hiddenFoods } })
 
-        const events: PusherEvent<PusherEventBase>[] = []
-        events.push(buildUpdateFoodEvent(params.gameId, { hiddenFoods, amountOfFood: game.amountOfFood }))
-        await pusherServer.triggerBatch(events)
+        const playerIds = playersUpdated.map((player) => player.id)
+        await sendUpdateGameEvents(params.gameId, playerIds, false, false)
 
         return NextResponse.json(
             { status: GameStatus.CHOOSING_EVOLVING_ACTION, cards: playerUpdated.cards },

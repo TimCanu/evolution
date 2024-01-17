@@ -1,5 +1,5 @@
 'use client'
-import { joinGame } from '@/src/lib/game.service'
+import { joinGame } from '@/src/lib/game.service.client'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import LoadingSpinner from '@/src/components/loading'

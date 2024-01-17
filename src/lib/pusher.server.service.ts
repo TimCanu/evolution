@@ -1,77 +1,57 @@
-import {
-    UPDATE_FOOD_STATUS,
-    UPDATE_OPPONENT_STATUS,
-    UPDATE_PLAYER_CARDS,
-    UPDATE_PLAYER_SPECIES,
-    UPDATE_PLAYER_STATUS,
-} from '@/src/const/game-events.const'
-import { Card } from '@/src/models/card.model'
-import {
-    PusherEvent,
-    PushUpdateFoodData,
-    PushUpdatePlayerCardsData,
-    PushUpdatePlayerOpponentsData,
-    PushUpdatePlayerSpeciesData,
-    PushUpdatePlayerStatusData,
-} from '@/src/models/pusher.channels.model'
-import { GameStatus } from '@/src/enums/game.events.enum'
+import { UPDATE_GAME_INFO } from '@/src/const/game-events.const'
+import { PusherEvent, PusherEventBase, PushUpdatePlayerGameInfoData } from '@/src/models/pusher.channels.model'
+import pusherServer from '@/src/lib/pusher-server'
+import { GameEntity } from '@/src/models/game-entity.model'
+import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { Opponent } from '@/src/models/opponent.model'
+import { Game } from '@/src/models/game.model'
 
-export const buildUpdatePlayerCardsEvent = (
+const buildUpdateGameEvent = (
     gameId: string,
     playerId: string,
-    cards: Card[]
-): PusherEvent<PushUpdatePlayerCardsData> => {
+    data: PushUpdatePlayerGameInfoData
+): PusherEvent<PushUpdatePlayerGameInfoData> => {
     return {
         channel: `game-${gameId}-player-${playerId}`,
-        name: UPDATE_PLAYER_CARDS,
-        data: { cards },
-    }
-}
-
-export const buildUpdateOpponentsEvent = (
-    gameId: string,
-    playerId: string,
-    opponents: Opponent[]
-): PusherEvent<PushUpdatePlayerOpponentsData> => {
-    return {
-        channel: `game-${gameId}-player-${playerId}`,
-        name: UPDATE_OPPONENT_STATUS,
-        data: { opponents },
-    }
-}
-
-export const buildUpdateFoodEvent = (gameId: string, data: PushUpdateFoodData): PusherEvent<PushUpdateFoodData> => {
-    return {
-        channel: `game-${gameId}`,
-        name: UPDATE_FOOD_STATUS,
+        name: UPDATE_GAME_INFO,
         data,
     }
 }
 
-export const buildUpdatePlayerSpeciesEvent = (
+export const sendUpdateGameEvents = async (
     gameId: string,
-    playerId: string,
-    data: PushUpdatePlayerSpeciesData
-): PusherEvent<PushUpdatePlayerSpeciesData> => {
-    return {
-        channel: `game-${gameId}-player-${playerId}`,
-        name: UPDATE_PLAYER_SPECIES,
-        data,
-    }
-}
+    playersId: string[],
+    shouldUpdateSpecies: boolean,
+    shouldUpdateCards: boolean
+): Promise<void> => {
+    const gameEntity: GameEntity = await getGameEntity(gameId)
 
-export const buildUpdatePlayerStatusEvent = (
-    gameId: string,
-    playerId: string,
-    status: GameStatus,
-    playerFeedingFirstId: string,
-    numberOfFoodEaten: number
-): PusherEvent<PushUpdatePlayerStatusData> => {
-    const isFeedingFirst = playerId === playerFeedingFirstId
-    return {
-        channel: `game-${gameId}-player-${playerId}`,
-        name: UPDATE_PLAYER_STATUS,
-        data: { status, isFeedingFirst, numberOfFoodEaten },
-    }
+    const events: PusherEvent<PusherEventBase>[] = playersId.map((playerId) => {
+        const player = gameEntity.players.find((player) => player.id === playerId)
+        if (!player) {
+            throw Error(`Player with id ${playerId} could not be found in game with id ${gameId}`)
+        }
+
+        const opponents: Opponent[] = getOpponents(gameEntity.players, playerId, gameEntity.firstPlayerToFeedId)
+        const game: Game = {
+            hiddenFoods: gameEntity.hiddenFoods,
+            amountOfFood: gameEntity.amountOfFood,
+            opponents,
+            player: {
+                id: player.id,
+                name: player.name,
+                species: player.species,
+                cards: player.cards,
+                status: player.status,
+                isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
+                numberOfFoodEaten: player.numberOfFoodEaten,
+            },
+        }
+        return buildUpdateGameEvent(gameId, player.id, {
+            game,
+            shouldUpdateSpecies,
+            shouldUpdateCards,
+        })
+    })
+    await pusherServer.triggerBatch(events)
 }

@@ -29,10 +29,3 @@ export const joinGame = async ({
     })
     return res.json()
 }
-
-export const getGame = async (gameId: string, playerId: string): Promise<Game> => {
-    const res = await fetch(`http://localhost:3000/api/games/${gameId}?playerId=${playerId}`, {
-        next: { revalidate: 0 },
-    })
-    return res.json()
-}

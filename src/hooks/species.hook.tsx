@@ -1,44 +1,18 @@
 'use client'
-import { createContext, FunctionComponent, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react'
 import { Species } from '@/src/models/species.model'
 import { v4 as uuidv4 } from 'uuid'
 import { Feature } from '@/src/models/feature.model'
 import { Card } from '@/src/models/card.model'
-import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { PusherInstance } from '@/src/lib/pusher.client.service'
-import { UPDATE_PLAYER_SPECIES } from '@/src/const/game-events.const'
-import { PushUpdatePlayerSpeciesData } from '@/src/models/pusher.channels.model'
+import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 
-interface SpeciesContextResult {
-    speciesList: Species[]
+interface SpeciesResult {
     playEvolvingAction: (card: Card) => void
     removeFeature: (speciesId: string, featureId: string) => void
 }
 
-interface SpeciesContextProps {
-    speciesInitialData: Species[]
-    gameId: string
-    playerId: string
-}
-
-const SpeciesContext = createContext<SpeciesContextResult>({} as SpeciesContextResult)
-
-export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContextProps>> = ({
-    children,
-    speciesInitialData,
-    gameId,
-    playerId,
-}) => {
-    const { playerOnGoingAction, updatePlayerState } = usePlayerActionsContext()
-    const [speciesList, setSpeciesList] = useState<Species[]>(speciesInitialData)
-
-    useEffect(() => {
-        const channel = PusherInstance.getPlayerChannel(gameId, playerId)
-        channel.bind(UPDATE_PLAYER_SPECIES, async function (data: PushUpdatePlayerSpeciesData) {
-            setSpeciesList(data.species)
-        })
-    }, [gameId, playerId])
+export const useSpecies = (): SpeciesResult => {
+    const { speciesList, selectedSpecies, status, updateSpeciesList, updateStatus } = useGameContext()
 
     const getSpecies = (speciesId: string): Species => {
         const speciesToReturn = speciesList.find((species) => species.id === speciesId)
@@ -49,10 +23,10 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
     }
 
     const getSpeciesForOnGoingAction = (): Species => {
-        if (!playerOnGoingAction.species) {
+        if (!selectedSpecies) {
             throw Error('Cannot get species for on going action as no species id has been saved')
         }
-        return getSpecies(playerOnGoingAction.species.id)
+        return getSpecies(selectedSpecies.id)
     }
 
     const updateSpecies = (speciesToUpdate: Species): void => {
@@ -62,7 +36,7 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
             }
             return speciesToUpdate
         })
-        setSpeciesList(newSpecies)
+        updateSpeciesList(newSpecies)
     }
 
     const removeFeature = (speciesId: string, featureId: string): void => {
@@ -75,14 +49,14 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
         const speciesToUpdate = getSpeciesForOnGoingAction()
         const speciesUpdated = { ...speciesToUpdate, size: speciesToUpdate.size + 1 }
         updateSpecies(speciesUpdated)
-        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
+        updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
     }
 
     const incrementSpeciesPopulation = (): void => {
         const speciesToUpdate = getSpeciesForOnGoingAction()
         const speciesUpdated = { ...speciesToUpdate, population: speciesToUpdate.population + 1 }
         updateSpecies(speciesUpdated)
-        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
+        updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
     }
 
     const addSpeciesToTheLeft = (): void => {
@@ -93,8 +67,8 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
             features: [],
             foodEaten: 0,
         }
-        setSpeciesList([newSpecies, ...speciesList])
-        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
+        updateSpeciesList([newSpecies, ...speciesList])
+        updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
     }
 
     const addSpeciesToTheRight = (): void => {
@@ -105,8 +79,8 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
             features: [],
             foodEaten: 0,
         }
-        setSpeciesList([...speciesList, newSpecies])
-        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
+        updateSpeciesList([...speciesList, newSpecies])
+        updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
     }
 
     const addSpeciesFeature = (card: Card): void => {
@@ -119,11 +93,11 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
         const specieToUpdate = getSpeciesForOnGoingAction()
         const specieUpdated = { ...specieToUpdate, features: [...specieToUpdate.features, feature] }
         updateSpecies(specieUpdated)
-        updatePlayerState({ action: GameStatus.CHOOSING_EVOLVING_ACTION })
+        updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
     }
 
     const playEvolvingAction = (card: Card): void => {
-        switch (playerOnGoingAction.action) {
+        switch (status) {
             case EVOLVING_STAGES.ADD_SPECIES_FEATURE:
                 addSpeciesFeature(card)
                 break
@@ -140,19 +114,12 @@ export const SpeciesProvider: FunctionComponent<PropsWithChildren<SpeciesContext
                 incrementSpeciesSize()
                 break
             default:
-                throw Error(`Action ${playerOnGoingAction.action} is not supported`)
+                throw Error(`Action ${status} is not supported`)
         }
     }
 
-    const res = {
-        speciesList,
+    return {
         playEvolvingAction,
         removeFeature,
     }
-
-    return <SpeciesContext.Provider value={res}>{children}</SpeciesContext.Provider>
-}
-
-export function useSpeciesContext(): SpeciesContextResult {
-    return useContext(SpeciesContext)
 }

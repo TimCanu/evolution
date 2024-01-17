@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Card } from '@/src/models/card.model'
-import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
 import { getCardImage } from '@/src/lib/card.service.client'
 
@@ -11,7 +11,7 @@ interface CardProps {
 }
 
 export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
-    const { canDiscardCard, isAddingFoodStage } = usePlayerActionsContext()
+    const { canDiscardCard, isAddingFoodStage } = usePlayerStatus()
 
     const cardImage = getCardImage(card)
 

@@ -1,11 +1,12 @@
 import { FC } from 'react'
 import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
-import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { feedSpecies } from '@/src/lib/species.service'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
 import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
+import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -24,7 +25,8 @@ export const SpeciesLayout: FC<CardProps> = ({
     playerId,
     species,
 }) => {
-    const { updatePlayerState, isEvolvingStage, isFeedingStage, playerOnGoingAction } = usePlayerActionsContext()
+    const { updateStatus, status, updateSelectedSpecies } = useGameContext()
+    const { isEvolvingStage, isFeedingStage } = usePlayerStatus()
     const canActionsBeShown = isEvolvingStage()
 
     const feed = async (): Promise<void> => {
@@ -51,9 +53,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                     <button
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
-                            updatePlayerState({
-                                action: EVOLVING_STAGES.ADD_LEFT_SPECIES,
-                            })
+                            updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)
                         }}
                     >
                         Add a new species to the left
@@ -64,10 +64,8 @@ export const SpeciesLayout: FC<CardProps> = ({
                         className="mb-5 mx-2"
                         aria-label={`Increase size of species at position ${index + 1}`}
                         onClick={() => {
-                            updatePlayerState({
-                                action: EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
-                                species,
-                            })
+                            updateSelectedSpecies(species)
+                            updateStatus(EVOLVING_STAGES.INCREMENT_SPECIES_SIZE)
                         }}
                     >
                         <PlusIcon colorHex="#FA5252" />
@@ -85,10 +83,8 @@ export const SpeciesLayout: FC<CardProps> = ({
                             className="flex justify-center items-center"
                             aria-label={`Add feature to species at position ${index + 1}`}
                             onClick={() => {
-                                updatePlayerState({
-                                    action: EVOLVING_STAGES.ADD_SPECIES_FEATURE,
-                                    species,
-                                })
+                                updateSelectedSpecies(species)
+                                updateStatus(EVOLVING_STAGES.ADD_SPECIES_FEATURE)
                             }}
                         >
                             <PlusIcon colorHex="#737373" />
@@ -105,7 +101,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                     )}
 
                     <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                        {isFeedingStage() || playerOnGoingAction.action === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
+                        {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                             <>
                                 {species.foodEaten} / {species.population}
                             </>
@@ -118,12 +114,10 @@ export const SpeciesLayout: FC<CardProps> = ({
                     <button
                         className="mb-5 mx-2"
                         aria-label={`Increase population of species at position ${index + 1}`}
-                        onClick={() =>
-                            updatePlayerState({
-                                action: EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
-                                species,
-                            })
-                        }
+                        onClick={() => {
+                            updateSelectedSpecies(species)
+                            updateStatus(EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION)
+                        }}
                     >
                         <PlusIcon colorHex="#12B886" />
                     </button>
@@ -132,9 +126,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                     <button
                         className="mb-5 border border-indigo-600 w-28"
                         onClick={() => {
-                            updatePlayerState({
-                                action: EVOLVING_STAGES.ADD_RIGHT_SPECIES,
-                            })
+                            updateStatus(EVOLVING_STAGES.ADD_RIGHT_SPECIES)
                         }}
                     >
                         Add a new species to the right

@@ -1,7 +1,7 @@
 import { FC } from 'react'
 import { Feature } from '@/src/models/feature.model'
-import { useSpeciesContext } from '@/src/providers/species.provider'
-import { usePlayerActionsContext } from '@/src/providers/player-actions.provider'
+import { useSpecies } from '@/src/hooks/species.hook'
+import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 
 interface CardProps {
     feature: Feature
@@ -11,8 +11,8 @@ interface CardProps {
 }
 
 export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex, featureIndex }) => {
-    const { removeFeature } = useSpeciesContext()
-    const { isEvolvingStage } = usePlayerActionsContext()
+    const { removeFeature } = useSpecies()
+    const { isEvolvingStage } = usePlayerStatus()
 
     return (
         <div

@@ -2,6 +2,7 @@ import { Card } from '@/src/models/card.model'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Opponent } from '@/src/models/opponent.model'
 import { Species } from '@/src/models/species.model'
+import { Game } from '@/src/models/game.model'
 
 export interface PusherEventBase {}
 
@@ -19,6 +20,12 @@ export interface PushUpdatePlayerStatusData extends PusherEventBase {
     status: GameStatus
     isFeedingFirst: boolean
     numberOfFoodEaten: number
+}
+
+export interface PushUpdatePlayerGameInfoData extends PusherEventBase {
+    game: Game
+    shouldUpdateCards: boolean
+    shouldUpdateSpecies: boolean
 }
 
 export interface PushUpdatePlayerOpponentsData extends PusherEventBase {
