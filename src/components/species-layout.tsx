@@ -3,11 +3,15 @@ import { Species } from '@/src/models/species.model'
 import { FeatureLayout } from '@/src/components/feature-layout'
 import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/providers/player-actions.provider'
 import { feedSpecies } from '@/src/lib/species.service'
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
+import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
     canShowAddSpeciesRightButton: boolean
     gameId: string
+    index: number
     playerId: string
     species: Species
 }
@@ -15,23 +19,31 @@ interface CardProps {
 export const SpeciesLayout: FC<CardProps> = ({
     canShowAddSpeciesLeftButton,
     canShowAddSpeciesRightButton,
+    index,
     gameId,
     playerId,
     species,
 }) => {
-    const { updatePlayerState, isEvolvingStage, isFeedingStage } = usePlayerActionsContext()
+    const { updatePlayerState, isEvolvingStage, isFeedingStage, playerOnGoingAction } = usePlayerActionsContext()
     const canActionsBeShown = isEvolvingStage()
 
     const feed = async (): Promise<void> => {
-        const { gameStatus } = await feedSpecies({ gameId, playerId, speciesId: species.id })
-        updatePlayerState({ action: gameStatus })
+        await feedSpecies({ gameId, playerId, speciesId: species.id })
     }
 
     return (
         <div className="flex flex-col self-end">
             <div className="flex self-center mb-2">
-                {species.features.map((feature, index) => {
-                    return <FeatureLayout key={index} feature={feature} speciesId={species.id} />
+                {species.features.map((feature, featureIndex) => {
+                    return (
+                        <FeatureLayout
+                            key={featureIndex}
+                            speciesIndex={index}
+                            featureIndex={featureIndex}
+                            feature={feature}
+                            speciesId={species.id}
+                        />
+                    )
                 })}
             </div>
             <div className="flex">
@@ -44,12 +56,13 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        Add a new species here
+                        Add a new species to the left
                     </button>
                 )}
                 {canActionsBeShown && species.size < 6 && (
                     <button
                         className="mb-5 mx-2"
+                        aria-label={`Increase size of species at position ${index + 1}`}
                         onClick={() => {
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
@@ -57,16 +70,20 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        +
+                        <PlusIcon colorHex="#FA5252" />
                     </button>
                 )}
-                <div className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center">
-                    <span className="border border-indigo-600 bg-orange-600	rounded-full w-8 h-8 flex justify-center items-center">
+                <div
+                    data-testid={`species-${index}`}
+                    className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center"
+                >
+                    <span className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
                         {species.size}
                     </span>
                     {canActionsBeShown && species.features.length < 3 && (
                         <button
-                            className="border border-indigo-600 bg-stone-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            className="flex justify-center items-center"
+                            aria-label={`Add feature to species at position ${index + 1}`}
                             onClick={() => {
                                 updatePlayerState({
                                     action: EVOLVING_STAGES.ADD_SPECIES_FEATURE,
@@ -74,30 +91,33 @@ export const SpeciesLayout: FC<CardProps> = ({
                                 })
                             }}
                         >
-                            +
+                            <PlusIcon colorHex="#737373" />
                         </button>
                     )}
                     {isFeedingStage() && species.foodEaten < species.population && (
                         <button
-                            className="border border-indigo-600 bg-amber-400 rounded-full w-8 h-8 flex justify-center items-center"
+                            className="flex justify-center items-center"
+                            aria-label="Feed plants to this species"
                             onClick={feed}
                         >
-                            FEED
+                            <FeedPlantsIcon />
                         </button>
                     )}
 
                     <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                        {isFeedingStage() && (
+                        {isFeedingStage() || playerOnGoingAction.action === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                             <>
                                 {species.foodEaten} / {species.population}
                             </>
+                        ) : (
+                            <> {species.population}</>
                         )}
-                        {!isFeedingStage() && <> {species.population}</>}
                     </span>
                 </div>
                 {canActionsBeShown && species.population < 6 && (
                     <button
                         className="mb-5 mx-2"
+                        aria-label={`Increase population of species at position ${index + 1}`}
                         onClick={() =>
                             updatePlayerState({
                                 action: EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
@@ -105,7 +125,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }
                     >
-                        +
+                        <PlusIcon colorHex="#12B886" />
                     </button>
                 )}
                 {canActionsBeShown && canShowAddSpeciesRightButton && (
@@ -117,7 +137,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                             })
                         }}
                     >
-                        Add a new species here
+                        Add a new species to the right
                     </button>
                 )}
             </div>

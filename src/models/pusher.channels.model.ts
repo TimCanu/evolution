@@ -17,6 +17,8 @@ export interface PushUpdatePlayerCardsData extends PusherEventBase {
 
 export interface PushUpdatePlayerStatusData extends PusherEventBase {
     status: GameStatus
+    isFeedingFirst: boolean
+    numberOfFoodEaten: number
 }
 
 export interface PushUpdatePlayerOpponentsData extends PusherEventBase {
@@ -25,10 +27,6 @@ export interface PushUpdatePlayerOpponentsData extends PusherEventBase {
 
 export interface PushUpdatePlayerSpeciesData extends PusherEventBase {
     species: Species[]
-}
-
-export interface PushUpdateGameStatusData extends PusherEventBase {
-    status: GameStatus
 }
 
 export interface PushUpdateFoodData extends PusherEventBase {

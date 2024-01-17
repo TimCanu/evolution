@@ -1,8 +1,8 @@
 import { GameEntity } from '@/src/models/game-entity.model'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/src/repositories/shared.repository'
-import { Player } from '@/src/models/player.model'
 import { Opponent } from '@/src/models/opponent.model'
+import { PlayerEntity } from '@/src/models/player-entity.model'
 
 export const getGameEntity = async (gameId: string): Promise<GameEntity> => {
     const db = await getDb()
@@ -15,11 +15,22 @@ export const getGameEntity = async (gameId: string): Promise<GameEntity> => {
     return JSON.parse(JSON.stringify(gameAsDocument[0]))
 }
 
-export const getOpponents = (players: Player[], playerId: string): Opponent[] => {
-    return players.reduce((players: Opponent[], player: Player) => {
+export const getOpponents = (players: PlayerEntity[], playerId: string, firstPlayerToFeedId: string): Opponent[] => {
+    return players.reduce((opponents: Opponent[], player: PlayerEntity) => {
         if (player.id !== playerId) {
-            return [...players, { name: player.name, species: player.species, cards: player.cards }]
+            const isFirstPlayerToFeed = player.id === firstPlayerToFeedId
+            return [
+                ...opponents,
+                {
+                    name: player.name,
+                    species: player.species,
+                    cards: player.cards,
+                    isFirstPlayerToFeed,
+                    status: player.status,
+                    numberOfFoodEaten: player.numberOfFoodEaten,
+                },
+            ]
         }
-        return players
+        return opponents
     }, [])
 }
