@@ -65,7 +65,8 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
                 },
             }
         )
-        await sendUpdateGameEvents(params.gameId, playersUpdated, true, true)
+        const playerIds = playersUpdated.map((player) => player.id)
+        await sendUpdateGameEvents(params.gameId, playerIds, true, true)
 
         return NextResponse.json({ playerId }, { status: 200 })
     } catch (e) {

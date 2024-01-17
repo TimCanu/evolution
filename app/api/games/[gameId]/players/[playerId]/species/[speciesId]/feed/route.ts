@@ -6,7 +6,6 @@ import { getGameEntity } from '@/src/repositories/games.repository'
 import { ObjectId } from 'mongodb'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Species } from '@/src/models/species.model'
-import { PusherEvent, PusherEventBase } from '@/src/models/pusher.channels.model'
 import { getPlayer } from '@/src/lib/player.service.server'
 import { Card } from '@/src/models/card.model'
 import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
@@ -56,6 +55,7 @@ export const POST = async (
             status: computePlayerStatus(endFeedingStage),
         }
         const playersUpdated = computePlayersStatus(endFeedingStage, game.players, playerUpdated)
+        const playerIds = playersUpdated.map((player) => player.id)
 
         if (endFeedingStage) {
             const endOfFeedingStageData = computeEndOfFeedingStageData(
@@ -80,7 +80,7 @@ export const POST = async (
                 game.firstPlayerToFeedId
             )
         }
-        await sendUpdateGameEvents(params.gameId, playersUpdated, true, true)
+        await sendUpdateGameEvents(params.gameId, playerIds, true, true)
 
         return NextResponse.json(null, { status: 200 })
     } catch (e) {

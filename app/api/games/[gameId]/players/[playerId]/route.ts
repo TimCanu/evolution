@@ -44,6 +44,8 @@ export const PUT = async (
             (player) => player.status === GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING
         )
 
+        const playerIds = players.map((player) => player.id)
+
         if (!haveAllPlayersFinishedEvolving) {
             const db = await getDb()
             await db.collection('games').updateOne(
@@ -54,7 +56,7 @@ export const PUT = async (
                     },
                 }
             )
-            await sendUpdateGameEvents(params.gameId, players, false, false)
+            await sendUpdateGameEvents(params.gameId, playerIds, false, false)
             return NextResponse.json(null, { status: 200 })
         }
 
@@ -80,7 +82,7 @@ export const PUT = async (
         }
 
         await updateDataForFeedingStage(params.gameId, amountOfFoodUpdated, playersUpdated)
-        await sendUpdateGameEvents(params.gameId, playersUpdated, true, true)
+        await sendUpdateGameEvents(params.gameId, playerIds, true, true)
 
         return NextResponse.json(null, { status: 200 })
     } catch (e) {
@@ -208,7 +210,7 @@ const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; 
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
             numberOfFoodEaten++
-            if(species.features.some((feature) => feature.key === FeatureKey.FORAGER)){
+            if (species.features.some((feature) => feature.key === FeatureKey.FORAGER)) {
                 species.foodEaten = 2
                 numberOfFoodEaten++
             }

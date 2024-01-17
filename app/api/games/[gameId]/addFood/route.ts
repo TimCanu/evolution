@@ -36,7 +36,8 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
             .collection('games')
             .updateOne({ _id: new ObjectId(params.gameId) }, { $set: { players: playersUpdated, hiddenFoods } })
 
-        await sendUpdateGameEvents(params.gameId, playersUpdated, false, false)
+        const playerIds = playersUpdated.map((player) => player.id)
+        await sendUpdateGameEvents(params.gameId, playerIds, false, false)
 
         return NextResponse.json(
             { status: GameStatus.CHOOSING_EVOLVING_ACTION, cards: playerUpdated.cards },
