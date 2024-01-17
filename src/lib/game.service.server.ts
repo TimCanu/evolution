@@ -3,7 +3,7 @@ import { GameEntity } from '@/src/models/game-entity.model'
 import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
 import { Opponent } from '@/src/models/opponent.model'
 
-const getGame = async (gameId: string, playerId: string): Promise<Game> => {
+export const getGame = async (gameId: string, playerId: string): Promise<Game> => {
     const gameEntity: GameEntity = await getGameEntity(gameId)
     const player = gameEntity.players.find((player) => player.id === playerId)
 

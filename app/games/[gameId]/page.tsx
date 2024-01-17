@@ -1,5 +1,5 @@
 import { Game } from '@/src/components/game'
-import { getGame } from '@/src/lib/game.service'
+import { getGame } from '@/src/lib/game.service.server'
 import { GameProvider } from '@/src/providers/game.provider'
 
 export default async function Home({
