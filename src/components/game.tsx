@@ -84,7 +84,7 @@ export function Game({ game }: GameProps) {
                 <FoodArea />
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
-                <div className="flex flex-row justify-center ">
+                <ul className="flex flex-row justify-center ">
                     {speciesList.map((species, index) => {
                         const isFirstSpecies = index === 0
                         const isLastSpecies = index === speciesList.length - 1
@@ -100,7 +100,7 @@ export function Game({ game }: GameProps) {
                             />
                         )
                     })}
-                </div>
+                </ul>
                 {isEvolvingStage() && (
                     <button
                         className="my-4 bg-cyan-500 border bg-color-white w-36 self-center"
@@ -109,20 +109,20 @@ export function Game({ game }: GameProps) {
                         Finish turn
                     </button>
                 )}
-                <div className="self-center flex">
+                <div role="status" className="self-center flex">
                     {isPlayerFeedingFirst && (
                         <Image src={playerTurnDino} alt="You are the first player to feed" height={35} />
                     )}
-                    <div className="flex flex-col">
-                        <p>{getCardDiscardMessage()}</p>
-                        <p>Your number of points: {numberOfFoodEaten}</p>
-                    </div>
+                    <p className="flex flex-col">
+                        <span>{getCardDiscardMessage()}</span>
+                        <span>Your number of points: {numberOfFoodEaten}</span>
+                    </p>
                 </div>
-                <div className="flex flex-row justify-center h-56 items-end">
+                <ul className="flex flex-row justify-center h-56 items-end">
                     {cards.map((card, index) => {
                         return <CardLayout key={index} index={index} card={card} playCard={playCard} />
                     })}
-                </div>
+                </ul>
             </div>
         </div>
     )

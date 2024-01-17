@@ -16,11 +16,11 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const cardImage = getCardImage(card)
 
     return (
-        <div
+        <li
             data-testid={`card-${index}`}
             className="border border-indigo-600 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
         >
-            <span className="mb-auto">{card.name}</span>
+            <h1 className="mb-auto">{card.name}</h1>
             <div className="relative self-center">
                 {cardImage && <Image src={cardImage} alt="" height={85} />}
                 {(isAddingFoodStage() || canDiscardCard(card)) && (
@@ -35,10 +35,10 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
                     </button>
                 )}
             </div>
-            <span className="text-xs max-h-[64px]">{card.description}</span>
-            <span className="self-end border border-indigo-600 rounded-full w-8 h-8 flex justify-center items-center">
+            <p className="text-xs max-h-[64px]">{card.description}</p>
+            <p className="self-end border border-indigo-600 rounded-full w-8 h-8 flex justify-center items-center">
                 {card.foodNumber}
-            </span>
-        </div>
+            </p>
+        </li>
     )
 }
