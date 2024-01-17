@@ -8,10 +8,10 @@ export interface CreateGameEntity {
     players: PlayerEntity[]
     hiddenFoods: number[]
     amountOfFood: number
+    firstPlayerToFeedId: string
 }
 
 // This is the struct that we have in the database
 export interface GameEntity extends CreateGameEntity {
     _id: ObjectId
-    firstPlayerToFeedId: string
 }
