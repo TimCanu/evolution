@@ -28,7 +28,7 @@ export const POST = async (
     try {
         const game: GameEntity = await getGameEntity(params.gameId)
 
-        const playerToUpdate: PlayerEntity = getPlayer(game._id.toString(), game.players, params.playerId)
+        const playerToUpdate: PlayerEntity = getPlayer(params.gameId, game.players, params.playerId)
         const speciesToUpdate = getSpecies(game._id.toString(), playerToUpdate, params.speciesId)
 
         checkThatSpeciesCanEat(params.gameId, params.playerId, speciesToUpdate, game.amountOfFood)

@@ -108,7 +108,7 @@ export function Game({ game }: GameProps) {
                 )}
                 <div role="status" className="self-center flex">
                     {isPlayerFeedingFirst && (
-                        <Image src={playerTurnDino} alt="You are the first player to feed" height={35} />
+                        <Image src={playerTurnDino} alt="You are the first player to feed" height={48} width={48} />
                     )}
                     <p className="flex flex-col">
                         <span>{getCardDiscardMessage()}</span>

@@ -7,7 +7,7 @@ export const FoodArea: FC = () => {
     const { hiddenFoods, amountOfFood } = useGameContext()
     return (
         <div className="relative self-center">
-            <Image src={FoodAreaImg} alt="" height={150} />
+            <Image src={FoodAreaImg} alt="" height={150} width={150} />
             <div className="place-self-center flex flex-row absolute top-1/2 left-1/4 right-1/4 rounded-md">
                 {hiddenFoods.map((_, index) => {
                     return (
