@@ -66,6 +66,7 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
         const playerChannel = PusherInstance.getPlayerChannel(gameId, game.player.id)
 
         playerChannel.bind(UPDATE_GAME_INFO, function (data: PushUpdatePlayerGameInfoData) {
+            console.log(data)
             setIsPlayerFeedingFirst(data.game.player.isFirstPlayerToFeed)
             setNumberOfFoodEaten(data.game.player.numberOfFoodEaten)
             setHiddenFoods(data.game.hiddenFoods)

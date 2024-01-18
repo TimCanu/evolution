@@ -9,7 +9,7 @@ import { GameStatus } from '@/src/enums/game.events.enum'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 import { Species } from '@/src/models/species.model'
-import { checkPlayerExists, getPlayer } from '@/src/lib/player.service.server'
+import { checkPlayerExists } from '@/src/lib/player.service.server'
 import {
     computeEndOfFeedingStageData,
     getNextPlayerToFeedId,
@@ -49,7 +49,6 @@ export const PUT = async (
         )
 
         const playerIds = players.map((player) => player.id)
-        console.log('toto')
 
         if (!haveAllPlayersFinishedEvolving) {
             const db = await getDb()
@@ -80,7 +79,8 @@ export const PUT = async (
                 game.remainingCards,
                 game.firstPlayerToFeedId
             )
-            return
+            await sendUpdateGameEvents(params.gameId, playerIds, true, true)
+            return NextResponse.json(null, { status: 200 })
         }
 
         await updateDataForFeedingStage(params.gameId, amountOfFoodUpdated, playersUpdated)
@@ -162,7 +162,10 @@ const computeDataForFeedingStage = (
         player.species.every((species) => species.population === species.foodEaten)
     )
     if (haveAllPlayersFed) {
-        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
+        const playersToReturn = playersUpdated.map((player) => {
+            return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
+        })
+        return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: true }
     }
 
     const firstPlayerToFeed = playersUpdated.find((player) => player.id === firstPlayerToFeedId)

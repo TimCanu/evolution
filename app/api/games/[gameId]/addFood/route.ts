@@ -14,7 +14,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const data: { playerId: string; cardId: string } = await request.json()
 
         const game: GameEntity = await getGameEntity(params.gameId)
-        const playerToUpdate: PlayerEntity = getPlayer(game._id.toString(), game.players, data.playerId)
+        const playerToUpdate: PlayerEntity = getPlayer(params.gameId, game.players, data.playerId)
         const cardPlayedAsFood = getCard(game._id.toString(), playerToUpdate, data.cardId)
 
         const hiddenFoods = [...game.hiddenFoods, cardPlayedAsFood.foodNumber]
