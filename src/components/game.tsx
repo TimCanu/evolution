@@ -62,9 +62,6 @@ export function Game({ game }: GameProps) {
     const finishEvolvingStage = async (): Promise<void> => {
         const player: Player = { ...game.player, species: speciesList, cards }
         await updatePlayer({ gameId, player })
-        if (hiddenFoods.length <= 0) {
-            updateStatus(GameStatus.ADDING_FOOD_TO_WATER_PLAN)
-        }
     }
 
     useEffect(() => {

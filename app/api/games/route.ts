@@ -61,7 +61,7 @@ export const POST = async (request: NextRequest) => {
             players: [firstPlayer],
             hiddenFoods: [],
             amountOfFood: 0,
-            firstPlayerToFeedId: playerId
+            firstPlayerToFeedId: playerId,
         }
 
         const res = await db.collection('games').insertOne(game)

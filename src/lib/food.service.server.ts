@@ -46,3 +46,18 @@ const computeSpeciesPopulation = (species: Species[]): Species[] => {
         return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
     }, [])
 }
+
+export const getNextPlayerToFeedId = (players: PlayerEntity[], lastPlayerToFeedId: string): string => {
+    const playerCurrentlyFeedingIndex = players.findIndex((player) => player.id === lastPlayerToFeedId)
+    const nextPlayerFeedingIndex =
+        playerCurrentlyFeedingIndex + 1 === players.length ? 0 : playerCurrentlyFeedingIndex + 1
+    const nextPlayerFeeding = players[nextPlayerFeedingIndex]
+    if (hasPlayerFinishedFeeding(nextPlayerFeeding)) {
+        return getNextPlayerToFeedId(players, nextPlayerFeeding.id)
+    }
+    return nextPlayerFeeding.id
+}
+
+export const hasPlayerFinishedFeeding = (player: PlayerEntity): boolean => {
+    return player.species.every((species) => species.foodEaten === species.population)
+}

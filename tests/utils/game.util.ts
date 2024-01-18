@@ -4,7 +4,12 @@ import { ObjectId } from 'mongodb'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { buildCarnivoreCard, buildFertileCard, buildForagerCard, buildLongNeckCard } from '@/tests/utils/cards.util'
 
-export const createGame = async (gameId: ObjectId, player1: PlayerEntity, player2: PlayerEntity): Promise<void> => {
+export const createGame = async (
+    gameId: ObjectId,
+    player1: PlayerEntity,
+    player2: PlayerEntity,
+    amountOfFood: number
+): Promise<void> => {
     const dbClient = await clientPromise
     const db = dbClient.db(process.env.DATABASE_NAME)
     await db.collection('games').deleteOne({ _id: gameId })
@@ -26,7 +31,7 @@ export const createGame = async (gameId: ObjectId, player1: PlayerEntity, player
         nbOfPlayers: 2,
         players: [player1, player2],
         hiddenFoods: [],
-        amountOfFood: 0,
+        amountOfFood: amountOfFood,
         firstPlayerToFeedId: player1.id,
     }
     await db.collection('games').insertOne(game)

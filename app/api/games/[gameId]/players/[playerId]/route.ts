@@ -9,8 +9,12 @@ import { GameStatus } from '@/src/enums/game.events.enum'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 import { Species } from '@/src/models/species.model'
-import { checkPlayerExists } from '@/src/lib/player.service.server'
-import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
+import { checkPlayerExists, getPlayer } from '@/src/lib/player.service.server'
+import {
+    computeEndOfFeedingStageData,
+    getNextPlayerToFeedId,
+    hasPlayerFinishedFeeding,
+} from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
 import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
@@ -45,6 +49,7 @@ export const PUT = async (
         )
 
         const playerIds = players.map((player) => player.id)
+        console.log('toto')
 
         if (!haveAllPlayersFinishedEvolving) {
             const db = await getDb()
@@ -60,14 +65,11 @@ export const PUT = async (
             return NextResponse.json(null, { status: 200 })
         }
 
-        const { playersUpdated, amountOfFoodUpdated } = computeDataForFeedingStage(
+        const { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed } = computeDataForFeedingStage(
             players,
             game.hiddenFoods,
             game.amountOfFood,
             game.firstPlayerToFeedId
-        )
-        const haveAllPlayersFed = playersUpdated.every((player) =>
-            player.species.every((species) => species.population === species.foodEaten)
         )
 
         if (haveAllPlayersFed) {
@@ -148,18 +150,54 @@ const computeDataForFeedingStage = (
 ): {
     playersUpdated: PlayerEntity[]
     amountOfFoodUpdated: number
+    haveAllPlayersFed: boolean
 } => {
-    const playersUpdated = players.map((player) => {
-        const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
-        const status =
-            player.id === firstPlayerToFeedId ? GameStatus.FEEDING_SPECIES : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
-        return { ...playerUpdatedWithSpecialActions, status }
-    })
+    const playersUpdated = computePlayersForFeedingStage(players, amountOfFood, firstPlayerToFeedId)
+
     const amountOfFoodUpdated = hiddenFoods.reduce((previousValue, currentAmountOfFoods) => {
         return previousValue + currentAmountOfFoods
     }, amountOfFood)
 
-    return { playersUpdated, amountOfFoodUpdated }
+    const haveAllPlayersFed = playersUpdated.every((player) =>
+        player.species.every((species) => species.population === species.foodEaten)
+    )
+    if (haveAllPlayersFed) {
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
+    }
+
+    const firstPlayerToFeed = playersUpdated.find((player) => player.id === firstPlayerToFeedId)
+    if (!firstPlayerToFeed) {
+        throw Error(`Could not find any player with id ${firstPlayerToFeedId}`)
+    }
+
+    if (!hasPlayerFinishedFeeding(firstPlayerToFeed)) {
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: false }
+    }
+
+    const nextPlayerToFeedId = getNextPlayerToFeedId(playersUpdated, firstPlayerToFeedId)
+    const playersToReturn = playersUpdated.map((player) => {
+        if (player.id === nextPlayerToFeedId) {
+            return { ...player, status: GameStatus.FEEDING_SPECIES }
+        }
+        return player
+    })
+
+    return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: false }
+}
+
+const computePlayersForFeedingStage = (
+    players: PlayerEntity[],
+    amountOfFood: number,
+    nextPlayerToFeed: string
+): PlayerEntity[] => {
+    return players.map((player) => {
+        const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
+        const status =
+            player.id === nextPlayerToFeed && !hasPlayerFinishedFeeding(playerUpdatedWithSpecialActions)
+                ? GameStatus.FEEDING_SPECIES
+                : GameStatus.WAITING_FOR_PLAYERS_TO_FEED
+        return { ...playerUpdatedWithSpecialActions, status }
+    })
 }
 
 const checkForIncorrectActions = (gameId: string, playerId: string, speciesList: Species[]): void => {

@@ -75,7 +75,10 @@ export const SpeciesLayout: FC<CardProps> = ({
                     data-testid={`species-${index}`}
                     className="border border-indigo-600 mb-5 w-28 flex flex-row justify-between items-center"
                 >
-                    <span className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center">
+                    <span
+                        className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center"
+                        aria-label={`Species at index ${index} size: ${species.size}`}
+                    >
                         {species.size}
                     </span>
                     {canActionsBeShown && species.features.length < 3 && (
@@ -100,15 +103,21 @@ export const SpeciesLayout: FC<CardProps> = ({
                         </button>
                     )}
 
-                    <span className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center">
-                        {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
-                            <>
-                                {species.foodEaten} / {species.population}
-                            </>
-                        ) : (
-                            <> {species.population}</>
-                        )}
-                    </span>
+                    {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
+                        <span
+                            className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            aria-label={`Species at index ${index} fed population: ${species.foodEaten} / ${species.population}`}
+                        >
+                            {species.foodEaten} / {species.population}
+                        </span>
+                    ) : (
+                        <span
+                            className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                            aria-label={`Species at index ${index} population: ${species.population}`}
+                        >
+                            {species.population}
+                        </span>
+                    )}
                 </div>
                 {canActionsBeShown && species.population < 6 && (
                     <button

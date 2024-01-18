@@ -88,7 +88,8 @@ export const addSpeciesFeature = async (
     await expect(page.getByRole('button', { name: 'Discard card' })).not.toBeVisible()
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards - 1)
-    await expect(page.getByTestId(`species-${speciesIndex}`)).toHaveText('1 1')
+    await expect(page.getByLabel(`Species at index ${speciesIndex} size: 1`)).toBeVisible()
+    await expect(page.getByLabel(`Species at index ${speciesIndex} population: 1`)).toBeVisible()
     await assertNumberOfFeatures(page, 1, speciesIndex)
 }
 
@@ -112,7 +113,8 @@ export const increaseSpeciesSize = async (
     await expect(page.getByRole('button', { name: 'Discard card' })).not.toBeVisible()
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards - 1)
-    await expect(page.getByTestId(`species-${speciesIndex}`)).toHaveText('2 1')
+    await expect(page.getByLabel(`Species at index ${speciesIndex} size: 2`)).toBeVisible()
+    await expect(page.getByLabel(`Species at index ${speciesIndex} population: 1`)).toBeVisible()
 }
 
 export const increaseSpeciesPopulation = async (
@@ -135,7 +137,8 @@ export const increaseSpeciesPopulation = async (
     await expect(page.getByRole('button', { name: 'Discard card' })).not.toBeVisible()
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards - 1)
-    await expect(page.getByTestId(`species-${speciesIndex}`)).toHaveText('2 2')
+    await expect(page.getByLabel(`Species at index ${speciesIndex} size: 2`)).toBeVisible()
+    await expect(page.getByLabel(`Species at index ${speciesIndex} population: 2`)).toBeVisible()
 }
 
 export const feedSpecies = async (

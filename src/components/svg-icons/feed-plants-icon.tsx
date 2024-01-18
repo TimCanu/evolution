@@ -1,9 +1,4 @@
 import { FC } from 'react'
-import { Species } from '@/src/models/species.model'
-import { FeatureLayout } from '@/src/components/feature-layout'
-import { EVOLVING_STAGES, usePlayerActionsContext } from '@/src/hooks/player-status.hook'
-import { feedSpecies } from '@/src/lib/species.service'
-import { GameStatus } from '@/src/enums/game.events.enum'
 
 export const FeedPlantsIcon: FC = () => {
     return (
