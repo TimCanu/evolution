@@ -8,7 +8,11 @@ import { GameStatus } from '@/src/enums/game.events.enum'
 import { Species } from '@/src/models/species.model'
 import { getPlayer } from '@/src/lib/player.service.server'
 import { Card } from '@/src/models/card.model'
-import { computeEndOfFeedingStageData } from '@/src/lib/food.service.server'
+import {
+    computeEndOfFeedingStageData,
+    getNextPlayerToFeedId,
+    hasPlayerFinishedFeeding,
+} from '@/src/lib/food.service.server'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { PlayerEntity } from '@/src/models/player-entity.model'
 import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
@@ -24,7 +28,7 @@ export const POST = async (
     try {
         const game: GameEntity = await getGameEntity(params.gameId)
 
-        const playerToUpdate: PlayerEntity = getPlayer(game, params.playerId)
+        const playerToUpdate: PlayerEntity = getPlayer(game._id.toString(), game.players, params.playerId)
         const speciesToUpdate = getSpecies(game._id.toString(), playerToUpdate, params.speciesId)
 
         checkThatSpeciesCanEat(params.gameId, params.playerId, speciesToUpdate, game.amountOfFood)
@@ -89,10 +93,6 @@ export const POST = async (
     }
 }
 
-const hasPlayerFinishedFeeding = (player: PlayerEntity): boolean => {
-    return player.species.every((species) => species.foodEaten === species.population)
-}
-
 const updateGameInDb = async (
     gameId: string,
     newAmountOfFood: number,
@@ -140,17 +140,6 @@ const computePlayersStatus = (
         }
         return player
     })
-}
-
-const getNextPlayerToFeedId = (players: PlayerEntity[], lastPlayerToFeedId: string): string => {
-    const playerCurrentlyFeedingIndex = players.findIndex((player) => player.id === lastPlayerToFeedId)
-    const nextPlayerFeedingIndex =
-        playerCurrentlyFeedingIndex + 1 === players.length ? 0 : playerCurrentlyFeedingIndex + 1
-    const nextPlayerFeeding = players[nextPlayerFeedingIndex]
-    if (hasPlayerFinishedFeeding(nextPlayerFeeding)) {
-        return getNextPlayerToFeedId(players, nextPlayerFeeding.id)
-    }
-    return nextPlayerFeeding.id
 }
 
 const computePlayerStatus = (endFeedingStage: boolean): GameStatus => {
