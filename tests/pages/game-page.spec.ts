@@ -313,3 +313,49 @@ test('Should skip feeding stage for first player to feed when already fed throug
     await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
     await expect(secondPlayerPage.getByText('Choose the species you would like to feed')).toBeVisible()
 })
+
+test('Long neck and forager cards should increase fed population by two when finishing turn', async ({ page: firstPlayerPage }) => {
+    const gameId = ObjectId.createFromTime(6)
+    const longNeckFeature: Feature = {
+        cardId: 'longNeckCardId',
+        name: 'Long neck',
+        key: FeatureKey.LONG_NECK,
+        description: 'Long card description',
+    }
+    const foragerFeature: Feature = {
+        cardId: 'foragerCardId',
+        name: 'Forager',
+        key: FeatureKey.FORAGER,
+        description: 'Forager description',
+    }
+    const firstPlayer: PlayerEntity = {
+        id: 'player1',
+        name: 'Aude',
+        species: [{ id: 'specie1', size: 1, population: 3, features: [longNeckFeature, foragerFeature], foodEaten: 0 }],
+        cards: [],
+        status: GameStatus.CHOOSING_EVOLVING_ACTION,
+        newSpeciesList: [],
+        numberOfFoodEaten: 0,
+    }
+    const secondPlayer: PlayerEntity = {
+        id: 'player2',
+        name: 'Tim',
+        species: [{ id: 'specie1', size: 1, population: 1, features: [], foodEaten: 0 }],
+        cards: [],
+        status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
+        newSpeciesList: [{ id: 'specie1', size: 1, population: 1, features: [longNeckFeature, foragerFeature], foodEaten: 0 }],
+        numberOfFoodEaten: 0,
+    }
+    await createGame(gameId, firstPlayer, secondPlayer, 10)
+
+    await firstPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${firstPlayer.id}`)
+    const secondPlayerPage = await firstPlayerPage.context().newPage()
+    await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
+
+    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 3`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
+
+    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 2 / 3`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1 / 1`)).toBeVisible()
+})

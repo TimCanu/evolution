@@ -251,7 +251,7 @@ const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; 
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
             numberOfFoodEaten++
-            if (species.features.some((feature) => feature.key === FeatureKey.FORAGER)) {
+            if (species.features.some((feature) => feature.key === FeatureKey.FORAGER) && species.population > 1) {
                 species.foodEaten = 2
                 numberOfFoodEaten++
             }
