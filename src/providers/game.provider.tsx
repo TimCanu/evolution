@@ -75,7 +75,7 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
     useEffect(() => {
         const playerChannel = PusherInstance.getPlayerChannel(gameId, game.player.id)
 
-        playerChannel.bind(UPDATE_GAME_INFO, function(data: PushUpdatePlayerGameInfoData) {
+        playerChannel.bind(UPDATE_GAME_INFO, function (data: PushUpdatePlayerGameInfoData) {
             setCarnivoreFeedingData({ preyIds: [] })
             setIsPlayerFeedingFirst(data.game.player.isFirstPlayerToFeed)
             setNumberOfFoodEaten(data.game.player.numberOfFoodEaten)

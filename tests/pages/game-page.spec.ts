@@ -111,14 +111,16 @@ test('Fertile card should increase population when there is food left', async ({
     const firstPlayer: PlayerEntity = {
         id: 'player1',
         name: 'Aude',
-        species: [{
-            id: 'player1Species1',
-            size: 1,
-            population: 1,
-            features: [fertileFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            {
+                id: 'player1Species1',
+                size: 1,
+                population: 1,
+                features: [fertileFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
@@ -158,14 +160,16 @@ test('Long neck card should increase fed population by one when finishing turn',
     const firstPlayer: PlayerEntity = {
         id: 'player1',
         name: 'Aude',
-        species: [{
-            id: 'player1Species1',
-            size: 1,
-            population: 1,
-            features: [longNeckFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            {
+                id: 'player1Species1',
+                size: 1,
+                population: 1,
+                features: [longNeckFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
@@ -205,14 +209,16 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     const firstPlayer: PlayerEntity = {
         id: 'player1',
         name: 'Aude',
-        species: [{
-            id: 'player1Species1',
-            size: 1,
-            population: 3,
-            features: [foragerFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            {
+                id: 'player1Species1',
+                size: 1,
+                population: 3,
+                features: [foragerFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.FEEDING_SPECIES,
         newSpeciesList: [],
@@ -254,14 +260,16 @@ test('Should skip feeding stage when all players are fed through long neck', asy
     const firstPlayer: PlayerEntity = {
         id: 'player1',
         name: 'Aude',
-        species: [{
-            id: 'player1Species1',
-            size: 1,
-            population: 1,
-            features: [longNeckFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            {
+                id: 'player1Species1',
+                size: 1,
+                population: 1,
+                features: [longNeckFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
@@ -273,14 +281,16 @@ test('Should skip feeding stage when all players are fed through long neck', asy
         species: [{ id: 'player2Species1', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{
-            id: 'player2Species1',
-            size: 1,
-            population: 1,
-            features: [longNeckFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        newSpeciesList: [
+            {
+                id: 'player2Species1',
+                size: 1,
+                population: 1,
+                features: [longNeckFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
@@ -302,8 +312,8 @@ test('Should skip feeding stage when all players are fed through long neck', asy
 })
 
 test('Should skip feeding stage for first player to feed when already fed through long neck', async ({
-                                                                                                         page: firstPlayerPage,
-                                                                                                     }) => {
+    page: firstPlayerPage,
+}) => {
     const gameId = ObjectId.createFromTime(6)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
@@ -314,14 +324,16 @@ test('Should skip feeding stage for first player to feed when already fed throug
     const firstPlayer: PlayerEntity = {
         id: 'player1',
         name: 'Aude',
-        species: [{
-            id: 'player1Species1',
-            size: 1,
-            population: 1,
-            features: [longNeckFeature],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            {
+                id: 'player1Species1',
+                size: 1,
+                population: 1,
+                features: [longNeckFeature],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],

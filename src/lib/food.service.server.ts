@@ -89,9 +89,13 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
     })
 
     const plantEatersThatCanFeed: Species[] = isTherePlantsLeft
-        ? players.map((player) => {
+        ? players
+              .map((player) => {
                   return player.species.filter((species) => {
-                      return species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) && species.foodEaten < species.population
+                      return (
+                          species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
+                          species.foodEaten < species.population
+                      )
                   })
               })
               .flat()
@@ -99,7 +103,7 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
 
     const speciesThatCanFeed = [...carnivoresThatCanFeed, ...plantEatersThatCanFeed]
     const speciesThatCanFeedIds = speciesThatCanFeed.map((species) => species.id)
-    const playersThatCanFeed = players.filter(player => {
+    const playersThatCanFeed = players.filter((player) => {
         return player.species.some((species) => speciesThatCanFeedIds.includes(species.id))
     })
     return playersThatCanFeed.map((player) => player.id)
@@ -162,6 +166,6 @@ export const computePlayersForFeedingRound = (
             player.status = GameStatus.FEEDING_SPECIES
             return { ...player, status: GameStatus.FEEDING_SPECIES }
         }
-        return {...player, status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED }
+        return { ...player, status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED }
     })
 }

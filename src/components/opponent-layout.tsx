@@ -39,10 +39,15 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                     const canBeEaten = carnivoreFeedingData.preyIds.includes(species.id)
 
                     const feedCarnivore = async (): Promise<void> => {
-                        if (!carnivoreFeedingData.carnivoreId){
+                        if (!carnivoreFeedingData.carnivoreId) {
                             throw Error('Carnivore id is not defined!')
                         }
-                        await feedSpecies({ gameId, playerId, speciesId: carnivoreFeedingData.carnivoreId, preyId: species.id })
+                        await feedSpecies({
+                            gameId,
+                            playerId,
+                            speciesId: carnivoreFeedingData.carnivoreId,
+                            preyId: species.id,
+                        })
                     }
                     return (
                         <li key={speciesIndex} className="flex flex-col w-36">
