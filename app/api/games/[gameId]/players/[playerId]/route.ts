@@ -169,6 +169,9 @@ const computeDataForFeedingStage = (
     }
 
     const playersThatCanFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
+    if (playersThatCanFeedIds.length === 0) {
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
+    }
     const playersComputedForFeedingStage = computePlayersForFirstFeedingRound(
         playersUpdated,
         firstPlayerToFeedId,

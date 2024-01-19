@@ -7,7 +7,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
 test('Forager card should increase fed population by two', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(4)
+    const gameId = ObjectId.createFromTime(51)
     const foragerFeature: Feature = {
         cardId: 'foragerCardId',
         name: 'Forager',

@@ -114,7 +114,6 @@ const canCarnivoreEatSpecies = (speciesFeeding: Species, speciesToEat: Species):
         checkThatCarnivoreCanEat(speciesFeeding, speciesToEat)
         return true
     } catch (e) {
-        console.log(e)
         return false
     }
 }

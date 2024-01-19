@@ -7,7 +7,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
 test('Long neck card should increase fed population by one when finishing turn', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(3)
+    const gameId = ObjectId.createFromTime(21)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
         name: 'Long neck',
@@ -56,7 +56,7 @@ test('Long neck card should increase fed population by one when finishing turn',
 })
 
 test('Should skip feeding stage when all players are fed through long neck', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(5)
+    const gameId = ObjectId.createFromTime(22)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
         name: 'Long neck',
@@ -120,7 +120,7 @@ test('Should skip feeding stage when all players are fed through long neck', asy
 test('Should skip feeding stage for first player to feed when already fed through long neck', async ({
     page: firstPlayerPage,
 }) => {
-    const gameId = ObjectId.createFromTime(6)
+    const gameId = ObjectId.createFromTime(23)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
         name: 'Long neck',
@@ -171,7 +171,7 @@ test('Should skip feeding stage for first player to feed when already fed throug
 test('Long neck and forager cards should increase fed population by two when finishing turn', async ({
     page: firstPlayerPage,
 }) => {
-    const gameId = ObjectId.createFromTime(7)
+    const gameId = ObjectId.createFromTime(24)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
         name: 'Long neck',
@@ -234,10 +234,8 @@ test('Long neck and forager cards should increase fed population by two when fin
     await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1 / 1`)).toBeVisible()
 })
 
-test('Long neck should not work with carnivore feature', async ({
-    page: firstPlayerPage,
-}) => {
-    const gameId = ObjectId.createFromTime(7)
+test('Long neck should not work with carnivore feature', async ({ page: firstPlayerPage }) => {
+    const gameId = ObjectId.createFromTime(25)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
         name: 'Long neck',
@@ -256,7 +254,7 @@ test('Long neck should not work with carnivore feature', async ({
         species: [
             {
                 id: 'player1Specie1',
-                size: 1,
+                size: 2,
                 population: 3,
                 features: [longNeckFeature, carnivoreFeature],
                 foodEaten: 0,

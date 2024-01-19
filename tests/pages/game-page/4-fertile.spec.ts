@@ -27,7 +27,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
 test('Fertile card should increase population when there is food left', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(2)
+    const gameId = ObjectId.createFromTime(41)
     const fertileFeature: Feature = {
         cardId: 'fertileCardId',
         name: 'Fertile',

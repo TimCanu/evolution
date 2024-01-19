@@ -23,7 +23,7 @@ import { assertNumberOfFoodInWaterPlan, assertNumberOfHiddenFood } from '@/tests
 import { createGame } from '@/tests/utils/game.util'
 
 test('should be able to play a game round with 2 players', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(1)
+    const gameId = ObjectId.createFromTime(11)
     const firstPlayer = createPlayer1()
     const secondPlayer = createPlayer2()
     await createGame(gameId, firstPlayer, secondPlayer, 0)
