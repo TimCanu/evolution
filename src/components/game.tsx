@@ -3,7 +3,7 @@
 import { OpponentLayout } from '@/src/components/opponent-layout'
 import { FoodArea } from '@/src/components/food-area'
 import { CardLayout } from '@/src/components/card-layout'
-import { SpeciesLayout } from '@/src/components/species-layout'
+import { SpeciesLayout } from '@/src/components/player-species/species-layout'
 import { useSpecies } from '@/src/hooks/species.hook'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { useCards } from '@/src/hooks/cards.hook'
