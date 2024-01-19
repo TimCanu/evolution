@@ -6,6 +6,7 @@ import playerTurnDino from '../assets/images/player-turn-dyno.png'
 import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
 import { feedSpecies } from '@/src/lib/species.service'
+import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
 
 interface OpponentLayoutProps {
     opponent: Opponent
@@ -60,11 +61,11 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                                 </span>
                                 {canBeEaten && (
                                     <button
-                                        className="flex justify-center items-center"
-                                        aria-label="Eat this species"
+                                        className="w-8"
+                                        aria-label={`Eat the species at index ${speciesIndex} of opponent at index ${opponentIndex}`}
                                         onClick={feedCarnivore}
                                     >
-                                        Eat
+                                        <FeedMeatIcon />
                                     </button>
                                 )}
                                 <span

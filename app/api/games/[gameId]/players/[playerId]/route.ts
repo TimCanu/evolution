@@ -12,9 +12,11 @@ import { Species } from '@/src/models/species.model'
 import { checkPlayerExists } from '@/src/lib/player.service.server'
 import {
     computeEndOfFeedingStageData,
-    computePlayersForFeedingRound,
+    computePlayersForFirstFeedingRound,
+    computePlayersForNextFeedingRound,
     getPlayersThatCanFeedIds,
-    hasPlayerFinishedFeeding, isCarnivore,
+    hasPlayerFinishedFeeding,
+    isCarnivore,
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -163,23 +165,16 @@ const computeDataForFeedingStage = (
         player.species.every((species) => species.population === species.foodEaten)
     )
     if (haveAllPlayersFed) {
-        const playersToReturn = playersUpdated.map((player) => {
-            return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
-        })
-        return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: true }
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
     }
 
-    const playersThatCanStillFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
-    if (!playersThatCanStillFeedIds.includes(firstPlayerToFeedId)){
-        const playersComputedForFeedingStage = computePlayersForFeedingRound(
-            playersUpdated,
-            firstPlayerToFeedId,
-            playersThatCanStillFeedIds
-        )
-        return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
-    }
-
-    return { playersUpdated: playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: false }
+    const playersThatCanFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
+    const playersComputedForFeedingStage = computePlayersForFirstFeedingRound(
+        playersUpdated,
+        firstPlayerToFeedId,
+        playersThatCanFeedIds
+    )
+    return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
 }
 
 const computePlayersForFeedingStage = (
@@ -230,7 +225,7 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
 
 const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {
     const longNeckActionsAppliedData = applyLongNeckActions(player.newSpeciesList)
-    player.species = longNeckActionsAppliedData.fedSpecies
+    player.species = longNeckActionsAppliedData.speciesListWithSpecialActionsApplied
     player.numberOfFoodEaten += longNeckActionsAppliedData.numberOfFoodEaten
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
@@ -239,10 +234,15 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
     return player
 }
 
-const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; numberOfFoodEaten: number } => {
+const applyLongNeckActions = (
+    speciesList: Species[]
+): {
+    speciesListWithSpecialActionsApplied: Species[]
+    numberOfFoodEaten: number
+} => {
     let numberOfFoodEaten = 0
-    const fedSpecies = speciesList.map((species) => {
-        if (isCarnivore(species)){
+    const speciesListWithSpecialActionsApplied = speciesList.map((species) => {
+        if (isCarnivore(species)) {
             return species
         }
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
@@ -255,7 +255,7 @@ const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; 
         }
         return species
     })
-    return { fedSpecies, numberOfFoodEaten }
+    return { speciesListWithSpecialActionsApplied, numberOfFoodEaten }
 }
 
 const applyFertileActions = (speciesList: Species[]): Species[] => {

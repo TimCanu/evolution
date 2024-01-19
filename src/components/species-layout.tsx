@@ -8,6 +8,7 @@ import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
 import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { isCarnivore } from '@/src/lib/food.service.server'
+import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -46,7 +47,10 @@ export const SpeciesLayout: FC<CardProps> = ({
     }
 
     const feedCarnivore = async (): Promise<void> => {
-        await feedSpecies({ gameId, playerId, speciesId: species.id, preyId: species.id })
+        if (!carnivoreFeedingData.carnivoreId) {
+            throw Error('Carnivore ID should be defined')
+        }
+        await feedSpecies({ gameId, playerId, speciesId: carnivoreFeedingData.carnivoreId, preyId: species.id })
     }
 
     return (
@@ -111,11 +115,11 @@ export const SpeciesLayout: FC<CardProps> = ({
                     )}
                     {canBeEaten && (
                         <button
-                            className="flex justify-center items-center"
-                            aria-label="Eat this species"
+                            className="w-8"
+                            aria-label={`Eat your own species at index ${index}`}
                             onClick={feedCarnivore}
                         >
-                            Eat
+                            <FeedMeatIcon />
                         </button>
                     )}
                     {isFeedingStage() &&
@@ -124,7 +128,11 @@ export const SpeciesLayout: FC<CardProps> = ({
                             species.preyIds.length > 0 ? (
                                 <button
                                     className="flex justify-center items-center"
-                                    aria-label="Feed this carnivore"
+                                    aria-label={
+                                        isCarnivoreFeeding
+                                            ? 'Cancel feeding of the carnivore'
+                                            : `Feed carnivore at index ${index}`
+                                    }
                                     onClick={toggleCarnivoreWantingToFeed}
                                 >
                                     {isCarnivoreFeeding ? 'Cancel' : 'Feed'}
@@ -133,13 +141,15 @@ export const SpeciesLayout: FC<CardProps> = ({
                                 <span>Go vegan</span>
                             )
                         ) : (
-                            <button
-                                className="flex justify-center items-center"
-                                aria-label="Feed plants to this species"
-                                onClick={feedPlantsEater}
-                            >
-                                <FeedPlantsIcon />
-                            </button>
+                            !canBeEaten && (
+                                <button
+                                    className="flex justify-center items-center"
+                                    aria-label="Feed plants to this species"
+                                    onClick={feedPlantsEater}
+                                >
+                                    <FeedPlantsIcon />
+                                </button>
+                            )
                         ))}
                     {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                         <span

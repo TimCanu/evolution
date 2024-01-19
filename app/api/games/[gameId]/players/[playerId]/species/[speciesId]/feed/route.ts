@@ -11,7 +11,7 @@ import { Card } from '@/src/models/card.model'
 import {
     checkThatCarnivoreCanEat,
     computeEndOfFeedingStageData,
-    computePlayersForFeedingRound,
+    computePlayersForNextFeedingRound,
     getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
     isCarnivore,
@@ -74,7 +74,7 @@ export const POST = async (
             return NextResponse.json(null, { status: 200 })
         }
 
-        const playersComputedForNextRound = computePlayersForFeedingRound(
+        const playersComputedForNextRound = computePlayersForNextFeedingRound(
             players,
             playerFeeding.id,
             playersThatCanStillFeedIds

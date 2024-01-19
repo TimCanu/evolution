@@ -154,14 +154,40 @@ export const isCarnivore = (species: Species): boolean => {
     return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
 }
 
-export const computePlayersForFeedingRound = (
+export const computePlayersForFirstFeedingRound = (
     players: PlayerEntity[],
-    playerCurrentlyFeedingId: string,
-    playersThatCanStillFeed: string[]
+    playerThatShouldFeedNext: string,
+    playersThatCanFeed: string[]
 ): PlayerEntity[] => {
-    const nextPlayerToFeedId = getNextPlayerToFeedId(players, playerCurrentlyFeedingId, playersThatCanStillFeed)
+    if (playersThatCanFeed.includes(playerThatShouldFeedNext)) {
+        return players.map((player) => {
+            if (player.id === playerThatShouldFeedNext) {
+                player.species = computeSpeciesPreys(player.species, players)
+                player.status = GameStatus.FEEDING_SPECIES
+                return { ...player, status: GameStatus.FEEDING_SPECIES }
+            }
+            return { ...player, status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED }
+        })
+    }
+    const playerToFeedId = getNextPlayerToFeedId(players, playerThatShouldFeedNext, playersThatCanFeed)
     return players.map((player) => {
-        if (player.id === nextPlayerToFeedId) {
+        if (player.id === playerToFeedId) {
+            player.species = computeSpeciesPreys(player.species, players)
+            player.status = GameStatus.FEEDING_SPECIES
+            return { ...player, status: GameStatus.FEEDING_SPECIES }
+        }
+        return { ...player, status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED }
+    })
+}
+
+export const computePlayersForNextFeedingRound = (
+    players: PlayerEntity[],
+    playerThatJustFed: string,
+    playersThatCanFeed: string[]
+): PlayerEntity[] => {
+    const playerToFeedId = getNextPlayerToFeedId(players, playerThatJustFed, playersThatCanFeed)
+    return players.map((player) => {
+        if (player.id === playerToFeedId) {
             player.species = computeSpeciesPreys(player.species, players)
             player.status = GameStatus.FEEDING_SPECIES
             return { ...player, status: GameStatus.FEEDING_SPECIES }
