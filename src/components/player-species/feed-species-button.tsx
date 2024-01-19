@@ -18,7 +18,7 @@ export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, p
     const { carnivoreFeedingData } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
-    if (!isFeedingStage || species.foodEaten >= species.population) {
+    if (!isFeedingStage()) {
         return null
     }
 

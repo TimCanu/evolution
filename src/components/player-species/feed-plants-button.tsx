@@ -15,7 +15,7 @@ interface FeedPlantsButtonProps {
 }
 
 export const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species }) => {
-    if (isCarnivore(species)) {
+    if (isCarnivore(species) || species.foodEaten >= species.population) {
         return null
     }
 

@@ -11,7 +11,7 @@ interface FeedCarnivoreButtonProps {
 export const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) => {
     const { carnivoreFeedingData, updateCarnivoreFeedingData } = useGameContext()
 
-    if (!isCarnivore(species)) {
+    if (!isCarnivore(species) || species.foodEaten >= species.population) {
         return null
     }
 
