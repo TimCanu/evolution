@@ -12,7 +12,8 @@ import { Species } from '@/src/models/species.model'
 import { checkPlayerExists } from '@/src/lib/player.service.server'
 import {
     computeEndOfFeedingStageData,
-    getNextPlayerToFeedId,
+    computePlayersForFeedingRound,
+    getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
@@ -168,24 +169,14 @@ const computeDataForFeedingStage = (
         return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: true }
     }
 
-    const firstPlayerToFeed = playersUpdated.find((player) => player.id === firstPlayerToFeedId)
-    if (!firstPlayerToFeed) {
-        throw Error(`Could not find any player with id ${firstPlayerToFeedId}`)
-    }
+    const playersThatCanStillFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
+    const playersComputedForFeedingStage = computePlayersForFeedingRound(
+        playersUpdated,
+        firstPlayerToFeedId,
+        playersThatCanStillFeedIds
+    )
 
-    if (!hasPlayerFinishedFeeding(firstPlayerToFeed)) {
-        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: false }
-    }
-
-    const nextPlayerToFeedId = getNextPlayerToFeedId(playersUpdated, firstPlayerToFeedId)
-    const playersToReturn = playersUpdated.map((player) => {
-        if (player.id === nextPlayerToFeedId) {
-            return { ...player, status: GameStatus.FEEDING_SPECIES }
-        }
-        return player
-    })
-
-    return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: false }
+    return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
 }
 
 const computePlayersForFeedingStage = (

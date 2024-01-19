@@ -4,6 +4,8 @@ import { OpponentFeatureLayout } from '@/src/components/opponent-feature-layout'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import playerTurnDino from '../assets/images/player-turn-dyno.png'
 import Image from 'next/image'
+import { useGameContext } from '@/src/providers/game.provider'
+import { feedSpecies } from '@/src/lib/species.service'
 
 interface OpponentLayoutProps {
     opponent: Opponent
@@ -11,6 +13,8 @@ interface OpponentLayoutProps {
 }
 
 export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentIndex }) => {
+    const { carnivoreFeedingData, gameId, playerId } = useGameContext()
+
     return (
         <li className="border border-indigo-600 w-80 h-44 ml-5 text-center">
             <h1 className="mx-4 flex justify-between mb-2">
@@ -32,6 +36,14 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
 
             <ul className="flex justify-around">
                 {opponent.species.map((species, speciesIndex) => {
+                    const canBeEaten = carnivoreFeedingData.preyIds.includes(species.id)
+
+                    const feedCarnivore = async (): Promise<void> => {
+                        if (!carnivoreFeedingData.carnivoreId){
+                            throw Error('Carnivore id is not defined!')
+                        }
+                        await feedSpecies({ gameId, playerId, speciesId: carnivoreFeedingData.carnivoreId, preyId: species.id })
+                    }
                     return (
                         <li key={speciesIndex} className="flex flex-col w-36">
                             <p className="flex justify-around mb-2">
@@ -41,6 +53,15 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                                 >
                                     {species.size}
                                 </span>
+                                {canBeEaten && (
+                                    <button
+                                        className="flex justify-center items-center"
+                                        aria-label="Eat this species"
+                                        onClick={feedCarnivore}
+                                    >
+                                        Eat
+                                    </button>
+                                )}
                                 <span
                                     aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${species.population}`}
                                     className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"

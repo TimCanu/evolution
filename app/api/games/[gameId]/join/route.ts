@@ -34,7 +34,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const newPlayer: PlayerEntity = {
             id: playerId,
             name: data.playerName,
-            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
+            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
             cards: newPlayerCards,
             status: GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
             newSpeciesList: [],

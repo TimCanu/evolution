@@ -7,6 +7,7 @@ import { GameStatus } from '@/src/enums/game.events.enum'
 import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
 import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
+import { isCarnivore } from '@/src/lib/food.service.server'
 
 interface CardProps {
     canShowAddSpeciesLeftButton: boolean
@@ -25,12 +26,27 @@ export const SpeciesLayout: FC<CardProps> = ({
     playerId,
     species,
 }) => {
-    const { updateStatus, status, updateSelectedSpecies } = useGameContext()
+    const { carnivoreFeedingData, status, updateStatus, updateSelectedSpecies, updateCarnivoreFeedingData } =
+        useGameContext()
     const { isEvolvingStage, isFeedingStage } = usePlayerStatus()
     const canActionsBeShown = isEvolvingStage()
+    const isCarnivoreFeeding = carnivoreFeedingData.carnivoreId === species.id
+    const canBeEaten = carnivoreFeedingData.preyIds.includes(species.id)
 
-    const feed = async (): Promise<void> => {
-        await feedSpecies({ gameId, playerId, speciesId: species.id })
+    const feedPlantsEater = async (): Promise<void> => {
+        await feedSpecies({ gameId, playerId, speciesId: species.id, preyId: undefined })
+    }
+
+    const toggleCarnivoreWantingToFeed = async (): Promise<void> => {
+        if (carnivoreFeedingData.carnivoreId) {
+            updateCarnivoreFeedingData(undefined, [])
+        } else {
+            updateCarnivoreFeedingData(species.id, species.preyIds)
+        }
+    }
+
+    const feedCarnivore = async (): Promise<void> => {
+        await feedSpecies({ gameId, playerId, speciesId: species.id, preyId: species.id })
     }
 
     return (
@@ -93,16 +109,38 @@ export const SpeciesLayout: FC<CardProps> = ({
                             <PlusIcon colorHex="#737373" />
                         </button>
                     )}
-                    {isFeedingStage() && species.foodEaten < species.population && (
+                    {canBeEaten && (
                         <button
                             className="flex justify-center items-center"
-                            aria-label="Feed plants to this species"
-                            onClick={feed}
+                            aria-label="Eat this species"
+                            onClick={feedCarnivore}
                         >
-                            <FeedPlantsIcon />
+                            Eat
                         </button>
                     )}
-
+                    {isFeedingStage() &&
+                        species.foodEaten < species.population &&
+                        (isCarnivore(species) ? (
+                            species.preyIds.length > 0 ? (
+                                <button
+                                    className="flex justify-center items-center"
+                                    aria-label="Feed this carnivore"
+                                    onClick={toggleCarnivoreWantingToFeed}
+                                >
+                                    {isCarnivoreFeeding ? 'Cancel' : 'Feed'}
+                                </button>
+                            ) : (
+                                <span>Go vegan</span>
+                            )
+                        ) : (
+                            <button
+                                className="flex justify-center items-center"
+                                aria-label="Feed plants to this species"
+                                onClick={feedPlantsEater}
+                            >
+                                <FeedPlantsIcon />
+                            </button>
+                        ))}
                     {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                         <span
                             className=" border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"

@@ -2,6 +2,8 @@ import { Card } from '@/src/models/card.model'
 import { v4 as uuidv4 } from 'uuid'
 import { Species } from '@/src/models/species.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
+import { GameStatus } from '@/src/enums/game.events.enum'
+import { FeatureKey } from '@/src/enums/feature-key.enum'
 
 export const computeEndOfFeedingStageData = (
     players: PlayerEntity[],
@@ -15,7 +17,7 @@ export const computeEndOfFeedingStageData = (
     const playersUpdated = players.map((player: PlayerEntity) => {
         player.species = computeSpeciesPopulation(player.species)
         if (player.species.length === 0) {
-            player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [] }]
+            player.species = [{ id: uuidv4(), size: 1, population: 1, foodEaten: 0, features: [], preyIds: [] }]
         }
         const numberOfCardsToAdd = player.species.length + 3
         player.cards = player.cards.concat(
@@ -27,6 +29,7 @@ export const computeEndOfFeedingStageData = (
                 return card
             })
         )
+        player.status = GameStatus.ADDING_FOOD_TO_WATER_PLAN
         return player
     })
     const firstPlayerToFeedIndex = playersUpdated.findIndex((player) => player.id === firstPlayerToFeedId)
@@ -47,17 +50,118 @@ const computeSpeciesPopulation = (species: Species[]): Species[] => {
     }, [])
 }
 
-export const getNextPlayerToFeedId = (players: PlayerEntity[], lastPlayerToFeedId: string): string => {
+export const getNextPlayerToFeedId = (
+    players: PlayerEntity[],
+    lastPlayerToFeedId: string,
+    playersThatCanStillFeedIds: string[]
+): string => {
     const playerCurrentlyFeedingIndex = players.findIndex((player) => player.id === lastPlayerToFeedId)
     const nextPlayerFeedingIndex =
         playerCurrentlyFeedingIndex + 1 === players.length ? 0 : playerCurrentlyFeedingIndex + 1
     const nextPlayerFeeding = players[nextPlayerFeedingIndex]
-    if (hasPlayerFinishedFeeding(nextPlayerFeeding)) {
-        return getNextPlayerToFeedId(players, nextPlayerFeeding.id)
+    if (!playersThatCanStillFeedIds.includes(nextPlayerFeeding.id)) {
+        return getNextPlayerToFeedId(players, nextPlayerFeeding.id, playersThatCanStillFeedIds)
     }
     return nextPlayerFeeding.id
 }
 
 export const hasPlayerFinishedFeeding = (player: PlayerEntity): boolean => {
     return player.species.every((species) => species.foodEaten === species.population)
+}
+
+export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEntity[]): string[] => {
+    const isTherePlantsLeft = amountOfFood > 0
+
+    const allCarnivores: Species[] = players
+        .map((player) => {
+            return player.species.filter((species) => {
+                return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
+            })
+        })
+        .flat()
+
+    const carnivoresThatCanFeed = allCarnivores.filter((carnivore) => {
+        return players.some((player) => {
+            return player.species.some((species) => {
+                return canCarnivoreEatSpecies(carnivore, species)
+            })
+        })
+    })
+
+    const plantEatersThatCanFeed: Species[] = isTherePlantsLeft
+        ? players.map((player) => {
+                  return player.species.filter((species) => {
+                      return species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) && species.foodEaten < species.population
+                  })
+              })
+              .flat()
+        : []
+
+    const speciesThatCanFeed = [...carnivoresThatCanFeed, ...plantEatersThatCanFeed]
+    const speciesThatCanFeedIds = speciesThatCanFeed.map((species) => species.id)
+    const playersThatCanFeed = players.filter(player => {
+        return player.species.some((species) => speciesThatCanFeedIds.includes(species.id))
+    })
+    return playersThatCanFeed.map((player) => player.id)
+}
+
+const canCarnivoreEatSpecies = (speciesFeeding: Species, speciesToEat: Species): boolean => {
+    try {
+        checkThatCarnivoreCanEat(speciesFeeding, speciesToEat)
+        return true
+    } catch (e) {
+        console.log(e)
+        return false
+    }
+}
+
+export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): void => {
+    if (carnivore.foodEaten >= carnivore.population) {
+        throw Error(`Species has already eaten | Species ID=${carnivore.id}`)
+    }
+    if (carnivore.id === prey.id) {
+        throw Error(`Carnivore cannot eat themselves`)
+    }
+    if (carnivore.size <= prey.size) {
+        throw Error(
+            `Cannot eat a species that has a size equal or superior to yours (${carnivore.size} <= ${prey.size}`
+        )
+    }
+}
+
+const computeSpeciesPreys = (speciesList: Species[], players: PlayerEntity[]): Species[] => {
+    return speciesList.map((species) => {
+        if (!isCarnivore(species)) {
+            return species
+        }
+        species.preyIds = players.reduce((speciesIds: string[], player) => {
+            player.species.forEach((potentialPrey) => {
+                if (canCarnivoreEatSpecies(species, potentialPrey)) {
+                    speciesIds.push(potentialPrey.id)
+                }
+            })
+            return speciesIds
+        }, [])
+        return species
+    })
+}
+
+export const isCarnivore = (species: Species): boolean => {
+    return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
+}
+
+export const computePlayersForFeedingRound = (
+    players: PlayerEntity[],
+    playerCurrentlyFeedingId: string,
+    playersThatCanStillFeed: string[]
+): PlayerEntity[] => {
+    const nextPlayerToFeedId = getNextPlayerToFeedId(players, playerCurrentlyFeedingId, playersThatCanStillFeed)
+    return players.map((player) => {
+        if (player.id === nextPlayerToFeedId) {
+            player.species = computeSpeciesPreys(player.species, players)
+            player.status = GameStatus.FEEDING_SPECIES
+            return { ...player, status: GameStatus.FEEDING_SPECIES }
+        }
+        return {...player, status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED }
+    })
 }
