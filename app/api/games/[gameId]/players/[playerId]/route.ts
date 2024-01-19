@@ -14,7 +14,7 @@ import {
     computeEndOfFeedingStageData,
     computePlayersForFeedingRound,
     getPlayersThatCanFeedIds,
-    hasPlayerFinishedFeeding,
+    hasPlayerFinishedFeeding, isCarnivore,
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -170,13 +170,16 @@ const computeDataForFeedingStage = (
     }
 
     const playersThatCanStillFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
-    const playersComputedForFeedingStage = computePlayersForFeedingRound(
-        playersUpdated,
-        firstPlayerToFeedId,
-        playersThatCanStillFeedIds
-    )
+    if (!playersThatCanStillFeedIds.includes(firstPlayerToFeedId)){
+        const playersComputedForFeedingStage = computePlayersForFeedingRound(
+            playersUpdated,
+            firstPlayerToFeedId,
+            playersThatCanStillFeedIds
+        )
+        return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
+    }
 
-    return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
+    return { playersUpdated: playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: false }
 }
 
 const computePlayersForFeedingStage = (
@@ -239,6 +242,9 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
 const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; numberOfFoodEaten: number } => {
     let numberOfFoodEaten = 0
     const fedSpecies = speciesList.map((species) => {
+        if (isCarnivore(species)){
+            return species
+        }
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
             numberOfFoodEaten++
