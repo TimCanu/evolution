@@ -99,10 +99,7 @@ export function Game({ game }: GameProps) {
                     })}
                 </ul>
                 {isEvolvingStage() && (
-                    <button
-                        className="my-4 bg-cyan-500 border bg-color-white w-36 self-center"
-                        onClick={finishEvolvingStage}
-                    >
+                    <button className="my-3 bg-teal-500 rounded w-36 self-center" onClick={finishEvolvingStage}>
                         Finish turn
                     </button>
                 )}
