@@ -15,7 +15,7 @@ export const createPlayer1 = (): PlayerEntity => {
     return {
         id: 'player1',
         name: 'Aude',
-        species: [{ id: 'specie1', size: 1, population: 1, features: [], foodEaten: 0 }],
+        species: [{ id: 'specie1', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
         cards: [
             buildLongNeckCard('firstPlayerCard1', 4),
             buildFertileCard('firstPlayerCard2', 3),
@@ -32,7 +32,7 @@ export const createPlayer2 = (): PlayerEntity => {
     return {
         id: 'player2',
         name: 'Tim',
-        species: [{ id: 'specie2', size: 1, population: 1, features: [], foodEaten: 0 }],
+        species: [{ id: 'specie2', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
         cards: [
             buildLongNeckCard('secondPlayerCard1', 1),
             buildFertileCard('secondPlayerCard2', 1),

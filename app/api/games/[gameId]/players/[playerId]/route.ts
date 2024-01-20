@@ -12,8 +12,11 @@ import { Species } from '@/src/models/species.model'
 import { checkPlayerExists } from '@/src/lib/player.service.server'
 import {
     computeEndOfFeedingStageData,
-    getNextPlayerToFeedId,
+    computePlayersForFirstFeedingRound,
+    computePlayersForNextFeedingRound,
+    getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
+    isCarnivore,
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -162,30 +165,19 @@ const computeDataForFeedingStage = (
         player.species.every((species) => species.population === species.foodEaten)
     )
     if (haveAllPlayersFed) {
-        const playersToReturn = playersUpdated.map((player) => {
-            return { ...player, status: GameStatus.ADDING_FOOD_TO_WATER_PLAN }
-        })
-        return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: true }
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
     }
 
-    const firstPlayerToFeed = playersUpdated.find((player) => player.id === firstPlayerToFeedId)
-    if (!firstPlayerToFeed) {
-        throw Error(`Could not find any player with id ${firstPlayerToFeedId}`)
+    const playersThatCanFeedIds = getPlayersThatCanFeedIds(amountOfFoodUpdated, playersUpdated)
+    if (playersThatCanFeedIds.length === 0) {
+        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
     }
-
-    if (!hasPlayerFinishedFeeding(firstPlayerToFeed)) {
-        return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: false }
-    }
-
-    const nextPlayerToFeedId = getNextPlayerToFeedId(playersUpdated, firstPlayerToFeedId)
-    const playersToReturn = playersUpdated.map((player) => {
-        if (player.id === nextPlayerToFeedId) {
-            return { ...player, status: GameStatus.FEEDING_SPECIES }
-        }
-        return player
-    })
-
-    return { playersUpdated: playersToReturn, amountOfFoodUpdated, haveAllPlayersFed: false }
+    const playersComputedForFeedingStage = computePlayersForFirstFeedingRound(
+        playersUpdated,
+        firstPlayerToFeedId,
+        playersThatCanFeedIds
+    )
+    return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
 }
 
 const computePlayersForFeedingStage = (
@@ -236,7 +228,7 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
 
 const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {
     const longNeckActionsAppliedData = applyLongNeckActions(player.newSpeciesList)
-    player.species = longNeckActionsAppliedData.fedSpecies
+    player.species = longNeckActionsAppliedData.speciesListWithSpecialActionsApplied
     player.numberOfFoodEaten += longNeckActionsAppliedData.numberOfFoodEaten
     if (amountOfFood > 0) {
         player.species = applyFertileActions(player.species)
@@ -245,9 +237,17 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
     return player
 }
 
-const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; numberOfFoodEaten: number } => {
+const applyLongNeckActions = (
+    speciesList: Species[]
+): {
+    speciesListWithSpecialActionsApplied: Species[]
+    numberOfFoodEaten: number
+} => {
     let numberOfFoodEaten = 0
-    const fedSpecies = speciesList.map((species) => {
+    const speciesListWithSpecialActionsApplied = speciesList.map((species) => {
+        if (isCarnivore(species)) {
+            return species
+        }
         if (species.features.some((feature) => feature.key === FeatureKey.LONG_NECK)) {
             species.foodEaten = 1
             numberOfFoodEaten++
@@ -258,7 +258,7 @@ const applyLongNeckActions = (speciesList: Species[]): { fedSpecies: Species[]; 
         }
         return species
     })
-    return { fedSpecies, numberOfFoodEaten }
+    return { speciesListWithSpecialActionsApplied, numberOfFoodEaten }
 }
 
 const applyFertileActions = (speciesList: Species[]): Species[] => {

@@ -17,17 +17,26 @@ interface GameContextProps {
 interface GameContextResult {
     amountOfFood: number
     cards: Card[]
-    isPlayerFeedingFirst: boolean
+    carnivoreFeedingData: CarnivoreFeedingData
+    gameId: string
     hiddenFoods: number[]
+    isPlayerFeedingFirst: boolean
     numberOfFoodEaten: number
     opponents: Opponent[]
+    playerId: string
     selectedSpecies?: Species
     speciesList: Species[]
     status: PlayerStatus
     updateCards: (cards: Card[]) => void
+    updateCarnivoreFeedingData: (carnivoreId: string | undefined, preyIds: string[]) => void
     updateSelectedSpecies: (species: Species) => void
     updateSpeciesList: (speciesList: Species[]) => void
     updateStatus: (status: PlayerStatus) => void
+}
+
+interface CarnivoreFeedingData {
+    carnivoreId?: string
+    preyIds: string[]
 }
 
 export enum EVOLVING_STAGES {
@@ -61,12 +70,13 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
     const [selectedSpecies, setSelectedSpecies] = useState<Species | undefined>(undefined)
     const [speciesList, setSpeciesList] = useState<Species[]>(game.player.species)
     const [status, setStatus] = useState<PlayerStatus>(game.player.status)
+    const [carnivoreFeedingData, setCarnivoreFeedingData] = useState<CarnivoreFeedingData>({ preyIds: [] })
 
     useEffect(() => {
         const playerChannel = PusherInstance.getPlayerChannel(gameId, game.player.id)
 
         playerChannel.bind(UPDATE_GAME_INFO, function (data: PushUpdatePlayerGameInfoData) {
-            console.log(data)
+            setCarnivoreFeedingData({ preyIds: [] })
             setIsPlayerFeedingFirst(data.game.player.isFirstPlayerToFeed)
             setNumberOfFoodEaten(data.game.player.numberOfFoodEaten)
             setHiddenFoods(data.game.hiddenFoods)
@@ -98,17 +108,25 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
         setSpeciesList(newSpeciesList)
     }
 
+    const updateCarnivoreFeedingData = (carnivoreId: string | undefined, preyIds: string[]): void => {
+        setCarnivoreFeedingData({ carnivoreId, preyIds })
+    }
+
     const res = {
         amountOfFood,
         cards,
-        isPlayerFeedingFirst,
+        carnivoreFeedingData,
+        gameId,
         hiddenFoods,
+        isPlayerFeedingFirst,
         numberOfFoodEaten,
         opponents,
+        playerId: game.player.id,
         selectedSpecies,
         speciesList,
         status,
         updateCards,
+        updateCarnivoreFeedingData,
         updateSelectedSpecies,
         updateSpeciesList,
         updateStatus,

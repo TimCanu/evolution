@@ -6,4 +6,5 @@ export interface Species {
     population: number
     foodEaten: number
     features: Feature[]
+    preyIds: string[]
 }

@@ -48,7 +48,7 @@ export const POST = async (request: NextRequest) => {
         const firstPlayer: PlayerEntity = {
             id: playerId,
             name: data.playerName,
-            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0 }],
+            species: [{ id: uuidv4(), size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
             cards: firstPlayerCards,
             newSpeciesList: [],
             status:
