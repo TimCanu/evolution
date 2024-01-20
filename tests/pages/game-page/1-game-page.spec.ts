@@ -33,6 +33,7 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
     await checkPlayerInitialLayout(firstPlayerPage, 'Tim', true)
+    await expect(firstPlayerPage.getByLabel('You are the first player to feed')).toBeVisible()
     await checkPlayerInitialLayout(secondPlayerPage, 'Aude', false)
 
     await addCardAsFood(firstPlayerPage, 1, 0, 4, firstPlayer.cards[0])
@@ -93,5 +94,5 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
     await expect(firstPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
     await expect(secondPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
 
-    await expect(firstPlayerPage.getByAltText('The player Tim is the first player to feed')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('The player Tim is the first player to feed')).toBeVisible()
 })

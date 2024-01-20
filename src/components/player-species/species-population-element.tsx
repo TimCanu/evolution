@@ -30,7 +30,7 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
 
     return (
         <button
-            className="relative p-1"
+            className="relative p-1 focus:animate-bounce"
             aria-label={`Increase population of species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)

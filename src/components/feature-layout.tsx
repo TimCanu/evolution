@@ -19,10 +19,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
     const cardImage = getFeatureImage(feature.key)
 
     return (
-        <li
-            data-testid={`s-${speciesIndex}-feature-${featureIndex}`}
-            className="mx-1 relative"
-        >
+        <li data-testid={`s-${speciesIndex}-feature-${featureIndex}`} className="mx-1 relative">
             {isEvolvingStage() && (
                 <button
                     aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}

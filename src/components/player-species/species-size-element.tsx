@@ -30,7 +30,7 @@ const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species
 
     return (
         <button
-            className="relative inline-flex p-1"
+            className="relative inline-flex p-1 focus:animate-bounce"
             aria-label={`Increase size of species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)
