@@ -21,13 +21,13 @@ interface CardProps {
 }
 
 export const SpeciesLayout: FC<CardProps> = ({
-                                                 canShowAddSpeciesLeftButton,
-                                                 canShowAddSpeciesRightButton,
-                                                 index,
-                                                 gameId,
-                                                 playerId,
-                                                 species,
-                                             }) => {
+    canShowAddSpeciesLeftButton,
+    canShowAddSpeciesRightButton,
+    index,
+    gameId,
+    playerId,
+    species,
+}) => {
     const { status } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 

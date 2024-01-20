@@ -70,7 +70,7 @@ test('should be able to play a game round with 2 players', async ({ page: firstP
     await assertNumberOfFoodInWaterPlan(firstPlayerPage, 4)
     await assertNumberOfFoodInWaterPlan(secondPlayerPage, 4)
 
-    await feedSpecies(secondPlayerPage, 0,1, 0)
+    await feedSpecies(secondPlayerPage, 0, 1, 0)
     await expect(secondPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
     await checkOpponentStatus(firstPlayerPage, 2, false)
     await checkOpponentStatus(secondPlayerPage, 1, true)
