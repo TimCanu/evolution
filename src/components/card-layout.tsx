@@ -13,7 +13,7 @@ interface CardProps {
 export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const { canDiscardCard, isAddingFoodStage } = usePlayerStatus()
 
-    const cardImage = getCardImage(card)
+    const cardImage = getCardImage(card.featureKey)
 
     return (
         <li

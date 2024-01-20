@@ -35,7 +35,7 @@ export const SpeciesLayout: FC<CardProps> = ({
         <article className="flex self-end">
             <AddLeftSpeciesButton canShowAddSpeciesLeftButton={canShowAddSpeciesLeftButton} />
             <li className="flex flex-col min-w-32 mx-2">
-                <ul className="flex self-center mb-2">
+                <ul className="flex self-center mb-1">
                     {species.features.map((feature, featureIndex) => {
                         return (
                             <FeatureLayout
@@ -50,7 +50,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                 </ul>
                 <div
                     data-testid={`species-${index}`}
-                    className="border mb-1 w-32 flex flex-row justify-between items-center min-w-32 self-center bg-amber-900 rounded-md h-10"
+                    className="border mb-1 w-32 flex flex-row justify-between items-center min-w-32 self-center bg-amber-900 rounded-md h-14"
                 >
                     <SpeciesSizeElement index={index} species={species} />
                     <AddSpeciesFeatureButton index={index} species={species} />

@@ -30,7 +30,7 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
 
     return (
         <button
-            className="relative inline-flex p-1"
+            className="relative p-1"
             aria-label={`Increase population of species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)
@@ -38,7 +38,7 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
             }}
         >
             <IncreaseSpeciesPopulationLabel species={species} index={index} />
-            <span className="absolute justify-center w-5 h-5 text-white bg-green-600 border rounded-full -top-1 -end-1">
+            <span className="absolute justify-center w-5 h-5 text-white bg-green-600 border rounded-full -top-1 -end-0 mr-1">
                 <PlusIcon />
             </span>
         </button>
@@ -48,7 +48,7 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
 const IncreaseSpeciesPopulationLabel: FC<SpeciesPopulationElementProps> = ({ index, species }) => {
     return (
         <span
-            className="border bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-1"
+            className="border bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-2"
             aria-label={`Species at index ${index} population: ${species.population}`}
         >
             {species.population}

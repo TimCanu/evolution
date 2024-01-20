@@ -38,7 +38,7 @@ const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species
             }}
         >
             <IncreaseSpeciesSizeLabel index={index} species={species} />
-            <span className="absolute justify-center w-5 h-5 text-white bg-orange-600 border rounded-full -top-1 -end-1">
+            <span className="absolute justify-center w-5 h-5 text-white bg-orange-600 border rounded-full -top-1 -start-0 ml-1">
                 <PlusIcon />
             </span>
         </button>
@@ -48,7 +48,7 @@ const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species
 const IncreaseSpeciesSizeLabel: FC<SpeciesSizeElementProps> = ({ index, species }) => {
     return (
         <span
-            className="border bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center ml-1"
+            className="border bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center ml-2"
             aria-label={`Species at index ${index} size: ${species.size}`}
         >
             {species.size}
