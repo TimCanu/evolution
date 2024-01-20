@@ -12,7 +12,7 @@ export const assertSpeciesFoodEaten = async (
     population: number,
     foodEaten: number
 ): Promise<void> => {
-    await expect(page.getByTestId(`species-${speciesIndex}`).getByText(`${foodEaten} / ${population}`)).toBeVisible()
+    await expect(page.getByTestId(`species-${speciesIndex}`).getByText(`${foodEaten}/${population}`)).toBeVisible()
 }
 
 export const assertNumberOfFeatures = async (
@@ -144,16 +144,15 @@ export const increaseSpeciesPopulation = async (
 export const feedSpecies = async (
     page: Page,
     speciesIndex: number,
-    numberOfSpeciesNotFed: number,
     speciesPopulation: number,
     speciesFoodEaten: number
 ): Promise<void> => {
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten)
     await expect(page.getByText('Choose the species you would like to feed')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Feed plants to this species' })).toHaveCount(numberOfSpeciesNotFed)
+    await expect(page.getByRole('button', { name: `Feed plants to species at index ${speciesIndex}` })).toBeVisible()
     await page
         .getByTestId(`species-${speciesIndex}`)
-        .getByRole('button', { name: 'Feed plants to this species' })
+        .getByRole('button', { name: `Feed plants to species at index ${speciesIndex}` })
         .click()
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten + 1)
 }
@@ -161,15 +160,14 @@ export const feedSpecies = async (
 export const feedLastSpecies = async (
     page: Page,
     speciesIndex: number,
-    numberOfSpeciesNotFed: number,
     speciesPopulation: number,
     speciesFoodEaten: number
 ): Promise<void> => {
     await assertSpeciesFoodEaten(page, speciesIndex, speciesPopulation, speciesFoodEaten)
     await expect(page.getByText('Choose the species you would like to feed')).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Feed plants to this species' })).toHaveCount(numberOfSpeciesNotFed)
+    await expect(page.getByRole('button', { name: `Feed plants to species at index ${speciesIndex}` })).toBeVisible()
     await page
         .getByTestId(`species-${speciesIndex}`)
-        .getByRole('button', { name: 'Feed plants to this species' })
+        .getByRole('button', { name: `Feed plants to species at index ${speciesIndex}` })
         .click()
 }

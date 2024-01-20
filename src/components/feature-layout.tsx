@@ -17,7 +17,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
     return (
         <li
             data-testid={`s-${speciesIndex}-feature-${featureIndex}`}
-            className="rounded bg-amber-900 w-28 h-36 ml-2 flex flex-col"
+            className="rounded-md bg-amber-900 w-28 h-36 flex flex-col mx-1 border"
         >
             <h1 className="mb-2 w-auto self-center flex justify-between">
                 {feature.name}

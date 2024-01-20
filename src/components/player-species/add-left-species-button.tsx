@@ -16,7 +16,7 @@ export const AddLeftSpeciesButton: FC<AddLeftSpeciesButtonProps> = ({ canShowAdd
 
     return (
         <button
-            className="mb-5 border border-indigo-600 w-28"
+            className="h-16 border border-indigo-600 w-36 self-center mr-5"
             onClick={() => {
                 updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)
             }}

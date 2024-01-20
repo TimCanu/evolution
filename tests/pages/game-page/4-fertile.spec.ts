@@ -1,25 +1,5 @@
 import { expect, test } from '@playwright/test'
 import { ObjectId } from 'mongodb'
-import {
-    checkOpponentSpecies,
-    checkOpponentStatus,
-    checkPlayerInitialLayout,
-    createPlayer1,
-    createPlayer2,
-    finishTurnEvolvingAndWaitForOthersToEvolve,
-    finishTurnEvolvingAndWaitForOthersToFeed,
-} from '@/tests/utils/player.util'
-import { addCardAsFood } from '@/tests/utils/cards.util'
-import {
-    addSpeciesFeature,
-    addSpeciesToTheLeft,
-    addSpeciesToTheRight,
-    feedLastSpecies,
-    feedSpecies,
-    increaseSpeciesPopulation,
-    increaseSpeciesSize,
-} from '@/tests/utils/species.util'
-import { assertNumberOfFoodInWaterPlan, assertNumberOfHiddenFood } from '@/tests/utils/food.util'
 import { createGame } from '@/tests/utils/game.util'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -71,8 +51,8 @@ test('Fertile card should increase population when there is food left', async ({
     await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0 / 1`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0 / 2`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/2`)).toBeVisible()
 })
 
 test('Fertile card should increase population from 5 to 6', async ({ page: firstPlayerPage }) => {
@@ -119,7 +99,7 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
     await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0 / 6`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/6`)).toBeVisible()
 })
 
 test('Fertile card should not increase population when it is already at 6', async ({ page: firstPlayerPage }) => {
@@ -166,5 +146,5 @@ test('Fertile card should not increase population when it is already at 6', asyn
     await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 6`)).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0 / 6`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/6`)).toBeVisible()
 })

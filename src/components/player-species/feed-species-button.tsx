@@ -3,9 +3,11 @@ import { Species } from '@/src/models/species.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { feedSpecies } from '@/src/lib/species.service'
 import { useGameContext } from '@/src/providers/game.provider'
-import { FeedCarnivoreButton } from '@/src/components/player-species/feed-carnivore-button'
 import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
-import { FeedPlantsButton } from '@/src/components/player-species/feed-plants-button'
+import { isCarnivore } from '@/src/lib/food.service.server'
+import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiting-icon'
+import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
+import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 
 interface FeedSpeciesButtonProps {
     gameId: string
@@ -39,8 +41,72 @@ export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, p
                     <FeedMeatIcon />
                 </button>
             ) : (
-                <FeedPlantsButton species={species} gameId={gameId} playerId={playerId} />
+                <FeedPlantsButton species={species} gameId={gameId} playerId={playerId} index={index} />
             )}
         </>
+    )
+}
+
+interface FeedCarnivoreButtonProps {
+    index: number
+    species: Species
+}
+
+const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) => {
+    const { carnivoreFeedingData, updateCarnivoreFeedingData } = useGameContext()
+
+    const isCurrentlyFeeding = carnivoreFeedingData.carnivoreId === species.id
+    const isAnotherCarnivoreFeeding = !!carnivoreFeedingData.carnivoreId && !isCurrentlyFeeding
+    if (!isCarnivore(species) || species.foodEaten >= species.population || isAnotherCarnivoreFeeding) {
+        return null
+    }
+
+    const toggleCarnivoreWantingToFeed = async (): Promise<void> => {
+        if (carnivoreFeedingData.carnivoreId === species.id) {
+            updateCarnivoreFeedingData(undefined, [])
+        } else {
+            updateCarnivoreFeedingData(species.id, species.preyIds)
+        }
+    }
+
+    const ariaLabel = isCurrentlyFeeding ? 'Cancel feeding of the carnivore' : `Feed carnivore at index ${index}`
+
+    return (
+        <>
+            {species.preyIds.length > 0 ? (
+                <button className="w-8" aria-label={ariaLabel} onClick={toggleCarnivoreWantingToFeed}>
+                    {isCurrentlyFeeding ? <CarnivoreWaitingIcon /> : <CarnivoreAttackingIcon />}
+                </button>
+            ) : (
+                <span>Go vegan</span>
+            )}
+        </>
+    )
+}
+
+interface FeedPlantsButtonProps {
+    gameId: string
+    playerId: string
+    species: Species
+    index: number
+}
+
+const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species, index }) => {
+    if (isCarnivore(species) || species.foodEaten >= species.population) {
+        return null
+    }
+
+    const feedPlantsEater = async (): Promise<void> => {
+        await feedSpecies({ gameId, playerId, speciesId: species.id, preyId: undefined })
+    }
+
+    return (
+        <button
+            className="flex justify-center items-center"
+            aria-label={`Feed plants to species at index ${index}`}
+            onClick={feedPlantsEater}
+        >
+            <FeedPlantsIcon />
+        </button>
     )
 }
