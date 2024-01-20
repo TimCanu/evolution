@@ -18,11 +18,11 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     return (
         <li
             data-testid={`card-${index}`}
-            className="border border-indigo-600 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
+            className="rounded bg-amber-900 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
         >
-            <h1 className="mb-auto">{card.name}</h1>
-            <div className="relative self-center">
-                {cardImage && <Image src={cardImage} alt="" height={85} />}
+            <h1 className="mb-2 self-center">{card.name}</h1>
+            <div className="relative self-center border-4 border-transparent">
+                {cardImage && <Image src={cardImage} alt="" height={80} />}
                 {(isAddingFoodStage() || canDiscardCard(card)) && (
                     <button
                         className="bg-cyan-500 invisible group-hover:visible h-1/2 absolute top-1/4 left-2 right-2 rounded-md"
@@ -35,8 +35,8 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
                     </button>
                 )}
             </div>
-            <p className="text-xs max-h-[64px]">{card.description}</p>
-            <p className="self-end border border-indigo-600 rounded-full w-8 h-8 flex justify-center items-center">
+            <p className="text-xs max-h-[64px] text-center">{card.description}</p>
+            <p className="self-end mb-0 mt-auto bg-green-900 h-auto rounded w-8 h-8 flex justify-center items-center">
                 {card.foodNumber}
             </p>
         </li>
