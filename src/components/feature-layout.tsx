@@ -23,7 +23,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
             {isEvolvingStage() && (
                 <button
                     aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}
-                    className="h-6 w-6 absolute justify-center -bottom-0 inset-x-1.5 bg-black rounded-full"
+                    className="h-6 w-6 absolute justify-center -top-6 inset-x-1.5 bg-black rounded-full"
                     onClick={() => {
                         removeFeature(speciesId, feature.cardId)
                     }}
