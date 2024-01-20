@@ -17,9 +17,9 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
     return (
         <li
             data-testid={`s-${speciesIndex}-feature-${featureIndex}`}
-            className="border border-indigo-600 w-24 h-36 ml-2 flex flex-col"
+            className="rounded bg-amber-900 w-28 h-36 ml-2 flex flex-col"
         >
-            <h1 className="mb-auto flex justify-between">
+            <h1 className="mb-2 w-auto self-center flex justify-between">
                 {feature.name}
                 {isEvolvingStage() && (
                     <button
@@ -46,7 +46,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
                     </button>
                 )}
             </h1>
-            <p>{feature.description}</p>
+            <p className="text-xs max-w-36 text-center items-center">{feature.description}</p>
         </li>
     )
 }
