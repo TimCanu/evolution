@@ -314,7 +314,9 @@ test('Should skip feeding stage for first player to feed when already fed throug
     await expect(secondPlayerPage.getByText('Choose the species you would like to feed')).toBeVisible()
 })
 
-test('Long neck and forager cards should increase fed population by two when finishing turn', async ({ page: firstPlayerPage }) => {
+test('Long neck and forager cards should increase fed population by two when finishing turn', async ({
+    page: firstPlayerPage,
+}) => {
     const gameId = ObjectId.createFromTime(6)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
@@ -343,7 +345,9 @@ test('Long neck and forager cards should increase fed population by two when fin
         species: [{ id: 'specie1', size: 1, population: 1, features: [], foodEaten: 0 }],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{ id: 'specie1', size: 1, population: 1, features: [longNeckFeature, foragerFeature], foodEaten: 0 }],
+        newSpeciesList: [
+            { id: 'specie1', size: 1, population: 1, features: [longNeckFeature, foragerFeature], foodEaten: 0 },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
