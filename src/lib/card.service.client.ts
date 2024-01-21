@@ -7,6 +7,8 @@ import forager from '../assets/images/forager.jpg'
 import foragerFeature from '../assets/images/forager-feature.jpg'
 import carnivore from '../assets/images/carnivore.jpg'
 import carnivoreFeature from '../assets/images/carnivore-feature.jpg'
+import climbing from '../assets/images/climbing.jpg'
+import climbingFeature from '../assets/images/climbing-feature.jpg'
 import missingImage from '../assets/images/missing-image.jpg'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 
@@ -20,6 +22,8 @@ export const getCardImage = (featureKey: FeatureKey): StaticImageData => {
             return forager
         case FeatureKey.CARNIVORE:
             return carnivore
+            case FeatureKey.CLIMBING:
+            return climbing
         default:
             return missingImage
     }
@@ -35,6 +39,8 @@ export const getFeatureImage = (featureKey: FeatureKey): StaticImageData => {
             return foragerFeature
         case FeatureKey.CARNIVORE:
             return carnivoreFeature
+            case FeatureKey.CLIMBING:
+                return climbingFeature
         default:
             return missingImage
     }
