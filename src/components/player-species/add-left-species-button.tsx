@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
+import { AddNewSpeciesIcon } from '@/src/components/svg-icons/add-new-species-icon'
 
 interface AddLeftSpeciesButtonProps {
     canShowAddSpeciesLeftButton: boolean
@@ -16,12 +17,13 @@ export const AddLeftSpeciesButton: FC<AddLeftSpeciesButtonProps> = ({ canShowAdd
 
     return (
         <button
-            className="mb-5 border border-indigo-600 w-28"
+            className="mr-5 self-end focus:animate-bounce"
+            aria-label="Add a new species to the left"
             onClick={() => {
                 updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)
             }}
         >
-            Add a new species to the left
+            <AddNewSpeciesIcon />
         </button>
     )
 }

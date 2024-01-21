@@ -13,11 +13,9 @@ import { addFood } from '@/src/lib/foods.service'
 import { updatePlayer } from '@/src/lib/player.service.client'
 import { Game as GameModel } from '@/src/models/game.model'
 import { Player } from '@/src/models/player.model'
-import { GameStatus } from '../enums/game.events.enum'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
-import playerTurnDino from '../assets/images/player-turn-dyno.png'
-import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
+import { PlayerTurnDinoIcon } from '@/src/components/svg-icons/player-turn-icon'
 
 interface GameProps {
     game: GameModel
@@ -104,9 +102,7 @@ export function Game({ game }: GameProps) {
                     </button>
                 )}
                 <div role="status" className="self-center flex">
-                    {isPlayerFeedingFirst && (
-                        <Image src={playerTurnDino} alt="You are the first player to feed" height={48} width={48} />
-                    )}
+                    {isPlayerFeedingFirst && <PlayerTurnDinoIcon ariaLabel="You are the first player to feed" />}
                     <p className="flex flex-col">
                         <span>{getCardDiscardMessage()}</span>
                         <span>Your number of points: {numberOfFoodEaten}</span>

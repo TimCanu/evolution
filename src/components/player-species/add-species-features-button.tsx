@@ -19,14 +19,14 @@ export const AddSpeciesFeatureButton: FC<AddSpeciesFeatureButtonProps> = ({ inde
 
     return (
         <button
-            className="flex justify-center items-center"
+            className="flex justify-center items-center w-8 text-white bg-gray-500 border-x border-y border-white rounded-full focus:animate-bounce"
             aria-label={`Add feature to species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)
                 updateStatus(EVOLVING_STAGES.ADD_SPECIES_FEATURE)
             }}
         >
-            <PlusIcon colorHex="#737373" />
+            <PlusIcon />
         </button>
     )
 }

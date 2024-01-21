@@ -13,12 +13,12 @@ interface CardProps {
 export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const { canDiscardCard, isAddingFoodStage } = usePlayerStatus()
 
-    const cardImage = getCardImage(card)
+    const cardImage = getCardImage(card.featureKey)
 
     return (
         <li
             data-testid={`card-${index}`}
-            className="rounded bg-amber-900 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
+            className="rounded-md border bg-amber-900 w-40 h-52 ml-2 flex flex-col hover:mb-4 hover:bg-sky-700 group"
         >
             <h1 className="mb-2 self-center">{card.name}</h1>
             <div className="relative self-center border-4 border-transparent">

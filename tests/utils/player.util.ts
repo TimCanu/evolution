@@ -114,6 +114,6 @@ export const finishTurnEvolvingAndWaitForOthersToEvolve = async (page: Page): Pr
 export const finishTurnEvolvingAndWaitForOthersToFeed = async (page: Page): Promise<void> => {
     await finishTurnEvolving(page)
     await expect(page.getByText('Waiting for other players to feed')).toBeVisible()
-    await expect(page.getByTestId('species-0').getByText('0 / 1')).toBeVisible()
-    await expect(page.getByTestId('species-1').getByText('1 / 1')).toBeVisible()
+    await expect(page.getByTestId('species-0').getByText('0/1')).toBeVisible()
+    await expect(page.getByTestId('species-1').getByText('1/1')).toBeVisible()
 }

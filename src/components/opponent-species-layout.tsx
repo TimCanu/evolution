@@ -11,7 +11,7 @@ interface OpponentLayoutProps {
     species: Species
 }
 
-export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponentIndex, speciesIndex, species }) => {
+export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, speciesIndex, species }) => {
     const { carnivoreFeedingData, gameId, playerId } = useGameContext()
     const canBeEaten = carnivoreFeedingData.preyIds.includes(species.id)
 
