@@ -118,7 +118,12 @@ export function Game({ game }: GameProps) {
                         </ul>
                     </div>
                     <div className="relative self-center place-self-end">
-                        <Image src={PouchImg} alt="Your number of points" height={70} width={70} />
+                        <Image
+                            src={PouchImg}
+                            alt={`Your number of points: ${numberOfFoodEaten}`}
+                            height={70}
+                            width={70}
+                        />
                         <span className="absolute bottom-4 start-6 border rounded-full w-6 h-6 text-center">
                             {numberOfFoodEaten}
                         </span>
