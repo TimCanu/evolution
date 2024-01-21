@@ -3,7 +3,7 @@ import { Feature } from '@/src/models/feature.model'
 import { useSpecies } from '@/src/hooks/species.hook'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
-import { getFeatureImage } from '@/src/lib/card.service.client'
+import { getCardImage, getFeatureImage } from '@/src/lib/card.service.client'
 
 interface CardProps {
     feature: Feature
@@ -16,14 +16,18 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
     const { removeFeature } = useSpecies()
     const { isEvolvingStage } = usePlayerStatus()
 
-    const cardImage = getFeatureImage(feature.key)
+    const featureImage = getFeatureImage(feature.key)
+    const cardImage = getCardImage(feature.key)
 
     return (
-        <li data-testid={`s-${speciesIndex}-feature-${featureIndex}`} className="mx-1 relative">
+        <li
+            data-testid={`s-${speciesIndex}-feature-${featureIndex}`}
+            className="mx-1 relative group-has-[div:hover]:mx-0 delay-0 group-has-[div:hover]:delay-300"
+        >
             {isEvolvingStage() && (
                 <button
                     aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}
-                    className="h-6 w-6 absolute justify-center -top-6 inset-x-1.5 bg-black rounded-full"
+                    className="visible h-6 w-6 absolute justify-center -top-6 inset-x-1.5 bg-black rounded-full group-has-[div:hover]:invisible group-has-[div:hover]:delay-300 group-has-[div:hover]:w-0 delay-0"
                     onClick={() => {
                         removeFeature(speciesId, feature.cardId)
                     }}
@@ -44,7 +48,21 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
                     </svg>
                 </button>
             )}
-            <Image src={cardImage} alt={`${feature.name}: ${feature.description}`} height={74} />
+            <div className="group/feature-image">
+                <Image
+                    src={featureImage}
+                    alt={`${feature.name}: ${feature.description}`}
+                    height={74}
+                    className="group-has-[div:hover]:invisible group-has-[div:hover]:delay-300 group-has-[div:hover]:w-0 delay-0"
+                />
+                <div className="invisible h-0 w-0 rounded-md group-hover/feature-image:border bg-amber-900 group-hover/feature-image:delay-300 delay-0 group-hover/feature-image:w-32 group-hover/feature-image:h-52 group-hover/feature-image:visible flex flex-col">
+                    <h1 className="mb-2 self-center">{feature.name}</h1>
+                    <div className="relative self-center border-4 border-transparent">
+                        <Image src={cardImage} alt="" height={80} />
+                    </div>
+                    <p className="text-xs max-h-[64px] text-center">{feature.description}</p>
+                </div>
+            </div>
         </li>
     )
 }

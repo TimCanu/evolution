@@ -36,7 +36,7 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
                 )}
             </div>
             <p className="text-xs max-h-[64px] text-center">{card.description}</p>
-            <p className="self-end mb-0 mt-auto bg-green-900 h-auto rounded w-8 h-8 flex justify-center items-center">
+            <p className="self-end mb-0 mt-auto bg-green-900 h-auto rounded w-8 flex justify-center items-center">
                 {card.foodNumber}
             </p>
         </li>
