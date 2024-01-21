@@ -3,11 +3,11 @@ import { Card } from '@/src/models/card.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 
 export const getCardToAddAsFood = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByText(`${card.name}Add as food${card.description}`)
+    return page.getByRole('button', { name: `Use the card ${card.name} to add ${card.foodNumber} to the water plan` })
 }
 
 export const getCardToDiscard = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByText(`${card.name}Discard card${card.description}`)
+    return page.getByRole('button', { name: `Discard the card ${card.name}` })
 }
 
 export const assertNumberOfCards = async (page: Page, numberOfCards: number): Promise<void> => {
@@ -23,12 +23,11 @@ export const addCardAsFood = async (
 ): Promise<void> => {
     await expect(page.getByRole('button', { name: 'Add as food' })).toBeHidden()
 
-    const cardToHover = await getCardToAddAsFood(page, card)
-    await cardToHover.hover()
-    await expect(page.getByRole('button', { name: 'Add as food' })).toBeVisible()
+    const cardToAdd = await getCardToAddAsFood(page, card)
+    await expect(cardToAdd).toBeVisible()
     await expect(page.getByTestId(`hidden-food-${numberOfAddedFood}`)).not.toBeAttached()
 
-    await page.getByRole('button', { name: 'Add as food' }).click()
+    await cardToAdd.click()
     await expect(page.getByTestId(`hidden-food-${numberOfAddedFood}`)).toBeVisible()
     await expect(page.getByText('Choose an action to evolve your species or finish your turn')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Finish turn' })).toBeVisible()

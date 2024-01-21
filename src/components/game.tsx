@@ -71,7 +71,7 @@ export function Game({ game }: GameProps) {
     }, [gameId, playerId])
 
     return (
-        <div className="grid grid-rows-4 min-h-[100vh] max-h-[100vh]">
+        <div className="grid grid-rows-4 overflow-hidden min-h-[100vh] max-h-[100vh]">
             <ul aria-label="Opponents" className="mt-1 row-span-1 flex flex-row justify-around">
                 {opponents.map((opponent, index) => {
                     return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
@@ -111,7 +111,7 @@ export function Game({ game }: GameProps) {
                 </div>
                 <div className="flex justify-center">
                     <div>
-                        <ul className="flex flex-row justify-center h-56 items-end">
+                        <ul className="flex flex-row justify-center h-28 items-end">
                             {cards.map((card, index) => {
                                 return <CardLayout key={index} index={index} card={card} playCard={playCard} />
                             })}
