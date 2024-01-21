@@ -18,5 +18,10 @@
         "key": "CARNIVORE",
         "name": "Carnivore",
         "description": "This species must attack other species for food and it can never eat Plants."
+    },
+    {
+        "key": "CLIMBING",
+        "name": "Climbing",
+        "description": "A carnivore must have the Climbing feature to attack it."
     }
 ]

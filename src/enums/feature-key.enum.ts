@@ -3,4 +3,5 @@ export enum FeatureKey {
     FERTILE = 'FERTILE',
     FORAGER = 'FORAGER',
     CARNIVORE = 'CARNIVORE',
+    CLIMBING = 'CLIMBING'
 }
