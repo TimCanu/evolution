@@ -16,6 +16,8 @@ import { Player } from '@/src/models/player.model'
 import { PusherInstance } from '@/src/lib/pusher.client.service'
 import { useGameContext } from '@/src/providers/game.provider'
 import { PlayerTurnDinoIcon } from '@/src/components/svg-icons/player-turn-icon'
+import PouchImg from '@/src/assets/images/pouch.png'
+import Image from 'next/image'
 
 interface GameProps {
     game: GameModel
@@ -105,14 +107,28 @@ export function Game({ game }: GameProps) {
                     {isPlayerFeedingFirst && <PlayerTurnDinoIcon ariaLabel="You are the first player to feed" />}
                     <p className="flex flex-col">
                         <span>{getCardDiscardMessage()}</span>
-                        <span>Your number of points: {numberOfFoodEaten}</span>
                     </p>
                 </div>
-                <ul className="flex flex-row justify-center h-56 items-end">
-                    {cards.map((card, index) => {
-                        return <CardLayout key={index} index={index} card={card} playCard={playCard} />
-                    })}
-                </ul>
+                <div className="flex justify-center">
+                    <div>
+                        <ul className="flex flex-row justify-center h-56 items-end">
+                            {cards.map((card, index) => {
+                                return <CardLayout key={index} index={index} card={card} playCard={playCard} />
+                            })}
+                        </ul>
+                    </div>
+                    <div className="relative self-center place-self-end">
+                        <Image
+                            src={PouchImg}
+                            alt={`Your number of points: ${numberOfFoodEaten}`}
+                            height={70}
+                            width={70}
+                        />
+                        <span className="absolute bottom-4 start-6 border rounded-full w-6 h-6 text-center">
+                            {numberOfFoodEaten}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     )
