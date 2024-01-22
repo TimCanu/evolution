@@ -128,6 +128,9 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
     if (!canCarnivoreClimb && canPreyClimb){
             throw Error(`Carnivore cannot eat this species because it protect by climbing card`)
     }
+    if(prey.features.some((feature) => feature.key === FeatureKey.DIGGER) && prey.foodEaten === prey.population){
+        throw Error(`Carnivore cannot eat this species because it protect by digger card`)
+    }
     if (carnivore.id === prey.id) {
         throw Error(`Carnivore cannot eat themselves`)
     }
