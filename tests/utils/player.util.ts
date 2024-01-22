@@ -96,7 +96,6 @@ export const checkOpponentSpecies = async (
 }
 
 const finishTurnEvolving = async (page: Page): Promise<void> => {
-    await page.getByLabel('Opponents').hover()
     await page.getByRole('button', { name: 'Finish turn' }).click()
 
     await expect(page.getByRole('button', { name: 'Finish turn' })).not.toBeAttached()
