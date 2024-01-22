@@ -22,8 +22,8 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const isClickable = isAddingFoodStage() || canDiscardCard(card)
     const bgColor =
         isClickable || isFeedingStage() || status === GameStatus.CHOOSING_EVOLVING_ACTION
-            ? 'bg-amber-900'
-            : 'bg-gray-500'
+            ? 'bg-amber-900 '
+            : 'bg-gray-500 '
 
     const onCardClick = (): void => {
         if (isClickable) {
@@ -45,19 +45,23 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
             role="button"
             aria-label={getAriaLabel()}
             data-testid={`card-${index}`}
-            className={`${
-                isClickable ? 'cursor-pointer' : 'cursor-auto'
-            } ${bgColor} bg-opacity-75 rounded-md border w-32 ml-2 h-full flex flex-col hover:h-auto group hover:scale-150 hover:mb-11`}
+            className={`${isClickable ? 'cursor-pointer ' : 'cursor-auto '}
+             ${bgColor} bg-opacity-75 rounded-md border w-32 ml-2 h-full flex flex-col group`}
             onClick={onCardClick}
         >
-            <h1 className="mb-2 self-center flex w-full justify-between pl-2">
+            <h1 className="mb-2 self-center flex w-full justify-between pl-2 group-hover:hidden">
                 {card.name}
                 <p className="self-end mb-0 mt-auto bg-green-900 h-auto rounded w-8 flex justify-center items-center">
                     {card.foodNumber}
                 </p>
             </h1>
-            <Image className="self-center mb-1" src={cardImage} alt={`${card.name}: ${card.description}`} height={60} />
-            <p className="invisible text-[9px] h-0 text-center group-hover:visible group-hover:h-14">
+            <Image
+                className="self-center mb-1 group-hover:hidden"
+                src={cardImage}
+                alt={`${card.name}: ${card.description}`}
+                height={60}
+            />
+            <p className="hidden text-[12px] my-1 mx-1 text-center group-hover:flex h-full justify-center items-center ">
                 {card.description}
             </p>
         </li>

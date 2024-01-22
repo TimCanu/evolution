@@ -125,8 +125,8 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
     if (carnivore.foodEaten >= carnivore.population) {
         throw Error(`Species has already eaten | Species ID=${carnivore.id}`)
     }
-    if (!canCarnivoreClimb && canPreyClimb){
-            throw Error(`Carnivore cannot eat this species because it protect by climbing card`)
+    if (!canCarnivoreClimb && canPreyClimb) {
+        throw Error(`Carnivore cannot eat this species because it protect by climbing card`)
     }
     if (carnivore.id === prey.id) {
         throw Error(`Carnivore cannot eat themselves`)

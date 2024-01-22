@@ -18,20 +18,30 @@ export const FoodArea: FC = () => {
                     )
                 })}
             </div>
-            <div className="relative self-center top-10">
+            <div className="relative">
                 <Image
                     src={FoodAreaImg}
                     alt={`Number of food on the food area: ${amountOfFood}`}
-                    height={360}
-                    width={360}
+                    sizes="100vw"
+                    style={{
+                        width: '100%',
+                        height: '100%',
+                    }}
                 />
-                <div className="place-self-center flex flex-row absolute top-1/4 left-[5rem] right-[5rem] flex-wrap rounded-md">
+                <div className="max-h-full flex absolute top-1/4 flex-wrap ml-10 mr-16">
                     {amountOfFood > 0 &&
-                        [...Array(amountOfFood)].map((_, index) => {
+                        [...Array(20)].map((_, index) => {
                             return (
                                 <>
                                     <div data-testid="food-element" key={index} />
-                                    <Image src={FoodPlantImg} alt="" height={35} width={35} />
+                                    <Image
+                                        src={FoodPlantImg}
+                                        alt=""
+                                        sizes="7vw"
+                                        style={{
+                                            width: '20%',
+                                        }}
+                                    />
                                 </>
                             )
                         })}
