@@ -26,11 +26,14 @@ export const SpeciesSizeElement: FC<SpeciesSizeElementProps> = ({ index, species
 }
 
 const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species }) => {
-    const { updateStatus, updateSelectedSpecies } = useGameContext()
+    const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
+
+    const isAnimated =
+        selectedSpecies && status === EVOLVING_STAGES.INCREMENT_SPECIES_SIZE && selectedSpecies.id === species.id
 
     return (
         <button
-            className="relative inline-flex p-1 focus:animate-bounce"
+            className={`relative p-1 ${isAnimated ? 'animate-bounce' : ''}`}
             aria-label={`Increase size of species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)
