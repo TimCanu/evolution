@@ -24,7 +24,7 @@ export const getCardImage = (featureKey: FeatureKey): StaticImageData => {
             return forager
         case FeatureKey.CARNIVORE:
             return carnivore
-            case FeatureKey.CLIMBING:
+        case FeatureKey.CLIMBING:
             return climbing
         case FeatureKey.DIGGER:
             return digger

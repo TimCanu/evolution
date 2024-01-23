@@ -9,15 +9,17 @@ interface AddLeftSpeciesButtonProps {
 
 export const AddLeftSpeciesButton: FC<AddLeftSpeciesButtonProps> = ({ canShowAddSpeciesLeftButton }) => {
     const { isEvolvingStage } = usePlayerStatus()
-    const { updateStatus } = useGameContext()
+    const { updateStatus, status } = useGameContext()
 
     if (!isEvolvingStage() || !canShowAddSpeciesLeftButton) {
         return null
     }
 
+    const isAnimated = status === EVOLVING_STAGES.ADD_LEFT_SPECIES
+
     return (
         <button
-            className="mr-5 self-end focus:animate-bounce"
+            className={`mr-5 self-end ${isAnimated ? 'animate-bounce' : ''}`}
             aria-label="Add a new species to the left"
             onClick={() => {
                 updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)

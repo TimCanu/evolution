@@ -111,7 +111,7 @@ export function Game({ game }: GameProps) {
                 </div>
                 <div className="flex justify-center">
                     <div>
-                        <ul className="flex flex-row justify-center h-28 items-end">
+                        <ul className="flex flex-row justify-center h-32 items-end">
                             {cards.map((card, index) => {
                                 return <CardLayout key={index} index={index} card={card} playCard={playCard} />
                             })}

@@ -6,7 +6,7 @@ import { PlayerEntity } from '@/src/models/player-entity.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
-test('Carnivore can\'t eat a species with Climbing feature', async ({ page: firstPlayerPage }) => {
+test("Carnivore can't eat a species with Climbing feature", async ({ page: firstPlayerPage }) => {
     const gameId = ObjectId.createFromTime(61)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
@@ -49,10 +49,14 @@ test('Carnivore can\'t eat a species with Climbing feature', async ({ page: firs
     const secondPlayer: PlayerEntity = {
         id: 'player2',
         name: 'Tim',
-        species: [{ id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] }],
+        species: [
+            { id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] },
+        ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{ id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] }],
+        newSpeciesList: [
+            { id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
@@ -93,7 +97,7 @@ test('Carnivore can eat a species with Climbing feature', async ({ page: firstPl
                 features: [carnivoreFeature, climbingFeature],
                 foodEaten: 0,
                 preyIds: [],
-            }
+            },
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
@@ -103,10 +107,14 @@ test('Carnivore can eat a species with Climbing feature', async ({ page: firstPl
     const secondPlayer: PlayerEntity = {
         id: 'player2',
         name: 'Tim',
-        species: [{ id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] }],
+        species: [
+            { id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] },
+        ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{ id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] }],
+        newSpeciesList: [
+            { id: 'player2Specie1', size: 2, population: 4, features: [climbingFeature], foodEaten: 0, preyIds: [] },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
@@ -123,7 +131,6 @@ test('Carnivore can eat a species with Climbing feature', async ({ page: firstPl
     await expect(secondPlayerPage.getByLabel(`Species at index 0 size: 2`)).toBeVisible()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0'}).click()
+    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
     await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
-
 })

@@ -10,16 +10,21 @@ interface AddSpeciesFeatureButtonProps {
 }
 
 export const AddSpeciesFeatureButton: FC<AddSpeciesFeatureButtonProps> = ({ index, species }) => {
-    const { updateStatus, updateSelectedSpecies } = useGameContext()
+    const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
     const { isEvolvingStage } = usePlayerStatus()
 
     if (!isEvolvingStage() || species.features.length >= 3) {
         return null
     }
 
+    const isAnimated =
+        selectedSpecies && status === EVOLVING_STAGES.ADD_SPECIES_FEATURE && selectedSpecies.id === species.id
+
     return (
         <button
-            className="flex justify-center items-center w-8 text-white bg-gray-500 border-x border-y border-white rounded-full focus:animate-bounce"
+            className={`flex justify-center items-center w-8 text-white bg-gray-500 border-x border-y border-white rounded-full ${
+                isAnimated ? 'animate-bounce' : ''
+            }`}
             aria-label={`Add feature to species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)

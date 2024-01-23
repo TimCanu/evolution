@@ -34,8 +34,7 @@ const addSpecies = async (
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
 
-    await page.getByRole('button', { name: buttonLabel }).click({ force: true })
-    await expect(page.getByRole('button', { name: 'Discard card' })).toBeHidden()
+    await page.getByRole('button', { name: buttonLabel }).click()
 
     const cardToDiscard = await getCardToDiscard(page, card)
     await cardToDiscard.click()
@@ -53,7 +52,6 @@ export const addSpeciesToTheLeft = async (
     numberOfCards: number,
     card: Card
 ): Promise<void> => {
-    await page.getByLabel('Opponents').hover()
     await addSpecies(page, numberOfSpecies, numberOfCards, card, 'Add a new species to the left')
 }
 
@@ -63,7 +61,6 @@ export const addSpeciesToTheRight = async (
     numberOfCards: number,
     card: Card
 ): Promise<void> => {
-    await page.getByLabel('Opponents').hover()
     await addSpecies(page, numberOfSpecies, numberOfCards, card, 'Add a new species to the right')
 }
 
@@ -77,9 +74,8 @@ export const addSpeciesFeature = async (
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
     await assertNumberOfFeatures(page, 0, speciesIndex)
-    await page.getByLabel('Opponents').hover()
+
     await page.getByRole('button', { name: `Add feature to species at position ${speciesIndex + 1}` }).click()
-    await expect(page.getByRole('button', { name: 'Discard card' })).toBeHidden()
 
     const cardToDiscard = await getCardToDiscard(page, featureToAdd)
 
@@ -101,15 +97,13 @@ export const increaseSpeciesSize = async (
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
-    await page.getByLabel('Opponents').hover()
+
     await page.getByRole('button', { name: `Increase size of species at position ${speciesIndex + 1}` }).click()
-    await expect(page.getByRole('button', { name: 'Discard card' })).toBeHidden()
 
     const card = await getCardToDiscard(page, cardToDiscard)
 
     await card.click()
 
-    await expect(page.getByRole('button', { name: 'Discard card' })).not.toBeVisible()
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards - 1)
     await expect(page.getByLabel(`Species at index ${speciesIndex} size: 2`)).toBeVisible()
@@ -125,15 +119,13 @@ export const increaseSpeciesPopulation = async (
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
-    await page.getByLabel('Opponents').hover()
+
     await page.getByRole('button', { name: `Increase population of species at position ${speciesIndex + 1}` }).click()
-    await expect(page.getByRole('button', { name: 'Discard card' })).toBeHidden()
 
     const card = await getCardToDiscard(page, cardToDiscard)
 
     await card.click()
 
-    await expect(page.getByRole('button', { name: 'Discard card' })).not.toBeVisible()
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards - 1)
     await expect(page.getByLabel(`Species at index ${speciesIndex} size: 2`)).toBeVisible()
