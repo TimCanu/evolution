@@ -18,6 +18,7 @@ import { useGameContext } from '@/src/providers/game.provider'
 import { PlayerTurnDinoIcon } from '@/src/components/svg-icons/player-turn-icon'
 import PouchImg from '@/src/assets/images/pouch.png'
 import Image from 'next/image'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface GameProps {
     game: GameModel
@@ -48,10 +49,12 @@ export function Game({ game }: GameProps) {
     const playCard = async (cardId: string): Promise<void> => {
         const card = getCard(cardId)
         if (isAddingFoodStage()) {
+            updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
             const { status, cards: cardsUpdated } = await addFood({ gameId, playerId, cardId })
             updateStatus(status)
             updateCards(cardsUpdated)
         } else if (isEvolvingStage()) {
+            updateStatus(GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING)
             playEvolvingAction(card)
         } else if (isFeedingStage()) {
             console.log('Action is not supported yet')
