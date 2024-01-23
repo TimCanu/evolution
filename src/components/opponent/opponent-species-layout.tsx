@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { OpponentFeatureLayout } from '@/src/components/opponent-feature-layout'
+import { OpponentFeatureLayout } from '@/src/components/opponent/opponent-feature-layout'
 import { useGameContext } from '@/src/providers/game.provider'
 import { feedSpecies } from '@/src/lib/species.service'
 import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
@@ -28,10 +28,10 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
     }
     return (
         <li key={speciesIndex} className="flex flex-col w-36">
-            <p className="flex justify-around mb-2">
+            <p className="flex justify-between border mb-1 w-32 flex-row items-center min-w-32 self-center bg-amber-900 rounded-md h-14">
                 <span
                     aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${species.size}`}
-                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center"
+                    className="border border-indigo-600 bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center ml-2"
                 >
                     {species.size}
                 </span>
@@ -46,22 +46,14 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
                 )}
                 <span
                     aria-label={`Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${species.population}`}
-                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center"
+                    className="border border-indigo-600 bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-2"
                 >
                     {species.population}
                 </span>
             </p>
-            <ul>
+            <ul className="flex self-center mb-1 group">
                 {species.features.map((feature, index) => {
-                    return (
-                        <OpponentFeatureLayout
-                            key={index}
-                            opponentIndex={opponentIndex}
-                            speciesIndex={speciesIndex}
-                            index={index}
-                            feature={feature}
-                        />
-                    )
+                    return <OpponentFeatureLayout key={index} feature={feature} />
                 })}
             </ul>
         </li>
