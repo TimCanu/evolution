@@ -8,6 +8,7 @@ import { isCarnivore } from '@/src/lib/food.service.server'
 import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiting-icon'
 import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
 import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
+import { GameStatus } from '@/src/enums/game.events.enum'
 
 interface FeedSpeciesButtonProps {
     gameId: string
@@ -17,7 +18,7 @@ interface FeedSpeciesButtonProps {
 }
 
 export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, playerId, species }) => {
-    const { carnivoreFeedingData } = useGameContext()
+    const { carnivoreFeedingData, updateStatus } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
     if (!isFeedingStage()) {
@@ -30,6 +31,7 @@ export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, p
         if (!carnivoreFeedingData.carnivoreId) {
             throw Error('Carnivore ID should be defined')
         }
+        updateStatus(GameStatus.WAITING_FOR_PLAYERS_TO_FEED)
         await feedSpecies({ gameId, playerId, speciesId: carnivoreFeedingData.carnivoreId, preyId: species.id })
     }
 
