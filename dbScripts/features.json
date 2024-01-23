@@ -27,6 +27,6 @@
     {
         "key": "DIGGER",
         "name": "Digger",
-        "description": "This species can't be attacked if it's food number egal his population."
+        "description": "This species can't be attacked if its food number egal its population."
     }
 ]
