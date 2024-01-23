@@ -26,11 +26,14 @@ export const SpeciesPopulationElement: FC<SpeciesPopulationElementProps> = ({ in
 }
 
 const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ index, species }) => {
-    const { updateStatus, updateSelectedSpecies } = useGameContext()
+    const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
+
+    const isAnimated =
+        selectedSpecies && status === EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION && selectedSpecies.id === species.id
 
     return (
         <button
-            className="relative p-1 focus:animate-bounce"
+            className={`relative p-1 ${isAnimated ? 'animate-bounce' : ''}`}
             aria-label={`Increase population of species at position ${index + 1}`}
             onClick={() => {
                 updateSelectedSpecies(species)
