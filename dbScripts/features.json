@@ -23,5 +23,10 @@
         "key": "CLIMBING",
         "name": "Climbing",
         "description": "A carnivore must have the Climbing feature to attack it."
+    },
+    {
+        "key": "DIGGER",
+        "name": "Digger",
+        "description": "This species can't be attacked if its food number egal its population."
     }
 ]
