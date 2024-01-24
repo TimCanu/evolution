@@ -1,6 +1,5 @@
 'use client'
 
-import { OpponentLayout } from '@/src/components/opponent/opponent-layout'
 import { FoodArea } from '@/src/components/food-area'
 import { CardLayout } from '@/src/components/card-layout'
 import { SpeciesLayout } from '@/src/components/player-species/species-layout'
@@ -21,6 +20,9 @@ import Image from 'next/image'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { AddLeftSpeciesButton } from '@/src/components/player-species/add-left-species-button'
 import { AddRightSpeciesButton } from '@/src/components/player-species/add-right-species-button'
+import { LeftOpponents } from '@/src/components/opponent/LeftOpponents'
+import { RightOpponents } from '@/src/components/opponent/RightOpponents'
+import { OpponentInTheMiddle } from '@/src/components/opponent/OpponentInTheMiddle'
 
 interface GameProps {
     game: GameModel
@@ -75,15 +77,15 @@ export function Game({ game }: GameProps) {
         }
     }, [gameId, playerId])
 
+    const opponentsDisplay = opponents.length === 1 ? 'flex-col' : 'flex-row'
+
     return (
-        <div className="grid grid-rows-4 overflow-hidden min-h-[100vh] max-h-[100vh]">
-            <ul aria-label="Opponents" className="mt-1 row-span-1 flex flex-row justify-around">
-                {opponents.map((opponent, index) => {
-                    return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
-                })}
-            </ul>
-            <div className="flex justify-center row-span-1">
+        <div className="grid grid-rows-2 overflow-hidden min-h-[100vh] max-h-[100vh]">
+            <div className={`flex ${opponentsDisplay} justify-between mr-4`}>
+                <LeftOpponents opponents={opponents} />
+                <OpponentInTheMiddle opponents={opponents} />
                 <FoodArea />
+                <RightOpponents opponents={opponents} />
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
                 <div className="flex self-center">

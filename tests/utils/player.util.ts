@@ -48,26 +48,19 @@ export const createPlayer2 = (): PlayerEntity => {
 export const checkPlayerInitialLayout = async (
     page: Page,
     opponentName: string,
-    isFirstPlayerToFeed: boolean
+    isFirstPlayerToFeed: boolean,
 ): Promise<void> => {
     await assertNumberOfCards(page, 4)
     await assertNumberOfSpecies(page, 1)
     await assertNumberOfHiddenFood(page, 0)
 
-    const opponent = page.getByRole('list').nth(0).getByRole('listitem').nth(0)
-    await expect(
-        opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)
-    ).toHaveText(opponentName)
+    await expect(page.getByLabel(`Opponent's at index ${0} name is ${opponentName}`)).toHaveText(opponentName)
     if (isFirstPlayerToFeed) {
-        await expect(
-            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
-        ).not.toBeAttached()
+        await expect(page.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })).not.toBeAttached()
     } else {
-        await expect(
-            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
-        ).toBeVisible()
+        await expect(page.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })).toBeVisible()
     }
-    await expect(opponent.getByRole('img', { name: `${opponentName} number of points: 0` })).toBeVisible()
+    await expect(page.getByRole('img', { name: `${opponentName} number of points: 0` })).toBeVisible()
     await checkOpponentSpecies(page, 0, 0, 1, 1)
     await expect(page.getByText('Discard a card to add food to the water plan')).toBeVisible()
 }
@@ -76,7 +69,7 @@ export const checkOpponentStatus = async (
     page: Page,
     numberOfPoints: number,
     isFeeding: boolean,
-    opponentName: string
+    opponentName: string,
 ): Promise<void> => {
     await expect(page.getByRole('img', { name: `${opponentName} number of points: ${numberOfPoints}` })).toBeVisible()
     if (isFeeding) {
@@ -91,15 +84,15 @@ export const checkOpponentSpecies = async (
     opponentIndex: number,
     speciesIndex: number,
     speciesSize: number,
-    speciesPopulation: number
+    speciesPopulation: number,
 ): Promise<void> => {
     await expect(
-        page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${speciesSize}`)
+        page.getByLabel(`Species at index ${speciesIndex} of opponent at index ${opponentIndex} size: ${speciesSize}`),
     ).toHaveText(speciesSize.toString())
     await expect(
         page.getByLabel(
-            `Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${speciesPopulation}`
-        )
+            `Species at index ${speciesIndex} of opponent at index ${opponentIndex} population: ${speciesPopulation}`,
+        ),
     ).toHaveText(speciesPopulation.toString())
 }
 
