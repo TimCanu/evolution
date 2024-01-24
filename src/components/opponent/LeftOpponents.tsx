@@ -11,7 +11,7 @@ export const LeftOpponents: FC<LeftOpponentsProps> = ({ opponents }) => {
         return null
     }
 
-    const getOpponents = () :Opponent[]=> {
+    const getOpponents = (): Opponent[] => {
         if (opponents.length === 2) {
             return [opponents[0]]
         }
@@ -21,7 +21,10 @@ export const LeftOpponents: FC<LeftOpponentsProps> = ({ opponents }) => {
     const opponentsOnTheLeft = getOpponents()
 
     return (
-        <ul aria-label="Opponents on the left" className="mt-1 row-span-1 flex flex-col-reverse gap-4 w-full items-center justify-around">
+        <ul
+            aria-label="Opponents on the left"
+            className="mt-1 row-span-1 flex flex-col-reverse gap-4 w-full items-center justify-around"
+        >
             {opponentsOnTheLeft.map((opponent, index) => {
                 return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
             })}

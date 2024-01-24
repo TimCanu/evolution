@@ -5,5 +5,5 @@ export const assertNumberOfHiddenFood = async (page: Page, numberOfHiddenFoods: 
 }
 
 export const assertNumberOfFoodInWaterPlan = async (page: Page, numberOfFoods: number): Promise<void> => {
-    await expect(page.getByRole('img', { name: `Number of food on the food area: ${numberOfFoods}`})).toBeVisible()
+    await expect(page.getByRole('img', { name: `Number of food on the food area: ${numberOfFoods}` })).toBeVisible()
 }

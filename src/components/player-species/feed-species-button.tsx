@@ -109,7 +109,7 @@ const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species
             aria-label={`Feed plants to species at index ${index}`}
             onClick={feedPlantsEater}
         >
-            <FoodIcon width="32px" height="32px"/>
+            <FoodIcon width="32px" height="32px" />
         </button>
     )
 }

@@ -23,9 +23,7 @@ export const FoodArea: FC = () => {
                 <div className="max-h-full flex absolute top-1/4 flex-wrap ml-10 mr-16">
                     {amountOfFood > 0 &&
                         [...Array(amountOfFood)].map((_, index) => {
-                            return (
-                                <FoodIcon width="15%" height="15%" data-testid="food-element" key={index} />
-                            )
+                            return <FoodIcon width="15%" height="15%" data-testid="food-element" key={index} />
                         })}
                 </div>
             </div>

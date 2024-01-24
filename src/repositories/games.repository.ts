@@ -16,11 +16,11 @@ export const getGameEntity = async (gameId: string): Promise<GameEntity> => {
 }
 
 export const getOpponents = (players: PlayerEntity[], playerId: string, firstPlayerToFeedId: string): Opponent[] => {
-    const currentPlayerIndex = players.findIndex(player => player.id === playerId)
+    const currentPlayerIndex = players.findIndex((player) => player.id === playerId)
     const playersToPlayBefore = players.filter((player, index) => index < currentPlayerIndex)
     const playersToPlayAfter = players.filter((player, index) => index > currentPlayerIndex)
     const opponentsInCorrectOrder = [...playersToPlayAfter, ...playersToPlayBefore]
-    return opponentsInCorrectOrder.map(player => {
+    return opponentsInCorrectOrder.map((player) => {
         const isFirstPlayerToFeed = player.id === firstPlayerToFeedId
         return {
             name: player.name,
