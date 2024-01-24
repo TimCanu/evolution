@@ -7,7 +7,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
 test("Carnivore can't eat a species with Herd feature", async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(71)
+    const gameId = ObjectId.createFromTime(81)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
         name: 'Carnivore',
@@ -85,7 +85,7 @@ test("Carnivore can't eat a species with Herd feature", async ({ page: firstPlay
 })
 
 test('Carnivore can eat a species with Digger feature', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(72)
+    const gameId = ObjectId.createFromTime(82)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
         name: 'Carnivore',
