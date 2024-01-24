@@ -59,23 +59,31 @@ export const checkPlayerInitialLayout = async (
         opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)
     ).toHaveText(opponentName)
     if (isFirstPlayerToFeed) {
-        await expect(opponent.getByRole('heading').getByRole('img')).not.toBeAttached()
+        await expect(
+            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+        ).not.toBeAttached()
     } else {
         await expect(
-            opponent
-                .getByRole('heading')
-                .getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
         ).toBeVisible()
     }
-    await expect(opponent.getByRole('status')).toHaveText('Number of points: 0')
+    await expect(opponent.getByRole('img', { name: `${opponentName} number of points: 0` })).toBeVisible()
     await checkOpponentSpecies(page, 0, 0, 1, 1)
     await expect(page.getByText('Discard a card to add food to the water plan')).toBeVisible()
 }
 
-export const checkOpponentStatus = async (page: Page, numberOfPoints: number, isFeeding: boolean): Promise<void> => {
-    await expect(page.getByRole('list').nth(0).getByRole('listitem').nth(0).getByRole('status')).toHaveText(
-        `Number of points: ${numberOfPoints}${isFeeding ? ' - Is feeding' : ''}`
-    )
+export const checkOpponentStatus = async (
+    page: Page,
+    numberOfPoints: number,
+    isFeeding: boolean,
+    opponentName: string
+): Promise<void> => {
+    await expect(page.getByRole('img', { name: `${opponentName} number of points: ${numberOfPoints}` })).toBeVisible()
+    if (isFeeding) {
+        await expect(page.getByRole('img', { name: `${opponentName} is currently feeding` })).toBeVisible()
+    } else {
+        await expect(page.getByRole('img', { name: `${opponentName} is currently feeding` })).toBeHidden()
+    }
 }
 
 export const checkOpponentSpecies = async (

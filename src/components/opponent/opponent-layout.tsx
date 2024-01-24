@@ -36,12 +36,7 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                     {opponent.isFirstPlayerToFeed && (
                         <PlayerTurnDinoIcon ariaLabel={`The player ${opponent.name} is the first player to feed`} />
                     )}
-                    {/*Number of points: {opponent.numberOfFoodEaten}{' '}*/}
-                    {opponent.status === GameStatus.FEEDING_SPECIES && (
-                        <div className="w-8 h-8">
-                            <PlayerEatingIcon />
-                        </div>
-                    )}
+                    {opponent.status === GameStatus.FEEDING_SPECIES && <PlayerEatingIcon name={opponent.name} />}
                 </span>
             </h1>
 

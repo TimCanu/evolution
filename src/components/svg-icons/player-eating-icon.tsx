@@ -1,8 +1,21 @@
 import { FC } from 'react'
 
-export const PlayerEatingIcon: FC = () => {
+interface PlayerEatingIconProps {
+    name: string
+}
+
+export const PlayerEatingIcon: FC<PlayerEatingIconProps> = ({ name }) => {
     return (
-        <svg fill="#000000" version="1.1" id="Capa_1" viewBox="0 0 458.862 458.862">
+        <svg
+            role="img"
+            width={32}
+            height={32}
+            aria-label={`${name} is currently feeding`}
+            fill="#000000"
+            version="1.1"
+            id="Capa_1"
+            viewBox="0 0 458.862 458.862"
+        >
             <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"></g>
             <g id="SVGRepo_iconCarrier">
