@@ -131,6 +131,9 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
     if (prey.features.some((feature) => feature.key === FeatureKey.DIGGER) && prey.foodEaten === prey.population) {
         throw Error(`Carnivore cannot eat this species because it is protected by the digger`)
     }
+    if (prey.features.some((feature) => feature.key === FeatureKey.HERD) && prey.population >= carnivore.population) {
+        throw Error(`Carnivore cannot eat this species because it is protected by the herd`)
+    }
     if (carnivore.id === prey.id) {
         throw Error(`Carnivore cannot eat themselves`)
     }

@@ -28,5 +28,10 @@
         "key": "DIGGER",
         "name": "Digger",
         "description": "This species can't be attacked if its food number egal its population."
+    },
+    {
+        "key": "HERD",
+        "name": "Herd",
+        "description": "A carnivore must have a superior population to attack it."
     }
 ]
