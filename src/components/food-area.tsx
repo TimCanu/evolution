@@ -2,8 +2,8 @@ import { FC } from 'react'
 import VersoCard from '@/src/assets/images/verso.jpg'
 import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
-import { FoodAreaIcon } from '@/src/components/svg-icons/food-area-icon'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
+import FoodAreaImg from '@/src/assets/images/foodArea.png'
 
 export const FoodArea: FC = () => {
     const { hiddenFoods, amountOfFood } = useGameContext()
@@ -19,7 +19,15 @@ export const FoodArea: FC = () => {
                 })}
             </div>
             <div className="relative min-w-52 max-h-[80%]">
-                <FoodAreaIcon amountOfFood={amountOfFood} />
+                <Image
+                    src={FoodAreaImg}
+                    alt={`Number of food on the food area: ${amountOfFood}`}
+                    sizes="100vw"
+                    style={{
+                        width: '100%',
+                        height: '80%',
+                    }}
+                />
                 <div className="max-h-full flex absolute top-1/4 flex-wrap ml-10 mr-16">
                     {amountOfFood > 0 &&
                         [...Array(amountOfFood)].map((_, index) => {
