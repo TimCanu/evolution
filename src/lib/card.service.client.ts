@@ -44,7 +44,7 @@ export const getFeatureImage = (featureKey: FeatureKey): StaticImageData => {
         case FeatureKey.CARNIVORE:
             return carnivoreFeature
         case FeatureKey.CLIMBING:
-                return climbingFeature
+            return climbingFeature
         case FeatureKey.DIGGER:
             return diggerFeature
         default:

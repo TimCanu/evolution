@@ -6,7 +6,7 @@ import { PlayerEntity } from '@/src/models/player-entity.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { Feature } from '@/src/models/feature.model'
 
-test('Carnivore can\'t eat a species with Digger feature', async ({ page: firstPlayerPage }) => {
+test("Carnivore can't eat a species with Digger feature", async ({ page: firstPlayerPage }) => {
     const gameId = ObjectId.createFromTime(71)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
@@ -41,24 +41,30 @@ test('Carnivore can\'t eat a species with Digger feature', async ({ page: firstP
     const secondPlayer: PlayerEntity = {
         id: 'player2',
         name: 'Tim',
-        species: [{ id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },  {
-            id: 'player2Specie2',
-            size: 3,
-            population: 1,
-            features: [],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            { id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },
+            {
+                id: 'player2Specie2',
+                size: 3,
+                population: 1,
+                features: [],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{ id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] }, {
-            id: 'player2Specie2',
-            size: 3,
-            population: 1,
-            features: [],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        newSpeciesList: [
+            { id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },
+            {
+                id: 'player2Specie2',
+                size: 3,
+                population: 1,
+                features: [],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
@@ -70,7 +76,6 @@ test('Carnivore can\'t eat a species with Digger feature', async ({ page: firstP
     await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
     await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
-
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
     await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
@@ -114,24 +119,30 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
     const secondPlayer: PlayerEntity = {
         id: 'player2',
         name: 'Tim',
-        species: [{ id: 'player2Specie1', size: 2, population: 2, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },  {
-            id: 'player2Specie2',
-            size: 3,
-            population: 1,
-            features: [],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        species: [
+            { id: 'player2Specie1', size: 2, population: 2, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },
+            {
+                id: 'player2Specie2',
+                size: 3,
+                population: 1,
+                features: [],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
-        newSpeciesList: [{ id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] }, {
-            id: 'player2Specie2',
-            size: 3,
-            population: 1,
-            features: [],
-            foodEaten: 0,
-            preyIds: [],
-        }],
+        newSpeciesList: [
+            { id: 'player2Specie1', size: 2, population: 1, features: [carnivoreFeature], foodEaten: 0, preyIds: [] },
+            {
+                id: 'player2Specie2',
+                size: 3,
+                population: 1,
+                features: [],
+                foodEaten: 0,
+                preyIds: [],
+            },
+        ],
         numberOfFoodEaten: 0,
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)

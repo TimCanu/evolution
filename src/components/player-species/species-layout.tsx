@@ -5,36 +5,24 @@ import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { useGameContext } from '@/src/providers/game.provider'
 import { FeedSpeciesButton } from '@/src/components/player-species/feed-species-button'
-import { AddLeftSpeciesButton } from '@/src/components/player-species/add-left-species-button'
 import { AddSpeciesFeatureButton } from '@/src/components/player-species/add-species-features-button'
-import { AddRightSpeciesButton } from '@/src/components/player-species/add-right-species-button'
 import { SpeciesSizeElement } from '@/src/components/player-species/species-size-element'
 import { SpeciesPopulationElement } from '@/src/components/player-species/species-population-element'
 
 interface CardProps {
-    canShowAddSpeciesLeftButton: boolean
-    canShowAddSpeciesRightButton: boolean
     gameId: string
     index: number
     playerId: string
     species: Species
 }
 
-export const SpeciesLayout: FC<CardProps> = ({
-    canShowAddSpeciesLeftButton,
-    canShowAddSpeciesRightButton,
-    index,
-    gameId,
-    playerId,
-    species,
-}) => {
+export const SpeciesLayout: FC<CardProps> = ({ index, gameId, playerId, species }) => {
     const { status } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
     return (
-        <article className="flex self-end">
-            <AddLeftSpeciesButton canShowAddSpeciesLeftButton={canShowAddSpeciesLeftButton} />
-            <li className="flex flex-col min-w-32 mx-2">
+        <li className="flex self-end">
+            <article className="flex flex-col min-w-32 mx-2">
                 <ul className="flex self-center mb-1 group">
                     {species.features.map((feature, featureIndex) => {
                         return (
@@ -66,8 +54,7 @@ export const SpeciesLayout: FC<CardProps> = ({
                         <SpeciesPopulationElement species={species} index={index} />
                     )}
                 </div>
-            </li>
-            <AddRightSpeciesButton canShowAddSpeciesRightButton={canShowAddSpeciesRightButton} />
-        </article>
+            </article>
+        </li>
     )
 }
