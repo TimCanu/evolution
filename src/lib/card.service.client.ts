@@ -11,6 +11,8 @@ import climbing from '../assets/images/climbing.jpg'
 import climbingFeature from '../assets/images/climbing-feature.jpg'
 import digger from '../assets/images/digger.jpg'
 import diggerFeature from '../assets/images/digger-feature.jpg'
+import herd from '../assets/images/herd.jpg'
+import herdFeature from '../assets/images/herd-feature.jpg'
 import missingImage from '../assets/images/missing-image.jpg'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 
@@ -28,6 +30,8 @@ export const getCardImage = (featureKey: FeatureKey): StaticImageData => {
             return climbing
         case FeatureKey.DIGGER:
             return digger
+        case FeatureKey.HERD:
+            return herd
         default:
             return missingImage
     }
@@ -44,9 +48,11 @@ export const getFeatureImage = (featureKey: FeatureKey): StaticImageData => {
         case FeatureKey.CARNIVORE:
             return carnivoreFeature
         case FeatureKey.CLIMBING:
-                return climbingFeature
+            return climbingFeature
         case FeatureKey.DIGGER:
             return diggerFeature
+        case FeatureKey.HERD:
+            return herdFeature
         default:
             return missingImage
     }
