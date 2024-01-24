@@ -381,7 +381,7 @@ test('Carnivore should see "Go vegan" when cannot eat', async ({ page: firstPlay
 })
 
 test('Carnivore cannot eat a species that it just killed', async ({ page: firstPlayerPage }) => {
-    const gameId = ObjectId.createFromTime(34)
+    const gameId = ObjectId.createFromTime(37)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
         name: 'Carnivore',

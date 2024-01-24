@@ -1,6 +1,6 @@
 'use client'
 
-import { OpponentLayout } from '@/src/components/opponent-layout'
+import { OpponentLayout } from '@/src/components/opponent/opponent-layout'
 import { FoodArea } from '@/src/components/food-area'
 import { CardLayout } from '@/src/components/card-layout'
 import { SpeciesLayout } from '@/src/components/player-species/species-layout'
@@ -19,6 +19,8 @@ import { PlayerTurnDinoIcon } from '@/src/components/svg-icons/player-turn-icon'
 import PouchImg from '@/src/assets/images/pouch.png'
 import Image from 'next/image'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { AddLeftSpeciesButton } from '@/src/components/player-species/add-left-species-button'
+import { AddRightSpeciesButton } from '@/src/components/player-species/add-right-species-button'
 
 interface GameProps {
     game: GameModel
@@ -84,23 +86,23 @@ export function Game({ game }: GameProps) {
                 <FoodArea />
             </div>
             <div className="mb-1 row-span-2 flex flex-col self-end h-full justify-end">
-                <ul className="flex flex-row justify-center ">
-                    {speciesList.map((species, index) => {
-                        const isFirstSpecies = index === 0
-                        const isLastSpecies = index === speciesList.length - 1
-                        return (
-                            <SpeciesLayout
-                                key={index}
-                                index={index}
-                                canShowAddSpeciesLeftButton={isFirstSpecies}
-                                canShowAddSpeciesRightButton={isLastSpecies}
-                                species={species}
-                                gameId={gameId}
-                                playerId={playerId}
-                            />
-                        )
-                    })}
-                </ul>
+                <div className="flex self-center">
+                    <AddLeftSpeciesButton />
+                    <ul className="flex flex-row justify-center ">
+                        {speciesList.map((species, index) => {
+                            return (
+                                <SpeciesLayout
+                                    key={index}
+                                    index={index}
+                                    species={species}
+                                    gameId={gameId}
+                                    playerId={playerId}
+                                />
+                            )
+                        })}
+                    </ul>
+                    <AddRightSpeciesButton />
+                </div>
                 {isEvolvingStage() && (
                     <button className="my-3 bg-teal-500 rounded w-36 self-center" onClick={finishEvolvingStage}>
                         Finish turn
@@ -120,14 +122,9 @@ export function Game({ game }: GameProps) {
                             })}
                         </ul>
                     </div>
-                    <div className="relative self-center place-self-end">
-                        <Image
-                            src={PouchImg}
-                            alt={`Your number of points: ${numberOfFoodEaten}`}
-                            height={70}
-                            width={70}
-                        />
-                        <span className="absolute bottom-4 start-6 border rounded-full w-6 h-6 text-center">
+                    <div className="relative self-center place-self-end w-16">
+                        <Image src={PouchImg} alt={`Your number of points: ${numberOfFoodEaten}`} />
+                        <span className="absolute bottom-3 start-5 border rounded-full w-6 h-6 text-center">
                             {numberOfFoodEaten}
                         </span>
                     </div>
