@@ -1,14 +1,14 @@
 import { FC } from 'react'
-import FoodAreaImg from '@/src/assets/images/foodArea.png'
-import FoodPlantImg from '@/src/assets/images/water-lily.png'
 import VersoCard from '@/src/assets/images/verso.jpg'
 import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
+import { FoodIcon } from '@/src/components/svg-icons/food-icon'
+import FoodAreaImg from '@/src/assets/images/foodArea.png'
 
 export const FoodArea: FC = () => {
     const { hiddenFoods, amountOfFood } = useGameContext()
     return (
-        <>
+        <div className="flex justify-center w-full">
             <div className="self-center">
                 {hiddenFoods.map((_, index) => {
                     return (
@@ -18,35 +18,23 @@ export const FoodArea: FC = () => {
                     )
                 })}
             </div>
-            <div className="relative">
+            <div className="relative min-w-52 max-h-[80%]">
                 <Image
                     src={FoodAreaImg}
                     alt={`Number of food on the food area: ${amountOfFood}`}
                     sizes="100vw"
                     style={{
                         width: '100%',
-                        height: '100%',
+                        height: '80%',
                     }}
                 />
                 <div className="max-h-full flex absolute top-1/4 flex-wrap ml-10 mr-16">
                     {amountOfFood > 0 &&
                         [...Array(amountOfFood)].map((_, index) => {
-                            return (
-                                <>
-                                    <div data-testid="food-element" key={index} />
-                                    <Image
-                                        src={FoodPlantImg}
-                                        alt=""
-                                        sizes="7vw"
-                                        style={{
-                                            width: '20%',
-                                        }}
-                                    />
-                                </>
-                            )
+                            return <FoodIcon width="15%" height="15%" data-testid="food-element" key={index} />
                         })}
                 </div>
             </div>
-        </>
+        </div>
     )
 }

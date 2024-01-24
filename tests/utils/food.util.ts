@@ -5,5 +5,5 @@ export const assertNumberOfHiddenFood = async (page: Page, numberOfHiddenFoods: 
 }
 
 export const assertNumberOfFoodInWaterPlan = async (page: Page, numberOfFoods: number): Promise<void> => {
-    await expect(page.getByTestId('food-element')).toHaveCount(numberOfFoods)
+    await expect(page.getByRole('img', { name: `Number of food on the food area: ${numberOfFoods}` })).toBeVisible()
 }

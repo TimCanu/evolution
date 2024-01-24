@@ -9,6 +9,7 @@ import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiti
 import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
 import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { FoodIcon } from '@/src/components/svg-icons/food-icon'
 
 interface FeedSpeciesButtonProps {
     gameId: string
@@ -108,7 +109,7 @@ const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species
             aria-label={`Feed plants to species at index ${index}`}
             onClick={feedPlantsEater}
         >
-            <FeedPlantsIcon />
+            <FoodIcon width="32px" height="32px" />
         </button>
     )
 }

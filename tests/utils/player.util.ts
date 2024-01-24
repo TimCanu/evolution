@@ -54,20 +54,17 @@ export const checkPlayerInitialLayout = async (
     await assertNumberOfSpecies(page, 1)
     await assertNumberOfHiddenFood(page, 0)
 
-    const opponent = page.getByRole('list').nth(0).getByRole('listitem').nth(0)
-    await expect(
-        opponent.getByRole('heading').getByLabel(`Opponent's at index ${0} name is ${opponentName}`)
-    ).toHaveText(opponentName)
+    await expect(page.getByLabel(`Opponent's at index ${0} name is ${opponentName}`)).toHaveText(opponentName)
     if (isFirstPlayerToFeed) {
         await expect(
-            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+            page.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
         ).not.toBeAttached()
     } else {
         await expect(
-            opponent.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
+            page.getByRole('img', { name: `The player ${opponentName} is the first player to feed` })
         ).toBeVisible()
     }
-    await expect(opponent.getByRole('img', { name: `${opponentName} number of points: 0` })).toBeVisible()
+    await expect(page.getByRole('img', { name: `${opponentName} number of points: 0` })).toBeVisible()
     await checkOpponentSpecies(page, 0, 0, 1, 1)
     await expect(page.getByText('Discard a card to add food to the water plan')).toBeVisible()
 }
