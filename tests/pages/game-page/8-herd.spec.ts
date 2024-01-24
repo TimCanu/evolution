@@ -84,7 +84,7 @@ test("Carnivore can't eat a species with Herd feature", async ({ page: firstPlay
     await expect(secondPlayerPage.getByText(`Go vegan`)).toBeVisible()
 })
 
-test('Carnivore can eat a species with Digger feature', async ({ page: firstPlayerPage }) => {
+test('Carnivore can eat a species with Herd feature', async ({ page: firstPlayerPage }) => {
     const gameId = ObjectId.createFromTime(82)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
