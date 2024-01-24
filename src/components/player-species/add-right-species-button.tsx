@@ -3,14 +3,10 @@ import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { AddNewSpeciesIcon } from '@/src/components/svg-icons/add-new-species-icon'
 
-interface AddRightSpeciesButtonProps {
-    canShowAddSpeciesRightButton: boolean
-}
-
-export const AddRightSpeciesButton: FC<AddRightSpeciesButtonProps> = ({ canShowAddSpeciesRightButton }) => {
+export const AddRightSpeciesButton: FC = () => {
     const { updateStatus, status } = useGameContext()
     const { isEvolvingStage } = usePlayerStatus()
-    if (!isEvolvingStage() || !canShowAddSpeciesRightButton) {
+    if (!isEvolvingStage()) {
         return null
     }
 
