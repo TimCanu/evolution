@@ -84,12 +84,3 @@ export const buildCarnivoreCard = (id: string, foodNumber: number): Card => {
     }
 }
 
-export const buildClimbingCard = (id: string, foodNumber: number): Card => {
-    return {
-        id,
-        name: 'Climbing',
-        featureKey: FeatureKey.CLIMBING,
-        description: 'Climbing card description',
-        foodNumber,
-    }
-}
