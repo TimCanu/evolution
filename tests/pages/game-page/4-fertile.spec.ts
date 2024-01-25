@@ -10,9 +10,7 @@ test('Fertile card should increase population when there is food left', async ({
     const gameId = ObjectId.createFromTime(41)
     const fertileFeature: Feature = {
         cardId: 'fertileCardId',
-        name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -59,9 +57,7 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
     const gameId = ObjectId.createFromTime(42)
     const fertileFeature: Feature = {
         cardId: 'fertileCardId',
-        name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -106,9 +102,7 @@ test('Fertile card should not increase population when it is already at 6', asyn
     const gameId = ObjectId.createFromTime(43)
     const fertileFeature: Feature = {
         cardId: 'fertileCardId',
-        name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
