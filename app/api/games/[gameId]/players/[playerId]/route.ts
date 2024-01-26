@@ -15,7 +15,7 @@ import {
     computePlayersForFirstFeedingRound,
     getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
-    isCarnivore,
+    isCarnivore
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -24,10 +24,10 @@ import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 export const PUT = async (
     request: NextRequest,
     {
-        params,
+        params
     }: {
         params: { gameId: string; playerId: string }
-    },
+    }
 ) => {
     try {
         const data: { player: Player } = await request.json()
@@ -47,7 +47,7 @@ export const PUT = async (
         })
 
         const haveAllPlayersFinishedEvolving = players.every(
-            (player) => player.status === GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
+            (player) => player.status === GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING
         )
 
         const playerIds = players.map((player) => player.id)
@@ -58,9 +58,9 @@ export const PUT = async (
                 { _id: new ObjectId(params.gameId) },
                 {
                     $set: {
-                        players: players,
-                    },
-                },
+                        players: players
+                    }
+                }
             )
             await sendUpdateGameEvents(params.gameId, playerIds, false, false)
             return NextResponse.json(null, { status: 200 })
@@ -70,7 +70,7 @@ export const PUT = async (
             players,
             game.hiddenFoods,
             game.amountOfFood,
-            game.firstPlayerToFeedId,
+            game.firstPlayerToFeedId
         )
 
         if (haveAllPlayersFed) {
@@ -79,7 +79,7 @@ export const PUT = async (
                 playersUpdated,
                 amountOfFoodUpdated,
                 game.remainingCards,
-                game.firstPlayerToFeedId,
+                game.firstPlayerToFeedId
             )
             await sendUpdateGameEvents(params.gameId, playerIds, true, true)
             return NextResponse.json(null, { status: 200 })
@@ -98,7 +98,7 @@ export const PUT = async (
 const updateDataForFeedingStage = async (
     gameId: string,
     amountOfFood: number,
-    players: PlayerEntity[],
+    players: PlayerEntity[]
 ): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
@@ -107,9 +107,9 @@ const updateDataForFeedingStage = async (
             $set: {
                 hiddenFoods: [],
                 amountOfFood,
-                players,
-            },
-        },
+                players
+            }
+        }
     )
 }
 
@@ -118,16 +118,16 @@ const updateDataForAddingFoodStage = async (
     players: PlayerEntity[],
     amountOfFood: number,
     remainingCards: Card[],
-    firstPlayerToFeedId: string,
+    firstPlayerToFeedId: string
 ): Promise<void> => {
     const playersWithNewStatus = players.map((player) => ({
         ...player,
-        status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+        status: GameStatus.ADDING_FOOD_TO_WATER_PLAN
     }))
     const endOfFeedingStageData = computeEndOfFeedingStageData(
         playersWithNewStatus,
         remainingCards,
-        firstPlayerToFeedId,
+        firstPlayerToFeedId
     )
 
     const db = await getDb()
@@ -138,9 +138,9 @@ const updateDataForAddingFoodStage = async (
                 hiddenFoods: [],
                 amountOfFood: amountOfFood,
                 players: endOfFeedingStageData.players,
-                firstPlayerToFeedId: endOfFeedingStageData.firstPlayerToFeedId,
-            },
-        },
+                firstPlayerToFeedId: endOfFeedingStageData.firstPlayerToFeedId
+            }
+        }
     )
 }
 
@@ -148,7 +148,7 @@ const computeDataForFeedingStage = (
     players: PlayerEntity[],
     hiddenFoods: number[],
     amountOfFood: number,
-    firstPlayerToFeedId: string,
+    firstPlayerToFeedId: string
 ): {
     playersUpdated: PlayerEntity[]
     amountOfFoodUpdated: number
@@ -161,7 +161,7 @@ const computeDataForFeedingStage = (
     }, amountOfFood)
 
     const haveAllPlayersFed = playersUpdated.every((player) =>
-        player.species.every((species) => species.population === species.foodEaten),
+        player.species.every((species) => species.population === species.foodEaten)
     )
     if (haveAllPlayersFed) {
         return { playersUpdated, amountOfFoodUpdated, haveAllPlayersFed: true }
@@ -174,7 +174,7 @@ const computeDataForFeedingStage = (
     const playersComputedForFeedingStage = computePlayersForFirstFeedingRound(
         playersUpdated,
         firstPlayerToFeedId,
-        playersThatCanFeedIds,
+        playersThatCanFeedIds
     )
     return { playersUpdated: playersComputedForFeedingStage, amountOfFoodUpdated, haveAllPlayersFed: false }
 }
@@ -182,7 +182,7 @@ const computeDataForFeedingStage = (
 const computePlayersForFeedingStage = (
     players: PlayerEntity[],
     amountOfFood: number,
-    nextPlayerToFeed: string,
+    nextPlayerToFeed: string
 ): PlayerEntity[] => {
     return players.map((player) => {
         const playerUpdatedWithSpecialActions = applySpecialCardAction(player, amountOfFood)
@@ -198,7 +198,7 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
     for (const species of speciesList) {
         if (species.features.length > 3) {
             throw Error(
-                `ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
         species.features.reduce((previousFeatureKeys: FeatureKey[], feature: Feature) => {
@@ -210,17 +210,17 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
         }, [])
         if (species.size > 6) {
             throw Error(
-                `ERROR: Species size > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Species size > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
         if (species.population > 6) {
             throw Error(
-                `ERROR: Species population > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Species population > 6 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
         if (species.population < 1 || species.size < 1) {
             throw Error(
-                `ERROR: Other species error ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`,
+                `ERROR: Other species error ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
     }
@@ -238,7 +238,7 @@ const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): Pla
 }
 
 const applyLongNeckActions = (
-    speciesList: Species[],
+    speciesList: Species[]
 ): {
     speciesListWithSpecialActionsApplied: Species[]
     numberOfFoodEaten: number

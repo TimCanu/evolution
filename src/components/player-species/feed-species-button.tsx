@@ -75,8 +75,11 @@ const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) =
         <>
             {species.preyIds.length > 0 ? (
                 <button type="button" className="w-8" onClick={toggleCarnivoreWantingToFeed}>
-                    {isCurrentlyFeeding ? <CarnivoreWaitingIcon ariaLabel="Cancel feeding of the carnivore" /> :
-                        <CarnivoreAttackingIcon ariaLabel={`Feed carnivore at index ${index}`} />}
+                    {isCurrentlyFeeding ? (
+                        <CarnivoreWaitingIcon ariaLabel="Cancel feeding of the carnivore" />
+                    ) : (
+                        <CarnivoreAttackingIcon ariaLabel={`Feed carnivore at index ${index}`} />
+                    )}
                 </button>
             ) : (
                 <span>Go vegan</span>

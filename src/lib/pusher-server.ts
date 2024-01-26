@@ -4,7 +4,7 @@ const conf = {
     appId: String(process.env.PUSHER_APP_ID),
     key: String(process.env.PUSHER_KEY),
     secret: String(process.env.PUSHER_SECRET),
-    cluster: String(process.env.PUSHER_CLUSTER),
+    cluster: String(process.env.PUSHER_CLUSTER)
 }
 let pusherServer: Pusher
 if (process.env.NODE_ENV === 'development') {

@@ -6,7 +6,7 @@ import {
     buildCarnivoreCard,
     buildFertileCard,
     buildForagerCard,
-    buildLongNeckCard,
+    buildLongNeckCard
 } from '@/tests/utils/cards.util'
 import { assertNumberOfSpecies } from '@/tests/utils/species.util'
 import { assertNumberOfHiddenFood } from '@/tests/utils/food.util'
@@ -20,11 +20,11 @@ export const createPlayer1 = (): PlayerEntity => {
             buildLongNeckCard('firstPlayerCard1', 4),
             buildFertileCard('firstPlayerCard2', 3),
             buildForagerCard('firstPlayerCard3', 2),
-            buildCarnivoreCard('firstPlayerCard4', -1),
+            buildCarnivoreCard('firstPlayerCard4', -1)
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
 }
 
@@ -37,11 +37,11 @@ export const createPlayer2 = (): PlayerEntity => {
             buildLongNeckCard('secondPlayerCard1', 1),
             buildFertileCard('secondPlayerCard2', 1),
             buildForagerCard('secondPlayerCard3', 1),
-            buildCarnivoreCard('secondPlayerCard4', 1),
+            buildCarnivoreCard('secondPlayerCard4', 1)
         ],
         status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
 }
 

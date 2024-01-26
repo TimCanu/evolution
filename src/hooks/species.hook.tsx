@@ -65,7 +65,7 @@ export const useSpecies = (): SpeciesResult => {
             population: 1,
             id: uuidv4(),
             features: [],
-            foodEaten: 0,
+            foodEaten: 0
         }
         updateSpeciesList([newSpecies, ...speciesList])
         updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
@@ -77,7 +77,7 @@ export const useSpecies = (): SpeciesResult => {
             population: 1,
             id: uuidv4(),
             features: [],
-            foodEaten: 0,
+            foodEaten: 0
         }
         updateSpeciesList([...speciesList, newSpecies])
         updateStatus(GameStatus.CHOOSING_EVOLVING_ACTION)
@@ -88,7 +88,7 @@ export const useSpecies = (): SpeciesResult => {
             key: card.featureKey,
             cardId: card.id,
             name: card.name,
-            description: card.description,
+            description: card.description
         }
         const specieToUpdate = getSpeciesForOnGoingAction()
         const specieUpdated = { ...specieToUpdate, features: [...specieToUpdate.features, feature] }
@@ -120,6 +120,6 @@ export const useSpecies = (): SpeciesResult => {
 
     return {
         playEvolvingAction,
-        removeFeature,
+        removeFeature
     }
 }

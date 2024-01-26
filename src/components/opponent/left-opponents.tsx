@@ -26,7 +26,13 @@ export const LeftOpponents: FC<LeftOpponentsProps> = ({ opponents }) => {
             className="mt-1 row-span-1 flex flex-col-reverse gap-4 w-full items-center justify-around"
         >
             {opponentsOnTheLeft.map((opponent, index) => {
-                return <OpponentLayout key={`${opponent.name}-${opponent.isFirstPlayerToFeed}`} opponentIndex={index} opponent={opponent} />
+                return (
+                    <OpponentLayout
+                        key={`${opponent.name}-${opponent.isFirstPlayerToFeed}`}
+                        opponentIndex={index}
+                        opponent={opponent}
+                    />
+                )
             })}
         </ul>
     )

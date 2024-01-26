@@ -9,12 +9,12 @@ import { Game } from '@/src/models/game.model'
 const buildUpdateGameEvent = (
     gameId: string,
     playerId: string,
-    data: PushUpdatePlayerGameInfoData,
+    data: PushUpdatePlayerGameInfoData
 ): PushUpdatePlayerGameInfo => {
     return {
         channel: `game-${gameId}-player-${playerId}`,
         name: UPDATE_GAME_INFO,
-        data,
+        data
     }
 }
 
@@ -22,7 +22,7 @@ export const sendUpdateGameEvents = async (
     gameId: string,
     playersId: string[],
     shouldUpdateSpecies: boolean,
-    shouldUpdateCards: boolean,
+    shouldUpdateCards: boolean
 ): Promise<void> => {
     const gameEntity: GameEntity = await getGameEntity(gameId)
 
@@ -44,13 +44,13 @@ export const sendUpdateGameEvents = async (
                 cards: player.cards,
                 status: player.status,
                 isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
-                numberOfFoodEaten: player.numberOfFoodEaten,
-            },
+                numberOfFoodEaten: player.numberOfFoodEaten
+            }
         }
         return buildUpdateGameEvent(gameId, player.id, {
             game,
             shouldUpdateSpecies,
-            shouldUpdateCards,
+            shouldUpdateCards
         })
     })
     await pusherServer.triggerBatch(events)

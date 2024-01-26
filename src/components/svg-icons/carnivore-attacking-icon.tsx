@@ -4,9 +4,17 @@ interface CarnivoreAttackingIconProps {
     ariaLabel: string
 }
 
-export const CarnivoreAttackingIcon: FC<CarnivoreAttackingIconProps> = ({ariaLabel}) => {
+export const CarnivoreAttackingIcon: FC<CarnivoreAttackingIconProps> = ({ ariaLabel }) => {
     return (
-        <svg role="img" aria-label={ariaLabel} fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 577.394 577.394">
+        <svg
+            role="img"
+            aria-label={ariaLabel}
+            fill="#000000"
+            version="1.1"
+            id="Capa_1"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 577.394 577.394"
+        >
             <g id="SVGRepo_bgCarrier" strokeWidth="0" />
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
             <g id="SVGRepo_iconCarrier">

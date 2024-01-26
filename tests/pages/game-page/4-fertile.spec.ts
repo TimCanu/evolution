@@ -12,7 +12,7 @@ test('Fertile card should increase population when there is food left', async ({
         cardId: 'fertileCardId',
         name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
+        description: 'Fertile card description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -24,13 +24,13 @@ test('Fertile card should increase population when there is food left', async ({
                 population: 1,
                 features: [fertileFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -39,7 +39,7 @@ test('Fertile card should increase population when there is food left', async ({
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
         newSpeciesList: [{ id: 'player2Species1', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -47,12 +47,12 @@ test('Fertile card should increase population when there is food left', async ({
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
-    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 population: 1')).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 population: 1')).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/1")).toBeVisible()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/2")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 0/1')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 0/2')).toBeVisible()
 })
 
 test('Fertile card should increase population from 5 to 6', async ({ page: firstPlayerPage }) => {
@@ -61,7 +61,7 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
         cardId: 'fertileCardId',
         name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
+        description: 'Fertile card description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -73,13 +73,13 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
                 population: 5,
                 features: [fertileFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -88,7 +88,7 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
         newSpeciesList: [{ id: 'player2Species1', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -96,10 +96,10 @@ test('Fertile card should increase population from 5 to 6', async ({ page: first
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 population: 5')).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/6")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 0/6')).toBeVisible()
 })
 
 test('Fertile card should not increase population when it is already at 6', async ({ page: firstPlayerPage }) => {
@@ -108,7 +108,7 @@ test('Fertile card should not increase population when it is already at 6', asyn
         cardId: 'fertileCardId',
         name: 'Fertile',
         key: FeatureKey.FERTILE,
-        description: 'Fertile card description',
+        description: 'Fertile card description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -120,13 +120,13 @@ test('Fertile card should not increase population when it is already at 6', asyn
                 population: 6,
                 features: [fertileFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -135,7 +135,7 @@ test('Fertile card should not increase population when it is already at 6', asyn
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
         newSpeciesList: [{ id: 'player2Species1', size: 1, population: 1, features: [], foodEaten: 0, preyIds: [] }],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -143,8 +143,8 @@ test('Fertile card should not increase population when it is already at 6', asyn
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 6")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 population: 6')).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/6")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 0/6')).toBeVisible()
 })

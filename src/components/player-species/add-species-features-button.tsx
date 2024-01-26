@@ -31,7 +31,7 @@ export const AddSpeciesFeatureButton: FC<AddSpeciesFeatureButtonProps> = ({ inde
                 updateStatus(EVOLVING_STAGES.ADD_SPECIES_FEATURE)
             }}
         >
-            <PlusIcon ariaLabel={`Add feature to species at position ${index + 1}`}/>
+            <PlusIcon ariaLabel={`Add feature to species at position ${index + 1}`} />
         </button>
     )
 }

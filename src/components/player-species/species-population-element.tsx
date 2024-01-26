@@ -42,7 +42,7 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
         >
             <IncreaseSpeciesPopulationLabel species={species} index={index} />
             <span className="absolute justify-center w-5 h-5 text-white bg-green-600 border rounded-full -top-1 -end-0 mr-1">
-                <PlusIcon ariaLabel={`Increase population of species at position ${index + 1}`}/>
+                <PlusIcon ariaLabel={`Increase population of species at position ${index + 1}`} />
             </span>
         </button>
     )

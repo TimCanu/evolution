@@ -9,7 +9,7 @@
         "lint": "next lint && biome lint ./src ./app ./tests",
         "lint-fix": "next lint && biome lint --apply ./src ./app ./tests",
         "lint-fix-unsafe": "next lint && biome lint --apply-unsafe ./src ./app ./tests",
-        "format": "prettier . --write",
+        "format": "biome format --write ./src ./app ./tests",
         "test": "playwright test",
         "test-ui": "playwright test --ui"
     },

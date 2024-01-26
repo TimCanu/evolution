@@ -21,7 +21,7 @@ export const AddLeftSpeciesButton: FC = () => {
                 updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)
             }}
         >
-            <AddNewSpeciesIcon ariaLabel="Add a new species to the left"/>
+            <AddNewSpeciesIcon ariaLabel="Add a new species to the left" />
         </button>
     )
 }

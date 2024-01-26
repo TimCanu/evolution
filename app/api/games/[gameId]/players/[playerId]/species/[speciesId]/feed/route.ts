@@ -14,7 +14,7 @@ import {
     computePlayersForNextFeedingRound,
     getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
-    isCarnivore,
+    isCarnivore
 } from '@/src/lib/food.service.server'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -23,10 +23,10 @@ import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 export const POST = async (
     request: NextRequest,
     {
-        params,
+        params
     }: {
         params: { gameId: string; playerId: string; speciesId: string }
-    },
+    }
 ) => {
     try {
         const game: GameEntity = await getGameEntity(params.gameId)
@@ -41,7 +41,7 @@ export const POST = async (
             speciesFeeding,
             game.players,
             game.amountOfFood,
-            preyId,
+            preyId
         )
 
         const playerIds = players.map((player) => player.id)
@@ -54,7 +54,7 @@ export const POST = async (
                 players,
                 playerIds,
                 game.remainingCards,
-                game.firstPlayerToFeedId,
+                game.firstPlayerToFeedId
             )
             return NextResponse.json(null, { status: 200 })
         }
@@ -69,7 +69,7 @@ export const POST = async (
                 players,
                 playerIds,
                 game.remainingCards,
-                game.firstPlayerToFeedId,
+                game.firstPlayerToFeedId
             )
             return NextResponse.json(null, { status: 200 })
         }
@@ -77,7 +77,7 @@ export const POST = async (
         const playersComputedForNextRound = computePlayersForNextFeedingRound(
             players,
             playerFeeding.id,
-            playersThatCanStillFeedIds,
+            playersThatCanStillFeedIds
         )
 
         await updateGameInDb(
@@ -85,7 +85,7 @@ export const POST = async (
             amountOfFood,
             playersComputedForNextRound,
             game.remainingCards,
-            game.firstPlayerToFeedId,
+            game.firstPlayerToFeedId
         )
 
         await sendUpdateGameEvents(params.gameId, playerIds, true, true)
@@ -102,7 +102,7 @@ const updateDataForAddingFoodStage = async (
     players: PlayerEntity[],
     playerIds: string[],
     remainingCards: Card[],
-    firstPlayerToFeedId: string,
+    firstPlayerToFeedId: string
 ): Promise<void> => {
     const endOfFeedingStageData = computeEndOfFeedingStageData(players, remainingCards, firstPlayerToFeedId)
 
@@ -111,7 +111,7 @@ const updateDataForAddingFoodStage = async (
         amountOfFood,
         endOfFeedingStageData.players,
         endOfFeedingStageData.remainingCards,
-        endOfFeedingStageData.firstPlayerToFeedId,
+        endOfFeedingStageData.firstPlayerToFeedId
     )
     await sendUpdateGameEvents(gameId, playerIds, true, true)
 }
@@ -121,7 +121,7 @@ const updateGameInDb = async (
     newAmountOfFood: number,
     playersUpdated: PlayerEntity[],
     remainingCards: Card[],
-    firstPlayerToFeedId: string,
+    firstPlayerToFeedId: string
 ): Promise<void> => {
     const db = await getDb()
     await db.collection('games').updateOne(
@@ -131,9 +131,9 @@ const updateGameInDb = async (
                 amountOfFood: newAmountOfFood,
                 players: playersUpdated,
                 remainingCards: remainingCards,
-                firstPlayerToFeedId,
-            },
-        },
+                firstPlayerToFeedId
+            }
+        }
     )
 }
 
@@ -150,7 +150,7 @@ const getSpecies = (gameId: string, player: PlayerEntity, speciesId: string): Sp
     const species = player.species.find((species) => species.id === speciesId)
     if (!species) {
         console.error(
-            `Species with id ${speciesId} in player with id ${player.id} does not exists in game with id ${gameId}`,
+            `Species with id ${speciesId} in player with id ${player.id} does not exists in game with id ${gameId}`
         )
         throw Error()
     }
@@ -174,7 +174,7 @@ const feedSpecies = (
     speciesFeeding: Species,
     players: PlayerEntity[],
     amountOfFood: number,
-    preyId: string | null,
+    preyId: string | null
 ): {
     players: PlayerEntity[]
     amountOfFood: number
@@ -188,7 +188,7 @@ const feedCarnivore = (
     playerFeeding: PlayerEntity,
     speciesFeeding: Species,
     players: PlayerEntity[],
-    preyId: string | null,
+    preyId: string | null
 ): PlayerEntity[] => {
     const isSpeciesToFeedCarnivore = !!preyId && isCarnivore(speciesFeeding)
     if (!isSpeciesToFeedCarnivore) {
@@ -246,7 +246,7 @@ const feedPlantBasedSpecies = (
     playerFeeding: PlayerEntity,
     speciesFeeding: Species,
     amountOfFood: number,
-    players: PlayerEntity[],
+    players: PlayerEntity[]
 ): {
     players: PlayerEntity[]
     amountOfFood: number

@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest, { params }: { params: { gameId:
         const playerUpdated: PlayerEntity = {
             ...playerToUpdate,
             cards: playerToUpdate.cards.filter((card) => card.id !== data.cardId),
-            status: GameStatus.CHOOSING_EVOLVING_ACTION,
+            status: GameStatus.CHOOSING_EVOLVING_ACTION
         }
         const playersUpdated: PlayerEntity[] = game.players.map((player) => {
             if (player.id === playerToUpdate.id) {

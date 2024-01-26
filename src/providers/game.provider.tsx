@@ -44,7 +44,7 @@ export enum EVOLVING_STAGES {
     ADD_RIGHT_SPECIES = 1,
     INCREMENT_SPECIES_SIZE = 2,
     INCREMENT_SPECIES_POPULATION = 3,
-    ADD_SPECIES_FEATURE = 4,
+    ADD_SPECIES_FEATURE = 4
 }
 
 type PlayerStatus = EVOLVING_STAGES | GameStatus
@@ -55,7 +55,7 @@ export const ALL_EVOLVING_STAGE_STEPS = [
     EVOLVING_STAGES.ADD_RIGHT_SPECIES,
     EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION,
     EVOLVING_STAGES.INCREMENT_SPECIES_SIZE,
-    EVOLVING_STAGES.ADD_SPECIES_FEATURE,
+    EVOLVING_STAGES.ADD_SPECIES_FEATURE
 ]
 
 const GameContext = createContext<GameContextResult>({} as GameContextResult)
@@ -129,7 +129,7 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
         updateCarnivoreFeedingData,
         updateSelectedSpecies,
         updateSpeciesList,
-        updateStatus,
+        updateStatus
     }
 
     return <GameContext.Provider value={res}>{children}</GameContext.Provider>

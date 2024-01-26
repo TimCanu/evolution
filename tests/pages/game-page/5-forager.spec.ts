@@ -12,7 +12,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
         cardId: 'foragerCardId',
         name: 'Forager',
         key: FeatureKey.FORAGER,
-        description: 'Forager description',
+        description: 'Forager description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -24,13 +24,13 @@ test('Forager card should increase fed population by two', async ({ page: firstP
                 population: 3,
                 features: [foragerFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.FEEDING_SPECIES,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -39,7 +39,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -51,7 +51,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 0/1')).toBeVisible()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 2/3")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 2/3')).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
     await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 1/1')).toBeVisible()

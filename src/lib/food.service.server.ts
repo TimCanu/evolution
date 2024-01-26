@@ -8,7 +8,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 export const computeEndOfFeedingStageData = (
     players: PlayerEntity[],
     cards: Card[],
-    firstPlayerToFeedId: string,
+    firstPlayerToFeedId: string
 ): {
     players: PlayerEntity[]
     remainingCards: Card[]
@@ -27,7 +27,7 @@ export const computeEndOfFeedingStageData = (
                     throw Error('No cards left... Maybe add some more in the DB?')
                 }
                 return card
-            }),
+            })
         )
         player.status = GameStatus.ADDING_FOOD_TO_WATER_PLAN
         return player
@@ -53,7 +53,7 @@ const computeSpeciesPopulation = (species: Species[]): Species[] => {
 export const getNextPlayerToFeedId = (
     players: PlayerEntity[],
     lastPlayerToFeedId: string,
-    playersThatCanStillFeedIds: string[],
+    playersThatCanStillFeedIds: string[]
 ): string => {
     const playerCurrentlyFeedingIndex = players.findIndex((player) => player.id === lastPlayerToFeedId)
     const nextPlayerFeedingIndex =
@@ -72,12 +72,11 @@ export const hasPlayerFinishedFeeding = (player: PlayerEntity): boolean => {
 export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEntity[]): string[] => {
     const isTherePlantsLeft = amountOfFood > 0
 
-    const allCarnivores: Species[] = players
-        .flatMap((player) => {
-            return player.species.filter((species) => {
-                return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
-            })
+    const allCarnivores: Species[] = players.flatMap((player) => {
+        return player.species.filter((species) => {
+            return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
         })
+    })
 
     const carnivoresThatCanFeed = allCarnivores.filter((carnivore) => {
         return players.some((player) => {
@@ -88,15 +87,14 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
     })
 
     const plantEatersThatCanFeed: Species[] = isTherePlantsLeft
-        ? players
-            .flatMap((player) => {
-                return player.species.filter((species) => {
-                    return (
-                        species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
-                        species.foodEaten < species.population
-                    )
-                })
-            })
+        ? players.flatMap((player) => {
+              return player.species.filter((species) => {
+                  return (
+                      species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
+                      species.foodEaten < species.population
+                  )
+              })
+          })
         : []
 
     const speciesThatCanFeed = [...carnivoresThatCanFeed, ...plantEatersThatCanFeed]
@@ -137,7 +135,7 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
     }
     if (carnivore.size <= prey.size) {
         throw Error(
-            `Cannot eat a species that has a size equal or superior to yours (${carnivore.size} <= ${prey.size}`,
+            `Cannot eat a species that has a size equal or superior to yours (${carnivore.size} <= ${prey.size}`
         )
     }
 }
@@ -166,7 +164,7 @@ export const isCarnivore = (species: Species): boolean => {
 export const computePlayersForFirstFeedingRound = (
     players: PlayerEntity[],
     playerThatShouldFeedNext: string,
-    playersThatCanFeed: string[],
+    playersThatCanFeed: string[]
 ): PlayerEntity[] => {
     if (playersThatCanFeed.includes(playerThatShouldFeedNext)) {
         return players.map((player) => {
@@ -192,7 +190,7 @@ export const computePlayersForFirstFeedingRound = (
 export const computePlayersForNextFeedingRound = (
     players: PlayerEntity[],
     playerThatJustFed: string,
-    playersThatCanFeed: string[],
+    playersThatCanFeed: string[]
 ): PlayerEntity[] => {
     const playerToFeedId = getNextPlayerToFeedId(players, playerThatJustFed, playersThatCanFeed)
     return players.map((player) => {

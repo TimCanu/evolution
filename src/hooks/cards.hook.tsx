@@ -25,6 +25,6 @@ export const useCards = (): CardsResult => {
 
     return {
         getCard,
-        removeCard,
+        removeCard
     }
 }

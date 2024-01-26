@@ -12,13 +12,13 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
         cardId: 'carnivoreCardId',
         name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
+        description: 'Carnivore description'
     }
     const diggerFeature: Feature = {
         cardId: 'diggerCardId',
         name: 'Digger',
         key: FeatureKey.DIGGER,
-        description: 'Digger description',
+        description: 'Digger description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -30,13 +30,13 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
                 population: 1,
                 features: [diggerFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -49,8 +49,8 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
                 population: 1,
                 features: [],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
@@ -62,10 +62,10 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
                 population: 1,
                 features: [],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -73,15 +73,15 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 population: 1')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 size: 1')).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 1/1')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 size: 1')).toBeVisible()
 
-    await expect(secondPlayerPage.getByText("Go vegan")).toBeVisible()
+    await expect(secondPlayerPage.getByText('Go vegan')).toBeVisible()
 })
 
 test('Carnivore can eat a species with Digger feature', async ({ page: firstPlayerPage }) => {
@@ -90,13 +90,13 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
         cardId: 'carnivoreCardId',
         name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
+        description: 'Carnivore description'
     }
     const diggerFeature: Feature = {
         cardId: 'diggerCardId',
         name: 'Digger',
         key: FeatureKey.DIGGER,
-        description: 'Digger description',
+        description: 'Digger description'
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -108,13 +108,13 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
                 population: 4,
                 features: [diggerFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.CHOOSING_EVOLVING_ACTION,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -127,8 +127,8 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
                 population: 1,
                 features: [],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING,
@@ -140,10 +140,10 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
                 population: 1,
                 features: [],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -151,17 +151,17 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 4")).toBeVisible()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 population: 4')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 size: 1')).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/4")).toBeVisible()
-    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 1/4')).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 size: 1')).toBeVisible()
 
     await secondPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
     await secondPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/3")).toBeVisible()
-    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 1/3')).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 1/1')).toBeVisible()
 })

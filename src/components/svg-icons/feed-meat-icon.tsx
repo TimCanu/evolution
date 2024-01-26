@@ -4,9 +4,15 @@ interface FeedMeatIconProps {
     ariaLabel: string
 }
 
-export const FeedMeatIcon: FC<FeedMeatIconProps> = ({ariaLabel}) => {
+export const FeedMeatIcon: FC<FeedMeatIconProps> = ({ ariaLabel }) => {
     return (
-        <svg role="img" aria-label={ariaLabel} viewBox="0 -4.08 46.99 46.99" xmlns="http://www.w3.org/2000/svg" fill="#000000">
+        <svg
+            role="img"
+            aria-label={ariaLabel}
+            viewBox="0 -4.08 46.99 46.99"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="#000000"
+        >
             <g id="SVGRepo_bgCarrier" strokeWidth="0" />
             <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round" />
             <g id="SVGRepo_iconCarrier">

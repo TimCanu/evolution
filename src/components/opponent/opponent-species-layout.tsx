@@ -23,7 +23,7 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
             gameId,
             playerId,
             speciesId: carnivoreFeedingData.carnivoreId,
-            preyId: species.id,
+            preyId: species.id
         })
     }
     return (
@@ -36,13 +36,10 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
                     {species.size}
                 </span>
                 {canBeEaten && (
-                    <button
-                        type="button"
-                        className="w-8"
-                        onClick={feedCarnivore}
-                    >
+                    <button type="button" className="w-8" onClick={feedCarnivore}>
                         <FeedMeatIcon
-                            ariaLabel={`Eat the species at index ${speciesIndex} of opponent at index ${opponentIndex}`} />
+                            ariaLabel={`Eat the species at index ${speciesIndex} of opponent at index ${opponentIndex}`}
+                        />
                     </button>
                 )}
                 <span

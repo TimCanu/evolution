@@ -44,7 +44,7 @@ export function Game({ game }: GameProps) {
         opponents,
         speciesList,
         updateCards,
-        updateStatus,
+        updateStatus
     } = useGameContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerStatus()
     const { playEvolvingAction } = useSpecies()
@@ -106,8 +106,11 @@ export function Game({ game }: GameProps) {
                     <AddRightSpeciesButton />
                 </div>
                 {isEvolvingStage() && (
-                    <button type="button" className="my-3 bg-teal-500 rounded w-36 self-center"
-                            onClick={finishEvolvingStage}>
+                    <button
+                        type="button"
+                        className="my-3 bg-teal-500 rounded w-36 self-center"
+                        onClick={finishEvolvingStage}
+                    >
                         Finish turn
                     </button>
                 )}

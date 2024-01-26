@@ -37,9 +37,7 @@ export const addCardAsFood = async (
     await expect(
         page.getByRole('img', { name: `Increase population of species at position ${numberOfSpecies}` })
     ).toBeVisible()
-    await expect(
-        page.getByRole('img', { name: `Add feature to species at position ${numberOfSpecies}` })
-    ).toBeVisible()
+    await expect(page.getByRole('img', { name: `Add feature to species at position ${numberOfSpecies}` })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the left' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the right' })).toBeVisible()
     await assertNumberOfCards(page, numberOfCards - 1)
@@ -51,7 +49,7 @@ export const buildLongNeckCard = (id: string, foodNumber: number): Card => {
         name: 'Long neck',
         featureKey: FeatureKey.LONG_NECK,
         description: 'Long neck card description',
-        foodNumber,
+        foodNumber
     }
 }
 export const buildFertileCard = (id: string, foodNumber: number): Card => {
@@ -60,7 +58,7 @@ export const buildFertileCard = (id: string, foodNumber: number): Card => {
         name: 'Fertile',
         featureKey: FeatureKey.FERTILE,
         description: 'Fertile card description',
-        foodNumber,
+        foodNumber
     }
 }
 
@@ -70,7 +68,7 @@ export const buildForagerCard = (id: string, foodNumber: number): Card => {
         name: 'Forager',
         featureKey: FeatureKey.FORAGER,
         description: 'Forager card description',
-        foodNumber,
+        foodNumber
     }
 }
 
@@ -80,7 +78,6 @@ export const buildCarnivoreCard = (id: string, foodNumber: number): Card => {
         name: 'Carnivore',
         featureKey: FeatureKey.CARNIVORE,
         description: 'Carnivore card description',
-        foodNumber,
+        foodNumber
     }
 }
-
