@@ -10,15 +10,11 @@ test("Carnivore can't eat a species with Herd feature", async ({ page: firstPlay
     const gameId = ObjectId.createFromTime(81)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
-        key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description'
+        key: FeatureKey.CARNIVORE
     }
     const herdFeature: Feature = {
         cardId: 'HerdCardId',
-        name: 'Herd',
-        key: FeatureKey.HERD,
-        description: 'Herd description'
+        key: FeatureKey.HERD
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -88,15 +84,11 @@ test('Carnivore can eat a species with Herd feature', async ({ page: firstPlayer
     const gameId = ObjectId.createFromTime(82)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
-        key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description'
+        key: FeatureKey.CARNIVORE
     }
     const herdFeature: Feature = {
         cardId: 'HerdCardId',
-        name: 'Herd',
-        key: FeatureKey.HERD,
-        description: 'Herd description'
+        key: FeatureKey.HERD
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
