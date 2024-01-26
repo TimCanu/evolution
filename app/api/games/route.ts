@@ -25,7 +25,7 @@ export const POST = async (request: NextRequest) => {
                 const card: Card = {
                     id: uuidv4(),
                     featureKey: feature.key,
-                    foodNumber,
+                    foodNumber
                 }
                 cards.push(card)
             }
@@ -51,7 +51,7 @@ export const POST = async (request: NextRequest) => {
             newSpeciesList: [],
             status:
                 data.nbOfPlayers === 1 ? GameStatus.ADDING_FOOD_TO_WATER_PLAN : GameStatus.WAITING_FOR_PLAYERS_TO_JOIN,
-            numberOfFoodEaten: 0,
+            numberOfFoodEaten: 0
         }
         const game: CreateGameEntity = {
             remainingCards: shuffledCards,
@@ -59,7 +59,7 @@ export const POST = async (request: NextRequest) => {
             players: [firstPlayer],
             hiddenFoods: [],
             amountOfFood: 0,
-            firstPlayerToFeedId: playerId,
+            firstPlayerToFeedId: playerId
         }
 
         const res = await db.collection('games').insertOne(game)

@@ -43,10 +43,10 @@ export const computeEndOfFeedingStageData = (
 
 const computeSpeciesPopulation = (species: Species[]): Species[] => {
     return species.reduce((speciesUpdated: Species[], species: Species) => {
-        if (species.foodEaten === 0) {
-            return speciesUpdated
+        if (species.foodEaten > 0) {
+            speciesUpdated.push({ ...species, population: species.foodEaten, foodEaten: 0 })
         }
-        return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
+        return speciesUpdated
     }, [])
 }
 
@@ -72,13 +72,11 @@ export const hasPlayerFinishedFeeding = (player: PlayerEntity): boolean => {
 export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEntity[]): string[] => {
     const isTherePlantsLeft = amountOfFood > 0
 
-    const allCarnivores: Species[] = players
-        .map((player) => {
-            return player.species.filter((species) => {
-                return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
-            })
+    const allCarnivores: Species[] = players.flatMap((player) => {
+        return player.species.filter((species) => {
+            return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
         })
-        .flat()
+    })
 
     const carnivoresThatCanFeed = allCarnivores.filter((carnivore) => {
         return players.some((player) => {
@@ -89,16 +87,14 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
     })
 
     const plantEatersThatCanFeed: Species[] = isTherePlantsLeft
-        ? players
-              .map((player) => {
-                  return player.species.filter((species) => {
-                      return (
-                          species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
-                          species.foodEaten < species.population
-                      )
-                  })
+        ? players.flatMap((player) => {
+              return player.species.filter((species) => {
+                  return (
+                      species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
+                      species.foodEaten < species.population
+                  )
               })
-              .flat()
+          })
         : []
 
     const speciesThatCanFeed = [...carnivoresThatCanFeed, ...plantEatersThatCanFeed]
@@ -126,16 +122,16 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
         throw Error(`Species has already eaten | Species ID=${carnivore.id}`)
     }
     if (!canCarnivoreClimb && canPreyClimb) {
-        throw Error(`Carnivore cannot eat this species because it protect by climbing card`)
+        throw Error('Carnivore cannot eat this species because it protect by climbing card')
     }
     if (prey.features.some((feature) => feature.key === FeatureKey.DIGGER) && prey.foodEaten === prey.population) {
-        throw Error(`Carnivore cannot eat this species because it is protected by the digger`)
+        throw Error('Carnivore cannot eat this species because it is protected by the digger')
     }
     if (prey.features.some((feature) => feature.key === FeatureKey.HERD) && prey.population >= carnivore.population) {
-        throw Error(`Carnivore cannot eat this species because it is protected by the herd`)
+        throw Error('Carnivore cannot eat this species because it is protected by the herd')
     }
     if (carnivore.id === prey.id) {
-        throw Error(`Carnivore cannot eat themselves`)
+        throw Error('Carnivore cannot eat themselves')
     }
     if (carnivore.size <= prey.size) {
         throw Error(
@@ -150,11 +146,11 @@ const computeSpeciesPreys = (speciesList: Species[], players: PlayerEntity[]): S
             return species
         }
         species.preyIds = players.reduce((speciesIds: string[], player) => {
-            player.species.forEach((potentialPrey) => {
+            for (const potentialPrey of player.species) {
                 if (canCarnivoreEatSpecies(species, potentialPrey)) {
                     speciesIds.push(potentialPrey.id)
                 }
-            })
+            }
             return speciesIds
         }, [])
         return species

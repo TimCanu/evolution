@@ -68,6 +68,6 @@ export const usePlayerStatus = (): PlayerStatusResult => {
         getCardDiscardMessage,
         isAddingFoodStage,
         isEvolvingStage,
-        isFeedingStage,
+        isFeedingStage
     }
 }

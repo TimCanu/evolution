@@ -13,10 +13,9 @@ import { checkPlayerExists } from '@/src/lib/player.service.server'
 import {
     computeEndOfFeedingStageData,
     computePlayersForFirstFeedingRound,
-    computePlayersForNextFeedingRound,
     getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
-    isCarnivore,
+    isCarnivore
 } from '@/src/lib/food.service.server'
 import { Card } from '@/src/models/card.model'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -25,7 +24,7 @@ import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 export const PUT = async (
     request: NextRequest,
     {
-        params,
+        params
     }: {
         params: { gameId: string; playerId: string }
     }
@@ -59,8 +58,8 @@ export const PUT = async (
                 { _id: new ObjectId(params.gameId) },
                 {
                     $set: {
-                        players: players,
-                    },
+                        players: players
+                    }
                 }
             )
             await sendUpdateGameEvents(params.gameId, playerIds, false, false)
@@ -108,8 +107,8 @@ const updateDataForFeedingStage = async (
             $set: {
                 hiddenFoods: [],
                 amountOfFood,
-                players,
-            },
+                players
+            }
         }
     )
 }
@@ -123,7 +122,7 @@ const updateDataForAddingFoodStage = async (
 ): Promise<void> => {
     const playersWithNewStatus = players.map((player) => ({
         ...player,
-        status: GameStatus.ADDING_FOOD_TO_WATER_PLAN,
+        status: GameStatus.ADDING_FOOD_TO_WATER_PLAN
     }))
     const endOfFeedingStageData = computeEndOfFeedingStageData(
         playersWithNewStatus,
@@ -139,8 +138,8 @@ const updateDataForAddingFoodStage = async (
                 hiddenFoods: [],
                 amountOfFood: amountOfFood,
                 players: endOfFeedingStageData.players,
-                firstPlayerToFeedId: endOfFeedingStageData.firstPlayerToFeedId,
-            },
+                firstPlayerToFeedId: endOfFeedingStageData.firstPlayerToFeedId
+            }
         }
     )
 }
@@ -196,7 +195,7 @@ const computePlayersForFeedingStage = (
 }
 
 const checkForIncorrectActions = (gameId: string, playerId: string, speciesList: Species[]): void => {
-    speciesList.forEach((species) => {
+    for (const species of speciesList) {
         if (species.features.length > 3) {
             throw Error(
                 `ERROR: Species features > 3 ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
@@ -206,7 +205,8 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
             if (previousFeatureKeys.includes(feature.key)) {
                 throw Error('Cannot add twice a feature to the same species')
             }
-            return [...previousFeatureKeys, feature.key]
+            previousFeatureKeys.push(feature.key)
+            return previousFeatureKeys
         }, [])
         if (species.size > 6) {
             throw Error(
@@ -223,7 +223,7 @@ const checkForIncorrectActions = (gameId: string, playerId: string, speciesList:
                 `ERROR: Other species error ||| Species ID=${species.id}, Player ID=${playerId}, Game ID=${gameId}`
             )
         }
-    })
+    }
 }
 
 const applySpecialCardAction = (player: PlayerEntity, amountOfFood: number): PlayerEntity => {

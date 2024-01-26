@@ -7,7 +7,6 @@ import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
 import { isCarnivore } from '@/src/lib/food.service.server'
 import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiting-icon'
 import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
-import { FeedPlantsIcon } from '@/src/components/svg-icons/feed-plants-icon'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
 
@@ -40,8 +39,8 @@ export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, p
         <>
             <FeedCarnivoreButton index={index} species={species} />
             {canBeEaten ? (
-                <button className="w-8" aria-label={`Eat your own species at index ${index}`} onClick={feedCarnivore}>
-                    <FeedMeatIcon />
+                <button type="button" className="w-8" onClick={feedCarnivore}>
+                    <FeedMeatIcon ariaLabel={`Eat your own species at index ${index}`} />
                 </button>
             ) : (
                 <FeedPlantsButton species={species} gameId={gameId} playerId={playerId} index={index} />
@@ -72,13 +71,15 @@ const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) =
         }
     }
 
-    const ariaLabel = isCurrentlyFeeding ? 'Cancel feeding of the carnivore' : `Feed carnivore at index ${index}`
-
     return (
         <>
             {species.preyIds.length > 0 ? (
-                <button className="w-8" aria-label={ariaLabel} onClick={toggleCarnivoreWantingToFeed}>
-                    {isCurrentlyFeeding ? <CarnivoreWaitingIcon /> : <CarnivoreAttackingIcon />}
+                <button type="button" className="w-8" onClick={toggleCarnivoreWantingToFeed}>
+                    {isCurrentlyFeeding ? (
+                        <CarnivoreWaitingIcon ariaLabel="Cancel feeding of the carnivore" />
+                    ) : (
+                        <CarnivoreAttackingIcon ariaLabel={`Feed carnivore at index ${index}`} />
+                    )}
                 </button>
             ) : (
                 <span>Go vegan</span>
@@ -105,6 +106,7 @@ const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species
 
     return (
         <button
+            type="button"
             className="flex justify-center items-center"
             aria-label={`Feed plants to species at index ${index}`}
             onClick={feedPlantsEater}

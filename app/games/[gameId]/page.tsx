@@ -4,7 +4,7 @@ import { GameProvider } from '@/src/providers/game.provider'
 
 export default async function Home({
     params,
-    searchParams,
+    searchParams
 }: {
     params: { gameId: string }
     searchParams: { playerId: string }

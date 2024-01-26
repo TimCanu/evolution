@@ -2,7 +2,7 @@ export const feedSpecies = async ({
     gameId,
     playerId,
     speciesId,
-    preyId,
+    preyId
 }: {
     gameId: string
     playerId: string
@@ -13,7 +13,7 @@ export const feedSpecies = async ({
         `http://localhost:3000/api/games/${gameId}/players/${playerId}/species/${speciesId}/feed?preyId=${preyId}`,
         {
             next: { revalidate: 0 },
-            method: 'POST',
+            method: 'POST'
         }
     )
     return res.json()

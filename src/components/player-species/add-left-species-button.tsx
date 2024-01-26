@@ -15,13 +15,13 @@ export const AddLeftSpeciesButton: FC = () => {
 
     return (
         <button
+            type="button"
             className={`mr-5 self-end ${isAnimated ? 'animate-bounce' : ''}`}
-            aria-label="Add a new species to the left"
             onClick={() => {
                 updateStatus(EVOLVING_STAGES.ADD_LEFT_SPECIES)
             }}
         >
-            <AddNewSpeciesIcon />
+            <AddNewSpeciesIcon ariaLabel="Add a new species to the left" />
         </button>
     )
 }

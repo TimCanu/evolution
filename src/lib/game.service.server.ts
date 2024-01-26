@@ -24,7 +24,7 @@ export const getGame = async (gameId: string, playerId: string): Promise<Game> =
             cards: player.cards,
             status: player.status,
             isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
-            numberOfFoodEaten: player.numberOfFoodEaten,
-        },
+            numberOfFoodEaten: player.numberOfFoodEaten
+        }
     }
 }

@@ -29,13 +29,19 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
         >
             {isEvolvingStage() && (
                 <button
-                    aria-label={`Remove feature ${featureName} at species with index ${speciesIndex}`}
+                    type="button"
                     className="visible h-6 w-6 absolute justify-center -top-6 inset-x-1.5 bg-black rounded-full group-has-[div:hover]:invisible group-has-[div:hover]:delay-300 group-has-[div:hover]:w-0 delay-0"
                     onClick={() => {
                         removeFeature(speciesId, feature.cardId)
                     }}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
+                    <svg
+                        role="img"
+                        aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                    >
                         <path
                             opacity="0.15"
                             d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z"

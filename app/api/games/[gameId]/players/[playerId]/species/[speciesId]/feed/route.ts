@@ -14,7 +14,7 @@ import {
     computePlayersForNextFeedingRound,
     getPlayersThatCanFeedIds,
     hasPlayerFinishedFeeding,
-    isCarnivore,
+    isCarnivore
 } from '@/src/lib/food.service.server'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { PlayerEntity } from '@/src/models/player-entity.model'
@@ -23,7 +23,7 @@ import { sendUpdateGameEvents } from '@/src/lib/pusher.server.service'
 export const POST = async (
     request: NextRequest,
     {
-        params,
+        params
     }: {
         params: { gameId: string; playerId: string; speciesId: string }
     }
@@ -131,8 +131,8 @@ const updateGameInDb = async (
                 amountOfFood: newAmountOfFood,
                 players: playersUpdated,
                 remainingCards: remainingCards,
-                firstPlayerToFeedId,
-            },
+                firstPlayerToFeedId
+            }
         }
     )
 }
@@ -255,13 +255,14 @@ const feedPlantBasedSpecies = (
         return { players, amountOfFood }
     }
     checkThatPlantsEaterCanEat(speciesFeeding, amountOfFood)
+    let amountOfFoodUpdated = amountOfFood
     speciesFeeding.foodEaten++
     playerFeeding.numberOfFoodEaten++
-    amountOfFood--
-    if (isForagerThatCanFeed(speciesFeeding, amountOfFood)) {
+    amountOfFoodUpdated--
+    if (isForagerThatCanFeed(speciesFeeding, amountOfFoodUpdated)) {
         speciesFeeding.foodEaten++
         playerFeeding.numberOfFoodEaten++
-        amountOfFood--
+        amountOfFoodUpdated--
     }
     playerFeeding.status = GameStatus.WAITING_FOR_PLAYERS_TO_FEED
     const playersUpdated = players.map((player) => {
@@ -276,7 +277,7 @@ const feedPlantBasedSpecies = (
         }
         return player
     })
-    return { players: playersUpdated, amountOfFood }
+    return { players: playersUpdated, amountOfFood: amountOfFoodUpdated }
 }
 
 const isForagerThatCanFeed = (species: Species, amountOfFood: number): boolean => {

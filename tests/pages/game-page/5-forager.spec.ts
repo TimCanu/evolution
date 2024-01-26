@@ -10,7 +10,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     const gameId = ObjectId.createFromTime(51)
     const foragerFeature: Feature = {
         cardId: 'foragerCardId',
-        key: FeatureKey.FORAGER,
+        key: FeatureKey.FORAGER
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -22,13 +22,13 @@ test('Forager card should increase fed population by two', async ({ page: firstP
                 population: 3,
                 features: [foragerFeature],
                 foodEaten: 0,
-                preyIds: [],
-            },
+                preyIds: []
+            }
         ],
         cards: [],
         status: GameStatus.FEEDING_SPECIES,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     const secondPlayer: PlayerEntity = {
         id: 'player2',
@@ -37,7 +37,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
         cards: [],
         status: GameStatus.WAITING_FOR_PLAYERS_TO_FEED,
         newSpeciesList: [],
-        numberOfFoodEaten: 0,
+        numberOfFoodEaten: 0
     }
     await createGame(gameId, firstPlayer, secondPlayer, 10)
 
@@ -45,12 +45,12 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 0/3')).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 0/1')).toBeVisible()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 2/3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 2/3')).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 1/1')).toBeVisible()
 })

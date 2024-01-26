@@ -7,7 +7,7 @@ import {
     createPlayer1,
     createPlayer2,
     finishTurnEvolvingAndWaitForOthersToEvolve,
-    finishTurnEvolvingAndWaitForOthersToFeed,
+    finishTurnEvolvingAndWaitForOthersToFeed
 } from '@/tests/utils/player.util'
 import { addCardAsFood } from '@/tests/utils/cards.util'
 import {
@@ -17,7 +17,7 @@ import {
     feedLastSpecies,
     feedSpecies,
     increaseSpeciesPopulation,
-    increaseSpeciesSize,
+    increaseSpeciesSize
 } from '@/tests/utils/species.util'
 import { assertNumberOfFoodInWaterPlan, assertNumberOfHiddenFood } from '@/tests/utils/food.util'
 import { createGame } from '@/tests/utils/game.util'

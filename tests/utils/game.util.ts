@@ -26,13 +26,13 @@ export const createGame = async (
             buildFertileCard('firstPlayerCard8', 3),
             buildFertileCard('firstPlayerCard7', 3),
             buildForagerCard('firstPlayerCard6', 2),
-            buildCarnivoreCard('firstPlayerCard5', -1),
+            buildCarnivoreCard('firstPlayerCard5', -1)
         ],
         nbOfPlayers: 2,
         players: [player1, player2],
         hiddenFoods: [],
         amountOfFood: amountOfFood,
-        firstPlayerToFeedId: player1.id,
+        firstPlayerToFeedId: player1.id
     }
     await db.collection('games').insertOne(game)
 }

@@ -2,7 +2,7 @@ import { Game } from '@/src/models/game.model'
 
 export const createGame = async ({
     nbOfPlayers,
-    playerName,
+    playerName
 }: {
     nbOfPlayers: number
     playerName: string
@@ -10,14 +10,14 @@ export const createGame = async ({
     const res = await fetch('http://localhost:3000/api/games', {
         next: { revalidate: 0 },
         method: 'POST',
-        body: JSON.stringify({ nbOfPlayers, playerName }),
+        body: JSON.stringify({ nbOfPlayers, playerName })
     })
     return res.json()
 }
 
 export const joinGame = async ({
     playerName,
-    gameId,
+    gameId
 }: {
     playerName: string
     gameId: string
@@ -25,7 +25,7 @@ export const joinGame = async ({
     const res = await fetch(`http://localhost:3000/api/games/${gameId}/join`, {
         next: { revalidate: 0 },
         method: 'POST',
-        body: JSON.stringify({ playerName }),
+        body: JSON.stringify({ playerName })
     })
     return res.json()
 }

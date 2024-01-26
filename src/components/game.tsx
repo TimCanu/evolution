@@ -20,9 +20,9 @@ import Image from 'next/image'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { AddLeftSpeciesButton } from '@/src/components/player-species/add-left-species-button'
 import { AddRightSpeciesButton } from '@/src/components/player-species/add-right-species-button'
-import { LeftOpponents } from '@/src/components/opponent/LeftOpponents'
-import { RightOpponents } from '@/src/components/opponent/RightOpponents'
-import { OpponentInTheMiddle } from '@/src/components/opponent/OpponentInTheMiddle'
+import { LeftOpponents } from '@/src/components/opponent/left-opponents'
+import { RightOpponents } from '@/src/components/opponent/right-opponents'
+import { MiddleOpponent } from '@/src/components/opponent/middle-opponent'
 
 interface GameProps {
     game: GameModel
@@ -44,7 +44,7 @@ export function Game({ game }: GameProps) {
         opponents,
         speciesList,
         updateCards,
-        updateStatus,
+        updateStatus
     } = useGameContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerStatus()
     const { playEvolvingAction } = useSpecies()
@@ -75,7 +75,7 @@ export function Game({ game }: GameProps) {
         return () => {
             PusherInstance.unsubscribeToAllChannels()
         }
-    }, [gameId, playerId])
+    })
 
     const opponentsDisplay = opponents.length === 1 ? 'flex-col' : 'flex-row'
 
@@ -83,7 +83,7 @@ export function Game({ game }: GameProps) {
         <div className="grid grid-rows-2 overflow-hidden min-h-[100vh] max-h-[100vh]">
             <div className={`flex ${opponentsDisplay} justify-between mr-4`}>
                 <LeftOpponents opponents={opponents} />
-                <OpponentInTheMiddle opponents={opponents} />
+                <MiddleOpponent opponents={opponents} />
                 <FoodArea />
                 <RightOpponents opponents={opponents} />
             </div>
@@ -94,7 +94,7 @@ export function Game({ game }: GameProps) {
                         {speciesList.map((species, index) => {
                             return (
                                 <SpeciesLayout
-                                    key={index}
+                                    key={species.id}
                                     index={index}
                                     species={species}
                                     gameId={gameId}
@@ -106,7 +106,11 @@ export function Game({ game }: GameProps) {
                     <AddRightSpeciesButton />
                 </div>
                 {isEvolvingStage() && (
-                    <button className="my-3 bg-teal-500 rounded w-36 self-center" onClick={finishEvolvingStage}>
+                    <button
+                        type="button"
+                        className="my-3 bg-teal-500 rounded w-36 self-center"
+                        onClick={finishEvolvingStage}
+                    >
                         Finish turn
                     </button>
                 )}
@@ -120,7 +124,7 @@ export function Game({ game }: GameProps) {
                     <div>
                         <ul className="flex flex-row justify-center h-32 items-end">
                             {cards.map((card, index) => {
-                                return <CardLayout key={index} index={index} card={card} playCard={playCard} />
+                                return <CardLayout key={card.id} index={index} card={card} playCard={playCard} />
                             })}
                         </ul>
                     </div>

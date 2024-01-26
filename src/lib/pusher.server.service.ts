@@ -1,5 +1,5 @@
 import { UPDATE_GAME_INFO } from '@/src/const/game-events.const'
-import { PusherEvent, PusherEventBase, PushUpdatePlayerGameInfoData } from '@/src/models/pusher.channels.model'
+import { PushUpdatePlayerGameInfo, PushUpdatePlayerGameInfoData } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
@@ -10,11 +10,11 @@ const buildUpdateGameEvent = (
     gameId: string,
     playerId: string,
     data: PushUpdatePlayerGameInfoData
-): PusherEvent<PushUpdatePlayerGameInfoData> => {
+): PushUpdatePlayerGameInfo => {
     return {
         channel: `game-${gameId}-player-${playerId}`,
         name: UPDATE_GAME_INFO,
-        data,
+        data
     }
 }
 
@@ -26,7 +26,7 @@ export const sendUpdateGameEvents = async (
 ): Promise<void> => {
     const gameEntity: GameEntity = await getGameEntity(gameId)
 
-    const events: PusherEvent<PusherEventBase>[] = playersId.map((playerId) => {
+    const events: PushUpdatePlayerGameInfo[] = playersId.map((playerId) => {
         const player = gameEntity.players.find((player) => player.id === playerId)
         if (!player) {
             throw Error(`Player with id ${playerId} could not be found in game with id ${gameId}`)
@@ -44,13 +44,13 @@ export const sendUpdateGameEvents = async (
                 cards: player.cards,
                 status: player.status,
                 isFirstPlayerToFeed: player.id === gameEntity.firstPlayerToFeedId,
-                numberOfFoodEaten: player.numberOfFoodEaten,
-            },
+                numberOfFoodEaten: player.numberOfFoodEaten
+            }
         }
         return buildUpdateGameEvent(gameId, player.id, {
             game,
             shouldUpdateSpecies,
-            shouldUpdateCards,
+            shouldUpdateCards
         })
     })
     await pusherServer.triggerBatch(events)

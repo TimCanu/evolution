@@ -26,7 +26,13 @@ export const RightOpponents: FC<RightOpponentsProps> = ({ opponents }) => {
             className="mt-1 row-span-1 flex flex-col gap-4 w-full items-center justify-around"
         >
             {opponentsOnTheRight.map((opponent, index) => {
-                return <OpponentLayout key={index} opponentIndex={index} opponent={opponent} />
+                return (
+                    <OpponentLayout
+                        key={`${opponent.name}-${opponent.isFirstPlayerToFeed}`}
+                        opponentIndex={index}
+                        opponent={opponent}
+                    />
+                )
             })}
         </ul>
     )

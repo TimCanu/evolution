@@ -4,13 +4,13 @@ const conf = {
     appId: String(process.env.PUSHER_APP_ID),
     key: String(process.env.PUSHER_KEY),
     secret: String(process.env.PUSHER_SECRET),
-    cluster: String(process.env.PUSHER_CLUSTER),
+    cluster: String(process.env.PUSHER_CLUSTER)
 }
 let pusherServer: Pusher
 if (process.env.NODE_ENV === 'development') {
     // In development mode, use a global variable so that the value
     // is preserved across module reloads caused by HMR (Hot Module Replacement).
-    let globalWithPusher = global as typeof globalThis & {
+    const globalWithPusher = global as typeof globalThis & {
         _pusherServ?: Pusher
     }
 

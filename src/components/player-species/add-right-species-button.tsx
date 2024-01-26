@@ -14,13 +14,13 @@ export const AddRightSpeciesButton: FC = () => {
 
     return (
         <button
+            type="button"
             className={`ml-5 self-end ${isAnimated ? 'animate-bounce' : ''}`}
-            aria-label="Add a new species to the right"
             onClick={() => {
                 updateStatus(EVOLVING_STAGES.ADD_RIGHT_SPECIES)
             }}
         >
-            <AddNewSpeciesIcon />
+            <AddNewSpeciesIcon ariaLabel="Add a new species to the right" />
         </button>
     )
 }
