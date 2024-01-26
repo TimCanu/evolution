@@ -26,9 +26,9 @@ export class PusherInstance {
     }
 
     public static unsubscribeToAllChannels(): void {
-        PusherInstance.playerChannels.forEach((channel) => {
-            PusherInstance.getPusher().unsubscribe(channel.name)
-        })
+        for(const [_, channelName] of Object.values(PusherInstance.playerChannels)){
+            PusherInstance.getPusher().unsubscribe(channelName)
+        }
         PusherInstance.playerChannels = new Map<string, Channel>()
     }
 }

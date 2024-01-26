@@ -3,11 +3,11 @@ import { Card } from '@/src/models/card.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 
 export const getCardToAddAsFood = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByRole('button', { name: `Use the card ${card.name} to add ${card.foodNumber} to the water plan` })
+    return page.getByRole('listitem', { name: `Use the card ${card.name} to add ${card.foodNumber} to the water plan` })
 }
 
 export const getCardToDiscard = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByRole('button', { name: `Discard the card ${card.name}` })
+    return page.getByRole('listitem', { name: `Discard the card ${card.name}` })
 }
 
 export const assertNumberOfCards = async (page: Page, numberOfCards: number): Promise<void> => {
@@ -32,13 +32,13 @@ export const addCardAsFood = async (
     await expect(page.getByText('Choose an action to evolve your species or finish your turn')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Finish turn' })).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Increase size of species at position ${numberOfSpecies}` })
+        page.getByRole('img', { name: `Increase size of species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Increase population of species at position ${numberOfSpecies}` })
+        page.getByRole('img', { name: `Increase population of species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(
-        page.getByRole('button', { name: `Add feature to species at position ${numberOfSpecies}` })
+        page.getByRole('img', { name: `Add feature to species at position ${numberOfSpecies}` })
     ).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the left' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Add a new species to the right' })).toBeVisible()

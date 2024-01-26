@@ -20,7 +20,7 @@ export const assertNumberOfFeatures = async (
     numberOfFeatures: number,
     speciesIndex: number
 ): Promise<void> => {
-    const regex = new RegExp('s-' + speciesIndex + '-feature-*')
+    const regex = new RegExp(`s-${speciesIndex}-feature-*`)
     await expect(page.getByTestId(regex)).toHaveCount(numberOfFeatures)
 }
 
@@ -41,9 +41,9 @@ const addSpecies = async (
 
     await assertNumberOfSpecies(page, numberOfSpecies + 1)
     await assertNumberOfCards(page, numberOfCards - 1)
-    await expect(page.getByRole('button', { name: 'Increase size of species at position 1' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Increase population of species at position 1' })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Add feature to species at position 1' })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Increase size of species at position 1' })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Increase population of species at position 1' })).toBeVisible()
+    await expect(page.getByRole('img', { name: 'Add feature to species at position 1' })).toBeVisible()
 }
 
 export const addSpeciesToTheLeft = async (
@@ -75,7 +75,7 @@ export const addSpeciesFeature = async (
     await assertNumberOfCards(page, numberOfCards)
     await assertNumberOfFeatures(page, 0, speciesIndex)
 
-    await page.getByRole('button', { name: `Add feature to species at position ${speciesIndex + 1}` }).click()
+    await page.getByRole('img', { name: `Add feature to species at position ${speciesIndex + 1}` }).click()
 
     const cardToDiscard = await getCardToDiscard(page, featureToAdd)
 
@@ -98,7 +98,7 @@ export const increaseSpeciesSize = async (
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
 
-    await page.getByRole('button', { name: `Increase size of species at position ${speciesIndex + 1}` }).click()
+    await page.getByRole('img', { name: `Increase size of species at position ${speciesIndex + 1}` }).click()
 
     const card = await getCardToDiscard(page, cardToDiscard)
 
@@ -120,7 +120,7 @@ export const increaseSpeciesPopulation = async (
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
 
-    await page.getByRole('button', { name: `Increase population of species at position ${speciesIndex + 1}` }).click()
+    await page.getByRole('img', { name: `Increase population of species at position ${speciesIndex + 1}` }).click()
 
     const card = await getCardToDiscard(page, cardToDiscard)
 

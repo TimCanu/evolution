@@ -8,7 +8,7 @@ import { FeatureKey } from '@/src/enums/feature-key.enum'
 export const computeEndOfFeedingStageData = (
     players: PlayerEntity[],
     cards: Card[],
-    firstPlayerToFeedId: string
+    firstPlayerToFeedId: string,
 ): {
     players: PlayerEntity[]
     remainingCards: Card[]
@@ -27,7 +27,7 @@ export const computeEndOfFeedingStageData = (
                     throw Error('No cards left... Maybe add some more in the DB?')
                 }
                 return card
-            })
+            }),
         )
         player.status = GameStatus.ADDING_FOOD_TO_WATER_PLAN
         return player
@@ -43,17 +43,17 @@ export const computeEndOfFeedingStageData = (
 
 const computeSpeciesPopulation = (species: Species[]): Species[] => {
     return species.reduce((speciesUpdated: Species[], species: Species) => {
-        if (species.foodEaten === 0) {
-            return speciesUpdated
+        if (species.foodEaten > 0) {
+            speciesUpdated.push({ ...species, population: species.foodEaten, foodEaten: 0 })
         }
-        return [...speciesUpdated, { ...species, population: species.foodEaten, foodEaten: 0 }]
+        return speciesUpdated
     }, [])
 }
 
 export const getNextPlayerToFeedId = (
     players: PlayerEntity[],
     lastPlayerToFeedId: string,
-    playersThatCanStillFeedIds: string[]
+    playersThatCanStillFeedIds: string[],
 ): string => {
     const playerCurrentlyFeedingIndex = players.findIndex((player) => player.id === lastPlayerToFeedId)
     const nextPlayerFeedingIndex =
@@ -73,12 +73,11 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
     const isTherePlantsLeft = amountOfFood > 0
 
     const allCarnivores: Species[] = players
-        .map((player) => {
+        .flatMap((player) => {
             return player.species.filter((species) => {
                 return species.features.some((feature) => feature.key === FeatureKey.CARNIVORE)
             })
         })
-        .flat()
 
     const carnivoresThatCanFeed = allCarnivores.filter((carnivore) => {
         return players.some((player) => {
@@ -90,15 +89,14 @@ export const getPlayersThatCanFeedIds = (amountOfFood: number, players: PlayerEn
 
     const plantEatersThatCanFeed: Species[] = isTherePlantsLeft
         ? players
-              .map((player) => {
-                  return player.species.filter((species) => {
-                      return (
-                          species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
-                          species.foodEaten < species.population
-                      )
-                  })
-              })
-              .flat()
+            .flatMap((player) => {
+                return player.species.filter((species) => {
+                    return (
+                        species.features.every((feature) => feature.key !== FeatureKey.CARNIVORE) &&
+                        species.foodEaten < species.population
+                    )
+                })
+            })
         : []
 
     const speciesThatCanFeed = [...carnivoresThatCanFeed, ...plantEatersThatCanFeed]
@@ -126,20 +124,20 @@ export const checkThatCarnivoreCanEat = (carnivore: Species, prey: Species): voi
         throw Error(`Species has already eaten | Species ID=${carnivore.id}`)
     }
     if (!canCarnivoreClimb && canPreyClimb) {
-        throw Error(`Carnivore cannot eat this species because it protect by climbing card`)
+        throw Error('Carnivore cannot eat this species because it protect by climbing card')
     }
     if (prey.features.some((feature) => feature.key === FeatureKey.DIGGER) && prey.foodEaten === prey.population) {
-        throw Error(`Carnivore cannot eat this species because it is protected by the digger`)
+        throw Error('Carnivore cannot eat this species because it is protected by the digger')
     }
     if (prey.features.some((feature) => feature.key === FeatureKey.HERD) && prey.population >= carnivore.population) {
-        throw Error(`Carnivore cannot eat this species because it is protected by the herd`)
+        throw Error('Carnivore cannot eat this species because it is protected by the herd')
     }
     if (carnivore.id === prey.id) {
-        throw Error(`Carnivore cannot eat themselves`)
+        throw Error('Carnivore cannot eat themselves')
     }
     if (carnivore.size <= prey.size) {
         throw Error(
-            `Cannot eat a species that has a size equal or superior to yours (${carnivore.size} <= ${prey.size}`
+            `Cannot eat a species that has a size equal or superior to yours (${carnivore.size} <= ${prey.size}`,
         )
     }
 }
@@ -150,11 +148,11 @@ const computeSpeciesPreys = (speciesList: Species[], players: PlayerEntity[]): S
             return species
         }
         species.preyIds = players.reduce((speciesIds: string[], player) => {
-            player.species.forEach((potentialPrey) => {
+            for (const potentialPrey of player.species) {
                 if (canCarnivoreEatSpecies(species, potentialPrey)) {
                     speciesIds.push(potentialPrey.id)
                 }
-            })
+            }
             return speciesIds
         }, [])
         return species
@@ -168,7 +166,7 @@ export const isCarnivore = (species: Species): boolean => {
 export const computePlayersForFirstFeedingRound = (
     players: PlayerEntity[],
     playerThatShouldFeedNext: string,
-    playersThatCanFeed: string[]
+    playersThatCanFeed: string[],
 ): PlayerEntity[] => {
     if (playersThatCanFeed.includes(playerThatShouldFeedNext)) {
         return players.map((player) => {
@@ -194,7 +192,7 @@ export const computePlayersForFirstFeedingRound = (
 export const computePlayersForNextFeedingRound = (
     players: PlayerEntity[],
     playerThatJustFed: string,
-    playersThatCanFeed: string[]
+    playersThatCanFeed: string[],
 ): PlayerEntity[] => {
     const playerToFeedId = getNextPlayerToFeedId(players, playerThatJustFed, playersThatCanFeed)
     return players.map((player) => {

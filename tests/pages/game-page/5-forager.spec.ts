@@ -47,12 +47,12 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel('Species at index 0 fed population: 0/3')).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 0/1')).toBeVisible()
 
     await firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 2/3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 2/3")).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel('Species at index 0 fed population: 1/1')).toBeVisible()
 })

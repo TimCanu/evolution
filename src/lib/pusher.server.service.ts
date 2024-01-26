@@ -1,5 +1,5 @@
 import { UPDATE_GAME_INFO } from '@/src/const/game-events.const'
-import { PusherEvent, PusherEventBase, PushUpdatePlayerGameInfoData } from '@/src/models/pusher.channels.model'
+import { PushUpdatePlayerGameInfo, PushUpdatePlayerGameInfoData } from '@/src/models/pusher.channels.model'
 import pusherServer from '@/src/lib/pusher-server'
 import { GameEntity } from '@/src/models/game-entity.model'
 import { getGameEntity, getOpponents } from '@/src/repositories/games.repository'
@@ -9,8 +9,8 @@ import { Game } from '@/src/models/game.model'
 const buildUpdateGameEvent = (
     gameId: string,
     playerId: string,
-    data: PushUpdatePlayerGameInfoData
-): PusherEvent<PushUpdatePlayerGameInfoData> => {
+    data: PushUpdatePlayerGameInfoData,
+): PushUpdatePlayerGameInfo => {
     return {
         channel: `game-${gameId}-player-${playerId}`,
         name: UPDATE_GAME_INFO,
@@ -22,11 +22,11 @@ export const sendUpdateGameEvents = async (
     gameId: string,
     playersId: string[],
     shouldUpdateSpecies: boolean,
-    shouldUpdateCards: boolean
+    shouldUpdateCards: boolean,
 ): Promise<void> => {
     const gameEntity: GameEntity = await getGameEntity(gameId)
 
-    const events: PusherEvent<PusherEventBase>[] = playersId.map((playerId) => {
+    const events: PushUpdatePlayerGameInfo[] = playersId.map((playerId) => {
         const player = gameEntity.players.find((player) => player.id === playerId)
         if (!player) {
             throw Error(`Player with id ${playerId} could not be found in game with id ${gameId}`)

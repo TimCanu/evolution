@@ -6,8 +6,11 @@
         "dev": "next dev",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint",
+        "lint": "next lint && biome lint ./src ./app ./tests",
+        "lint-fix": "next lint && biome lint --apply ./src ./app ./tests",
+        "lint-fix-unsafe": "next lint && biome lint --apply-unsafe ./src ./app ./tests",
         "format": "prettier . --write",
+        "test": "playwright test",
         "test-ui": "playwright test --ui"
     },
     "dependencies": {
@@ -21,6 +24,7 @@
         "uuid": "^9.0.1"
     },
     "devDependencies": {
+        "@biomejs/biome": "1.5.3",
         "@playwright/test": "^1.40.1",
         "@types/node": "^20",
         "@types/react": "^18",

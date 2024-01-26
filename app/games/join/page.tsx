@@ -41,7 +41,7 @@ export default function Home() {
                     Join game
                 </button>
             </form>
-            {isLoading && <LoadingSpinner label="Joining game..."></LoadingSpinner>}
+            {isLoading && <LoadingSpinner label="Joining game..." />}
         </div>
     )
 }

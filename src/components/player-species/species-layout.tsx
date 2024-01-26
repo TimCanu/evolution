@@ -27,7 +27,7 @@ export const SpeciesLayout: FC<CardProps> = ({ index, gameId, playerId, species 
                     {species.features.map((feature, featureIndex) => {
                         return (
                             <FeatureLayout
-                                key={featureIndex}
+                                key={feature.key}
                                 speciesIndex={index}
                                 featureIndex={featureIndex}
                                 feature={feature}

@@ -40,11 +40,11 @@ interface CarnivoreFeedingData {
 }
 
 export enum EVOLVING_STAGES {
-    ADD_LEFT_SPECIES,
-    ADD_RIGHT_SPECIES,
-    INCREMENT_SPECIES_SIZE,
-    INCREMENT_SPECIES_POPULATION,
-    ADD_SPECIES_FEATURE,
+    ADD_LEFT_SPECIES = 0,
+    ADD_RIGHT_SPECIES = 1,
+    INCREMENT_SPECIES_SIZE = 2,
+    INCREMENT_SPECIES_POPULATION = 3,
+    ADD_SPECIES_FEATURE = 4,
 }
 
 type PlayerStatus = EVOLVING_STAGES | GameStatus
@@ -75,7 +75,7 @@ export const GameProvider: FunctionComponent<PropsWithChildren<GameContextProps>
     useEffect(() => {
         const playerChannel = PusherInstance.getPlayerChannel(gameId, game.player.id)
 
-        playerChannel.bind(UPDATE_GAME_INFO, function (data: PushUpdatePlayerGameInfoData) {
+        playerChannel.bind(UPDATE_GAME_INFO, (data: PushUpdatePlayerGameInfoData) => {
             setCarnivoreFeedingData({ preyIds: [] })
             setIsPlayerFeedingFirst(data.game.player.isFirstPlayerToFeed)
             setNumberOfFoodEaten(data.game.player.numberOfFoodEaten)

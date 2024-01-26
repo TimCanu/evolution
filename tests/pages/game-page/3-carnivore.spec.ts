@@ -47,39 +47,39 @@ test('Carnivore should increase fed population by the size of the specie eaten',
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 6`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 6")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 6`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/4`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 size: 3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 6")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/4")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 size: 3")).toBeVisible()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
     await expect(
-        firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' })
+        firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' })
     ).toBeVisible()
 
-    await firstPlayerPage.getByRole('button', { name: 'Cancel feeding of the carnivore' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Cancel feeding of the carnivore' }).click()
     await expect(
-        firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' })
+        firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' })
     ).not.toBeAttached()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 3/5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 3/5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/3")).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/3`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/3")).toBeVisible()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 5/5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/2`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 5/5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/2")).toBeVisible()
 })
 
 test('Carnivore should die when cannot eat', async ({ page: firstPlayerPage }) => {
@@ -123,16 +123,16 @@ test('Carnivore should die when cannot eat', async ({ page: firstPlayerPage }) =
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/1")).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await expect(firstPlayerPage.getByRole('img', { name: 'Your number of points: 0' })).toBeVisible()
     await expect(secondPlayerPage.getByRole('img', { name: 'Your number of points: 1' })).toBeVisible()
     await expect(firstPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
@@ -181,24 +181,24 @@ test('Carnivore should be able to eat own player species', async ({ page: firstP
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 1 population: 6`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 1 population: 6")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 1 fed population: 0/6`)).toBeVisible()
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 1 fed population: 0/6")).toBeVisible()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
 
-    await expect(firstPlayerPage.getByRole('button', { name: 'Eat your own species at index 1' })).toBeVisible()
-    await firstPlayerPage.getByRole('button', { name: 'Cancel feeding of the carnivore' }).click()
+    await expect(firstPlayerPage.getByRole('img', { name: 'Eat your own species at index 1' })).toBeVisible()
+    await firstPlayerPage.getByRole('img', { name: 'Cancel feeding of the carnivore' }).click()
 
-    await expect(firstPlayerPage.getByRole('button', { name: 'Eat your own species at index 1' })).not.toBeAttached()
+    await expect(firstPlayerPage.getByRole('img', { name: 'Eat your own species at index 1' })).not.toBeAttached()
     await expect(firstPlayerPage.getByRole('button', { name: 'Feed plants to species at index 1' })).toBeVisible()
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat your own species at index 1' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat your own species at index 1' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 1/5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 1 fed population: 0/5`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 1 fed population: 0/5")).toBeVisible()
 })
 
 test('Carnivore should be able to kill an opponent species', async ({ page: firstPlayerPage }) => {
@@ -242,27 +242,27 @@ test('Carnivore should be able to kill an opponent species', async ({ page: firs
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 6`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 2`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 size: 3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 6")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 2")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 size: 3")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 3/5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 3/5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/1")).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
 })
 
 test('should skip feeding stage when all species are carnivores that cannot feed', async ({
@@ -312,14 +312,14 @@ test('should skip feeding stage when all species are carnivores that cannot feed
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 3")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
     await expect(firstPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
     await expect(secondPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
 })
@@ -373,11 +373,11 @@ test('Carnivore should see "Go vegan" when cannot eat', async ({ page: firstPlay
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 5`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 size: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 5")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 size: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByText(`Go vegan`)).toBeVisible()
+    await expect(firstPlayerPage.getByText("Go vegan")).toBeVisible()
 })
 
 test('Carnivore cannot eat a species that it just killed', async ({ page: firstPlayerPage }) => {
@@ -441,16 +441,16 @@ test('Carnivore cannot eat a species that it just killed', async ({ page: firstP
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 1 population: 3`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 1 population: 3")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await firstPlayerPage.getByRole('button', { name: 'Feed carnivore at index 0' }).click()
-    await firstPlayerPage.getByRole('button', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Feed carnivore at index 0' }).click()
+    await firstPlayerPage.getByRole('img', { name: 'Eat the species at index 0 of opponent at index 0' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 1/5`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/5")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/3")).toBeVisible()
 
     await secondPlayerPage.getByRole('button', { name: 'Feed plants to species at index 0' }).click()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/3`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/3")).toBeVisible()
 })

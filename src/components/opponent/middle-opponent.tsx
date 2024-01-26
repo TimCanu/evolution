@@ -6,7 +6,7 @@ interface OpponentInTheMiddleProps {
     opponents: Opponent[]
 }
 
-export const OpponentInTheMiddle: FC<OpponentInTheMiddleProps> = ({ opponents }) => {
+export const MiddleOpponent: FC<OpponentInTheMiddleProps> = ({ opponents }) => {
     if (opponents.length > 1 || opponents.length === 0) {
         return null
     }

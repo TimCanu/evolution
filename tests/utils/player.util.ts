@@ -104,9 +104,9 @@ const finishTurnEvolving = async (page: Page): Promise<void> => {
     await page.getByRole('button', { name: 'Finish turn' }).click()
 
     await expect(page.getByRole('button', { name: 'Finish turn' })).not.toBeAttached()
-    await expect(page.getByRole('button', { name: /Increase size of species at position */ })).toHaveCount(0)
-    await expect(page.getByRole('button', { name: /Increase population of species at position */ })).toHaveCount(0)
-    await expect(page.getByRole('button', { name: /Add feature to species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('img', { name: /Increase size of species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('img', { name: /Increase population of species at position */ })).toHaveCount(0)
+    await expect(page.getByRole('img', { name: /Add feature to species at position */ })).toHaveCount(0)
     await expect(page.getByRole('button', { name: 'Add a new species to the left' })).not.toBeAttached()
     await expect(page.getByRole('button', { name: 'Add a new species to the right' })).not.toBeAttached()
 }

@@ -44,7 +44,7 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                 {opponent.species.map((species, speciesIndex) => {
                     return (
                         <OpponentSpeciesLayout
-                            key={speciesIndex}
+                            key={species.id}
                             species={species}
                             speciesIndex={speciesIndex}
                             opponentIndex={opponentIndex}

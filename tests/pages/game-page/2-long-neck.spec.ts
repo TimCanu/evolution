@@ -47,12 +47,12 @@ test('Long neck card should increase fed population by one when finishing turn',
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 0/1`)).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 0/1")).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
 })
 
 test('Should skip feeding stage when all players are fed through long neck', async ({ page: firstPlayerPage }) => {
@@ -105,16 +105,16 @@ test('Should skip feeding stage when all players are fed through long neck', asy
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
     await expect(firstPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
     await expect(firstPlayerPage.getByRole('img', { name: 'Your number of points: 1' })).toBeVisible()
     await expect(secondPlayerPage.getByText('Discard a card to add food to the water plan')).toBeVisible()
     await expect(secondPlayerPage.getByRole('img', { name: 'Your number of points: 1' })).toBeVisible()
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
 })
 
 test('Should skip feeding stage for first player to feed when already fed through long neck', async ({
@@ -160,8 +160,8 @@ test('Should skip feeding stage for first player to feed when already fed throug
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
     await expect(firstPlayerPage.getByText('Waiting for other players to feed')).toBeVisible()
@@ -226,12 +226,12 @@ test('Long neck and forager cards should increase fed population by two when fin
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 3")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 2/3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 2/3")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
 })
 
 test('Long neck should not work with carnivore feature', async ({ page: firstPlayerPage }) => {
@@ -290,10 +290,10 @@ test('Long neck should not work with carnivore feature', async ({ page: firstPla
     const secondPlayerPage = await firstPlayerPage.context().newPage()
     await secondPlayerPage.goto(`http://localhost:3000/games/${gameId}?playerId=${secondPlayer.id}`)
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 population: 3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 population: 1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 population: 3")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 population: 1")).toBeVisible()
     await firstPlayerPage.getByRole('button', { name: 'Finish turn' }).click()
 
-    await expect(firstPlayerPage.getByLabel(`Species at index 0 fed population: 0/3`)).toBeVisible()
-    await expect(secondPlayerPage.getByLabel(`Species at index 0 fed population: 1/1`)).toBeVisible()
+    await expect(firstPlayerPage.getByLabel("Species at index 0 fed population: 0/3")).toBeVisible()
+    await expect(secondPlayerPage.getByLabel("Species at index 0 fed population: 1/1")).toBeVisible()
 })

@@ -49,7 +49,7 @@ export default function Home() {
                     New game
                 </button>
             </form>
-            {isLoading && <LoadingSpinner label="Creating game..."></LoadingSpinner>}
+            {isLoading && <LoadingSpinner label="Creating game..." />}
         </div>
     )
 }

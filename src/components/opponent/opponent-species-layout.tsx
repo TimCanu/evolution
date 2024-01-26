@@ -37,11 +37,12 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
                 </span>
                 {canBeEaten && (
                     <button
+                        type="button"
                         className="w-8"
-                        aria-label={`Eat the species at index ${speciesIndex} of opponent at index ${opponentIndex}`}
                         onClick={feedCarnivore}
                     >
-                        <FeedMeatIcon />
+                        <FeedMeatIcon
+                            ariaLabel={`Eat the species at index ${speciesIndex} of opponent at index ${opponentIndex}`} />
                     </button>
                 )}
                 <span
@@ -53,7 +54,7 @@ export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, 
             </p>
             <ul className="flex self-center mb-1 group">
                 {species.features.map((feature, index) => {
-                    return <OpponentFeatureLayout key={index} feature={feature} />
+                    return <OpponentFeatureLayout key={feature.key} feature={feature} />
                 })}
             </ul>
         </li>
