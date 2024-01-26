@@ -25,8 +25,6 @@ export const POST = async (request: NextRequest) => {
                 const card: Card = {
                     id: uuidv4(),
                     featureKey: feature.key,
-                    name: feature.name,
-                    description: feature.description,
                     foodNumber
                 }
                 cards.push(card)

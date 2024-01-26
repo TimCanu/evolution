@@ -10,15 +10,11 @@ test("Carnivore can't eat a species with Digger feature", async ({ page: firstPl
     const gameId = ObjectId.createFromTime(71)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
-        key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description'
+        key: FeatureKey.CARNIVORE
     }
     const diggerFeature: Feature = {
         cardId: 'diggerCardId',
-        name: 'Digger',
-        key: FeatureKey.DIGGER,
-        description: 'Digger description'
+        key: FeatureKey.DIGGER
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -88,15 +84,11 @@ test('Carnivore can eat a species with Digger feature', async ({ page: firstPlay
     const gameId = ObjectId.createFromTime(72)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
-        key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description'
+        key: FeatureKey.CARNIVORE
     }
     const diggerFeature: Feature = {
         cardId: 'diggerCardId',
-        name: 'Digger',
-        key: FeatureKey.DIGGER,
-        description: 'Digger description'
+        key: FeatureKey.DIGGER
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',

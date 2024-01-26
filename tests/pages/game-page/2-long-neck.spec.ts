@@ -10,9 +10,7 @@ test('Long neck card should increase fed population by one when finishing turn',
     const gameId = ObjectId.createFromTime(21)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
-        name: 'Long neck',
-        key: FeatureKey.LONG_NECK,
-        description: 'Long card description'
+        key: FeatureKey.LONG_NECK
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -59,9 +57,7 @@ test('Should skip feeding stage when all players are fed through long neck', asy
     const gameId = ObjectId.createFromTime(22)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
-        name: 'Long neck',
-        key: FeatureKey.LONG_NECK,
-        description: 'Long card description'
+        key: FeatureKey.LONG_NECK
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -123,9 +119,7 @@ test('Should skip feeding stage for first player to feed when already fed throug
     const gameId = ObjectId.createFromTime(23)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
-        name: 'Long neck',
-        key: FeatureKey.LONG_NECK,
-        description: 'Long card description'
+        key: FeatureKey.LONG_NECK
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -174,15 +168,11 @@ test('Long neck and forager cards should increase fed population by two when fin
     const gameId = ObjectId.createFromTime(24)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
-        name: 'Long neck',
-        key: FeatureKey.LONG_NECK,
-        description: 'Long card description'
+        key: FeatureKey.LONG_NECK
     }
     const foragerFeature: Feature = {
         cardId: 'foragerCardId',
-        name: 'Forager',
-        key: FeatureKey.FORAGER,
-        description: 'Forager description'
+        key: FeatureKey.FORAGER
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -238,15 +228,11 @@ test('Long neck should not work with carnivore feature', async ({ page: firstPla
     const gameId = ObjectId.createFromTime(25)
     const longNeckFeature: Feature = {
         cardId: 'longNeckCardId',
-        name: 'Long neck',
-        key: FeatureKey.LONG_NECK,
-        description: 'Long card description'
+        key: FeatureKey.LONG_NECK
     }
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
-        key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description'
+        key: FeatureKey.CARNIVORE
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',

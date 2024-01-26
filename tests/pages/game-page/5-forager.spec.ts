@@ -10,9 +10,7 @@ test('Forager card should increase fed population by two', async ({ page: firstP
     const gameId = ObjectId.createFromTime(51)
     const foragerFeature: Feature = {
         cardId: 'foragerCardId',
-        name: 'Forager',
-        key: FeatureKey.FORAGER,
-        description: 'Forager description'
+        key: FeatureKey.FORAGER
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',

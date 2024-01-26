@@ -1,13 +1,16 @@
 import { expect, Locator, Page } from '@playwright/test'
 import { Card } from '@/src/models/card.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
+import { getFeatureName } from '@/src/lib/feature.service.client'
 
 export const getCardToAddAsFood = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByRole('listitem', { name: `Use the card ${card.name} to add ${card.foodNumber} to the water plan` })
+    const cardName = getFeatureName(card.featureKey)
+    return page.getByRole('listitem', { name: `Use the card ${cardName} to add ${card.foodNumber} to the water plan` })
 }
 
 export const getCardToDiscard = async (page: Page, card: Card): Promise<Locator> => {
-    return page.getByRole('listitem', { name: `Discard the card ${card.name}` })
+    const cardName = getFeatureName(card.featureKey)
+    return page.getByRole('listitem', { name: `Discard the card ${cardName}` })
 }
 
 export const assertNumberOfCards = async (page: Page, numberOfCards: number): Promise<void> => {
@@ -46,18 +49,14 @@ export const addCardAsFood = async (
 export const buildLongNeckCard = (id: string, foodNumber: number): Card => {
     return {
         id,
-        name: 'Long neck',
         featureKey: FeatureKey.LONG_NECK,
-        description: 'Long neck card description',
         foodNumber
     }
 }
 export const buildFertileCard = (id: string, foodNumber: number): Card => {
     return {
         id,
-        name: 'Fertile',
         featureKey: FeatureKey.FERTILE,
-        description: 'Fertile card description',
         foodNumber
     }
 }
@@ -65,9 +64,7 @@ export const buildFertileCard = (id: string, foodNumber: number): Card => {
 export const buildForagerCard = (id: string, foodNumber: number): Card => {
     return {
         id,
-        name: 'Forager',
         featureKey: FeatureKey.FORAGER,
-        description: 'Forager card description',
         foodNumber
     }
 }
@@ -75,9 +72,7 @@ export const buildForagerCard = (id: string, foodNumber: number): Card => {
 export const buildCarnivoreCard = (id: string, foodNumber: number): Card => {
     return {
         id,
-        name: 'Carnivore',
         featureKey: FeatureKey.CARNIVORE,
-        description: 'Carnivore card description',
         foodNumber
     }
 }
