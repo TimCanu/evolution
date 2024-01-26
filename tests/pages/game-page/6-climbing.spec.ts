@@ -10,15 +10,11 @@ test("Carnivore can't eat a species with Climbing feature", async ({ page: first
     const gameId = ObjectId.createFromTime(61)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const climbingFeature: Feature = {
         cardId: 'climbingCardId',
-        name: 'Climbing',
         key: FeatureKey.CLIMBING,
-        description: 'Climbing description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -76,15 +72,11 @@ test('Carnivore can eat a species with Climbing feature', async ({ page: firstPl
     const gameId = ObjectId.createFromTime(62)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const climbingFeature: Feature = {
         cardId: 'climbingCardId',
-        name: 'Climbing',
         key: FeatureKey.CLIMBING,
-        description: 'Climbing description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',

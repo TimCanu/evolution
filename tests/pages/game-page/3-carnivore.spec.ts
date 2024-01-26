@@ -10,9 +10,7 @@ test('Carnivore should increase fed population by the size of the specie eaten',
     const gameId = ObjectId.createFromTime(31)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -86,9 +84,7 @@ test('Carnivore should die when cannot eat', async ({ page: firstPlayerPage }) =
     const gameId = ObjectId.createFromTime(32)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -143,9 +139,7 @@ test('Carnivore should be able to eat own player species', async ({ page: firstP
     const gameId = ObjectId.createFromTime(33)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -205,9 +199,7 @@ test('Carnivore should be able to kill an opponent species', async ({ page: firs
     const gameId = ObjectId.createFromTime(34)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -271,9 +263,7 @@ test('should skip feeding stage when all species are carnivores that cannot feed
     const gameId = ObjectId.createFromTime(35)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -328,9 +318,7 @@ test('Carnivore should see "Go vegan" when cannot eat', async ({ page: firstPlay
     const gameId = ObjectId.createFromTime(36)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
@@ -384,9 +372,7 @@ test('Carnivore cannot eat a species that it just killed', async ({ page: firstP
     const gameId = ObjectId.createFromTime(37)
     const carnivoreFeature: Feature = {
         cardId: 'carnivoreCardId',
-        name: 'Carnivore',
         key: FeatureKey.CARNIVORE,
-        description: 'Carnivore description',
     }
     const firstPlayer: PlayerEntity = {
         id: 'player1',
