@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { getCardImage } from '@/src/lib/card.service.client'
 import { useGameContext } from '@/src/providers/game.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface CardProps {
     card: Card
@@ -13,6 +14,7 @@ interface CardProps {
 }
 
 export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
+    const { t } = useTranslationClient()
     const { canDiscardCard, isAddingFoodStage, isFeedingStage } = usePlayerStatus()
     const { status } = useGameContext()
 
@@ -39,10 +41,10 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
 
     const getAriaLabel = (): string => {
         if (isAddingFoodStage()) {
-            return `Use the card ${card.name} to add ${card.foodNumber} to the water plan`
+            return t('add-card-as-food', { name: card.name, foodNumber: card.foodNumber })
         }
         if (canDiscard) {
-            return `Discard the card ${card.name}`
+            return t('discard-card', { name: card.name })
         }
         return `${card.name}: ${card.description}`
     }

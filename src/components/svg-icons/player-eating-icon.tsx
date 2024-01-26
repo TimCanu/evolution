@@ -1,16 +1,18 @@
 import { FC } from 'react'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface PlayerEatingIconProps {
     name: string
 }
 
 export const PlayerEatingIcon: FC<PlayerEatingIconProps> = ({ name }) => {
+    const { t } = useTranslationClient()
     return (
         <svg
             role="img"
             width={32}
             height={32}
-            aria-label={`${name} is currently feeding`}
+            aria-label={t('opponent-feeding', { name })}
             fill="#000000"
             version="1.1"
             id="Capa_1"

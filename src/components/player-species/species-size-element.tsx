@@ -3,6 +3,7 @@ import { Species } from '@/src/models/species.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface SpeciesSizeElementProps {
     index: number
@@ -26,6 +27,7 @@ export const SpeciesSizeElement: FC<SpeciesSizeElementProps> = ({ index, species
 }
 
 const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species }) => {
+    const { t } = useTranslationClient()
     const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
 
     const isAnimated =
@@ -42,17 +44,18 @@ const IncreaseSpeciesSizeButton: FC<SpeciesSizeElementProps> = ({ index, species
         >
             <IncreaseSpeciesSizeLabel index={index} species={species} />
             <span className="absolute justify-center w-5 h-5 text-white bg-orange-600 border rounded-full -top-1 -start-0 ml-1">
-                <PlusIcon ariaLabel={`Increase size of species at position ${index + 1}`} />
+                <PlusIcon ariaLabel={t('increase-size', { index: index + 1 })} />
             </span>
         </button>
     )
 }
 
 const IncreaseSpeciesSizeLabel: FC<SpeciesSizeElementProps> = ({ index, species }) => {
+    const { t } = useTranslationClient()
     return (
         <span
             className="border bg-orange-600 rounded-full w-8 h-8 flex justify-center items-center ml-2"
-            aria-label={`Species at index ${index} size: ${species.size}`}
+            aria-label={t('species-size', { index, size: species.size })}
         >
             {species.size}
         </span>

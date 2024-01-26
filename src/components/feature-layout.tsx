@@ -4,6 +4,7 @@ import { useSpecies } from '@/src/hooks/species.hook'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
 import { getCardImage, getFeatureImage } from '@/src/lib/card.service.client'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface CardProps {
     feature: Feature
@@ -13,6 +14,7 @@ interface CardProps {
 }
 
 export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex, featureIndex }) => {
+    const { t } = useTranslationClient()
     const { removeFeature } = useSpecies()
     const { isEvolvingStage } = usePlayerStatus()
 
@@ -34,7 +36,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
                 >
                     <svg
                         role="img"
-                        aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}
+                        aria-label={t('remove-feature', { name: feature.name, index: speciesIndex })}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="none"

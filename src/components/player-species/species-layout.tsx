@@ -8,6 +8,7 @@ import { FeedSpeciesButton } from '@/src/components/player-species/feed-species-
 import { AddSpeciesFeatureButton } from '@/src/components/player-species/add-species-features-button'
 import { SpeciesSizeElement } from '@/src/components/player-species/species-size-element'
 import { SpeciesPopulationElement } from '@/src/components/player-species/species-population-element'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface CardProps {
     gameId: string
@@ -17,6 +18,7 @@ interface CardProps {
 }
 
 export const SpeciesLayout: FC<CardProps> = ({ index, gameId, playerId, species }) => {
+    const { t } = useTranslationClient()
     const { status } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
@@ -45,8 +47,12 @@ export const SpeciesLayout: FC<CardProps> = ({ index, gameId, playerId, species 
                     <FeedSpeciesButton index={index} gameId={gameId} playerId={playerId} species={species} />
                     {isFeedingStage() || status === GameStatus.WAITING_FOR_PLAYERS_TO_FEED ? (
                         <span
-                            className=" border bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-1"
-                            aria-label={`Species at index ${index} fed population: ${species.foodEaten}/${species.population}`}
+                            className="border bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-1"
+                            aria-label={t('species-fed-population', {
+                                index,
+                                foodEaten: species.foodEaten,
+                                population: species.population
+                            })}
                         >
                             {species.foodEaten}/{species.population}
                         </span>

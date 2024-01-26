@@ -1,12 +1,14 @@
 import { OpponentLayout } from '@/src/components/opponent/opponent-layout'
 import { FC } from 'react'
 import { Opponent } from '@/src/models/opponent.model'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface RightOpponentsProps {
     opponents: Opponent[]
 }
 
 export const RightOpponents: FC<RightOpponentsProps> = ({ opponents }) => {
+    const { t } = useTranslationClient()
     if (opponents.length <= 1) {
         return null
     }
@@ -22,7 +24,7 @@ export const RightOpponents: FC<RightOpponentsProps> = ({ opponents }) => {
 
     return (
         <ul
-            aria-label="Opponents on the right"
+            aria-label={t('right-opponents')}
             className="mt-1 row-span-1 flex flex-col gap-4 w-full items-center justify-around"
         >
             {opponentsOnTheRight.map((opponent, index) => {

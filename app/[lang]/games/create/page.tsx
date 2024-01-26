@@ -3,10 +3,10 @@ import { createGame } from '@/src/lib/game.service.client'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import LoadingSpinner from '@/src/components/loading'
-import { useTranslation } from '@/src/i18n/i18n.client'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 export default function Home({ params: { lang } }: { params: { lang: string } }) {
-    const { t } = useTranslation(lang)
+    const { t } = useTranslationClient(lang)
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -29,11 +29,11 @@ export default function Home({ params: { lang } }: { params: { lang: string } })
         <div className="flex flex-col h-screen justify-center items-center">
             <form onSubmit={onSubmit} className="flex flex-col gap-4 justify-center">
                 <div className="flex flex-row gap-4 text-xl justify-between">
-                    <label htmlFor="playerName">Your name:</label>
+                    <label htmlFor="playerName">{t('your-name')}</label>
                     <input type="text" name="playerName" className="text-black w-40" />
                 </div>
                 <div className="flex flex-row gap-4 text-xl justify-between">
-                    <label htmlFor="nbPlayers">Number of players:</label>
+                    <label htmlFor="nbPlayers">{t('number-of-players')}</label>
                     <input
                         type="number"
                         name="nbPlayers"
@@ -48,10 +48,10 @@ export default function Home({ params: { lang } }: { params: { lang: string } })
                     type="submit"
                     className="w-96 text-center px-4 py-1 text-4xl text-zinc-300 font-semibold rounded-lg border-4 border-zinc-300 hover:text-slate-950 hover:bg-zinc-300 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:ring-offset-2 basis-1/4 shrink"
                 >
-                    {t('New game')}
+                    {t('new-game')}
                 </button>
             </form>
-            {isLoading && <LoadingSpinner label="Creating game..." />}
+            {isLoading && <LoadingSpinner label={t('creating-game')} />}
         </div>
     )
 }

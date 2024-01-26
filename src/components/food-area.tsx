@@ -4,8 +4,10 @@ import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
 import FoodAreaImg from '@/src/assets/images/foodArea.png'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 export const FoodArea: FC = () => {
+    const { t } = useTranslationClient()
     const { hiddenFoods, amountOfFood } = useGameContext()
     return (
         <div className="flex justify-center w-full">
@@ -14,7 +16,7 @@ export const FoodArea: FC = () => {
                     return (
                         // biome-ignore lint: Here it is ok to base the key on the index
                         <div data-testid={`hidden-food-${index}`} className="mb-3 mr-2" key={index}>
-                            <Image src={VersoCard} alt="Hidden Card" height={60} width={50} />
+                            <Image src={VersoCard} alt={t('hidden-card')} height={60} width={50} />
                         </div>
                     )
                 })}
@@ -22,7 +24,7 @@ export const FoodArea: FC = () => {
             <div className="relative min-w-52 max-h-[80%]">
                 <Image
                     src={FoodAreaImg}
-                    alt={`Number of food on the food area: ${amountOfFood}`}
+                    alt={t('number-of-food-food-area', { amountOfFood })}
                     sizes="100vw"
                     style={{
                         width: '100%',

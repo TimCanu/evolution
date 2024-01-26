@@ -2,6 +2,7 @@
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Card } from '@/src/models/card.model'
 import { ALL_EVOLVING_STAGE_STEPS, EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
+import { useTranslationClient } from '@/src/i18n/i18n.client'
 
 interface PlayerStatusResult {
     isAddingFoodStage: () => boolean
@@ -12,6 +13,7 @@ interface PlayerStatusResult {
 }
 
 export const usePlayerStatus = (): PlayerStatusResult => {
+    const { t } = useTranslationClient()
     const { status, selectedSpecies } = useGameContext()
 
     const isAddingFoodStage = (): boolean => {
@@ -36,27 +38,27 @@ export const usePlayerStatus = (): PlayerStatusResult => {
     const getCardDiscardMessage = (): string => {
         switch (status) {
             case EVOLVING_STAGES.ADD_LEFT_SPECIES:
-                return 'Choose the species to add to the left'
+                return t('choose-species-add-left')
             case EVOLVING_STAGES.ADD_RIGHT_SPECIES:
-                return 'Choose the species to add to the right'
+                return t('choose-species-add-right')
             case GameStatus.CHOOSING_EVOLVING_ACTION:
-                return 'Choose an action to evolve your species or finish your turn'
+                return t('choose-action-or-finish')
             case GameStatus.ADDING_FOOD_TO_WATER_PLAN:
-                return 'Discard a card to add food to the water plan'
+                return t('discard-card-to-add-food')
             case EVOLVING_STAGES.INCREMENT_SPECIES_SIZE:
-                return 'Discard a card to increase the selected species size'
+                return t('discard-card-to-increase-size')
             case EVOLVING_STAGES.INCREMENT_SPECIES_POPULATION:
-                return 'Discard a card to increase the selected species population'
+                return t('discard-card-to-increase-population')
             case EVOLVING_STAGES.ADD_SPECIES_FEATURE:
-                return 'Choose the card to add as a feature for the selected species'
+                return t('choose-card-to-add-as-feature')
             case GameStatus.FEEDING_SPECIES:
-                return 'Choose the species you would like to feed'
+                return t('choose-species-to-feed')
             case GameStatus.WAITING_FOR_PLAYERS_TO_JOIN:
-                return 'Waiting for other players to join'
+                return t('waiting-for-other-players-to-join')
             case GameStatus.WAITING_FOR_PLAYERS_TO_FEED:
-                return 'Waiting for other players to feed'
+                return t('waiting-for-other-players-to-feed')
             case GameStatus.WAITING_FOR_PLAYERS_TO_FINISH_EVOLVING:
-                return 'Waiting for other players to finish evolving'
+                return t('waiting-for-other-players-to-evolve')
             default:
                 console.warn(`Adding an action message has not been supported for the action ${status} `)
                 return ''

@@ -1,3 +1,10 @@
 {
-    "hello": "Bonjour"
+    "left-opponents": "Opponents on the left",
+    "right-opponents": "Opponents on the right",
+    "opponent-index-name": "Opponent's at index {{index}} name is {{name}}",
+    "opponent-number-points": "{{name}} number of points: {{points}}",
+    "opponent-species-size": "Species at index {{speciesIndex}} of opponent at index {{opponentIndex}} size: {{size}}",
+    "opponent-eat-species": "Eat the species at index {{speciesIndex}} of opponent at index {{opponentIndex}}",
+    "opponent-species-population": "`Species at index {{speciesIndex}} of opponent at index {{opponentIndex}} population: {{population}}",
+    "opponent-first-to-feed": "The player {{name}} is the first player to feed"
 }

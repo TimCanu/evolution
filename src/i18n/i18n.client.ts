@@ -21,7 +21,7 @@ if (!i18next.isInitialized) {
         })
 }
 
-export function useTranslation(lng: string) {
+export function useTranslationClient(lng?: string) {
     const [cookies, setCookie] = useCookies([cookieName])
     const translationHook = useTranslationOrg('translation')
     const runsOnServerSide = typeof window === 'undefined'
@@ -36,7 +36,7 @@ export function useTranslation(lng: string) {
     }, [activeLng, runsOnServerSide, translationHook.i18n.resolvedLanguage])
 
     useEffect(() => {
-        if (!runsOnServerSide && translationHook.i18n.resolvedLanguage !== lng) {
+        if (!runsOnServerSide && lng && translationHook.i18n.resolvedLanguage !== lng) {
             translationHook.i18n.changeLanguage(lng).then(() => {
                 setActiveLng(lng)
             })
@@ -45,7 +45,7 @@ export function useTranslation(lng: string) {
     }, [lng, runsOnServerSide, translationHook.i18n])
 
     useEffect(() => {
-        if (runsOnServerSide || cookies.i18next === lng) {
+        if (runsOnServerSide || (lng && cookies.i18next === lng)) {
             return
         }
         setCookie(cookieName, lng, { path: '/' })
