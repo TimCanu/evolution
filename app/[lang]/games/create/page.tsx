@@ -3,8 +3,10 @@ import { createGame } from '@/src/lib/game.service.client'
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
 import LoadingSpinner from '@/src/components/loading'
+import { useTranslation } from '@/src/i18n/i18n.client'
 
-export default function Home() {
+export default function Home({ params: { lang } }: { params: { lang: string } }) {
+    const { t } = useTranslation(lang)
     const router = useRouter()
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
@@ -46,7 +48,7 @@ export default function Home() {
                     type="submit"
                     className="w-96 text-center px-4 py-1 text-4xl text-zinc-300 font-semibold rounded-lg border-4 border-zinc-300 hover:text-slate-950 hover:bg-zinc-300 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:ring-offset-2 basis-1/4 shrink"
                 >
-                    New game
+                    {t('New game')}
                 </button>
             </form>
             {isLoading && <LoadingSpinner label="Creating game..." />}
