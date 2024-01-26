@@ -2,10 +2,11 @@ import React, { FC, KeyboardEventHandler } from 'react'
 import { Card } from '@/src/models/card.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
-import { getCardImage } from '@/src/lib/card.service.client'
 import { useGameContext } from '@/src/providers/game.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { getCardImage } from '@/src/lib/card-images.service.client'
+import { getFeatureDescription, getFeatureName } from '@/src/lib/feature.service.client'
 
 interface CardProps {
     card: Card
@@ -19,6 +20,8 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
     const { status } = useGameContext()
 
     const cardImage = getCardImage(card.featureKey)
+    const cardName = getFeatureName(card.featureKey)
+    const cardDescription = getFeatureDescription(card.featureKey)
 
     const canDiscard = canDiscardCard(card)
     const isClickable = isAddingFoodStage() || canDiscardCard(card)
@@ -41,12 +44,12 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
 
     const getAriaLabel = (): string => {
         if (isAddingFoodStage()) {
-            return t('add-card-as-food', { name: card.name, foodNumber: card.foodNumber })
+            return t('add-card-as-food', { name: cardName, foodNumber: card.foodNumber })
         }
         if (canDiscard) {
-            return t('discard-card', { name: card.name })
+            return t('discard-card', { name: cardName })
         }
-        return `${card.name}: ${card.description}`
+        return `${cardName}: ${cardDescription}`
     }
 
     return (
@@ -59,7 +62,7 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
             onKeyDown={onCardKeyPress}
         >
             <h1 className="mb-2 self-center flex w-full justify-between pl-2 group-hover:hidden">
-                {card.name}
+                {cardName}
                 <p className="self-end mb-0 mt-auto bg-green-900 h-auto rounded w-8 flex justify-center items-center">
                     {card.foodNumber}
                 </p>
@@ -67,11 +70,11 @@ export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
             <Image
                 className="self-center mb-1 group-hover:hidden"
                 src={cardImage}
-                alt={`${card.name}: ${card.description}`}
+                alt={`${cardName}: ${cardDescription}`}
                 height={60}
             />
             <p className="hidden text-[12px] my-1 mx-1 text-center group-hover:flex h-full justify-center items-center ">
-                {card.description}
+                {cardDescription}
             </p>
         </li>
     )

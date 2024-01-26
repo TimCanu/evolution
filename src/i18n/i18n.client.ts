@@ -22,7 +22,6 @@ if (!i18next.isInitialized) {
 }
 
 export function useTranslationClient(lng?: string) {
-    const [cookies, setCookie] = useCookies([cookieName])
     const translationHook = useTranslationOrg('translation')
     const runsOnServerSide = typeof window === 'undefined'
 
@@ -40,16 +39,8 @@ export function useTranslationClient(lng?: string) {
             translationHook.i18n.changeLanguage(lng).then(() => {
                 setActiveLng(lng)
             })
-            console.log('changing lang')
         }
     }, [lng, runsOnServerSide, translationHook.i18n])
-
-    useEffect(() => {
-        if (runsOnServerSide || (lng && cookies.i18next === lng)) {
-            return
-        }
-        setCookie(cookieName, lng, { path: '/' })
-    }, [lng, cookies.i18next, setCookie, runsOnServerSide])
 
     return translationHook
 }

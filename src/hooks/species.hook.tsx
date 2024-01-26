@@ -88,9 +88,7 @@ export const useSpecies = (): SpeciesResult => {
     const addSpeciesFeature = (card: Card): void => {
         const feature: Feature = {
             key: card.featureKey,
-            cardId: card.id,
-            name: card.name,
-            description: card.description
+            cardId: card.id
         }
         const specieToUpdate = getSpeciesForOnGoingAction()
         const specieUpdated = { ...specieToUpdate, features: [...specieToUpdate.features, feature] }

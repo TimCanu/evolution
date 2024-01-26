@@ -39,7 +39,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
                 >
                     <svg
                         role="img"
-                        aria-label={t('remove-feature', { name: feature.name, index: speciesIndex })}
+                        aria-label={t('remove-feature', { name: featureName, index: speciesIndex })}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="none"
