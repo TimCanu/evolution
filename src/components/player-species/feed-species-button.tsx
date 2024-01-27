@@ -9,7 +9,7 @@ import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiti
 import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface FeedSpeciesButtonProps {
     gameId: string
@@ -19,7 +19,9 @@ interface FeedSpeciesButtonProps {
 }
 
 export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, playerId, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { carnivoreFeedingData, updateStatus } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
@@ -57,7 +59,9 @@ interface FeedCarnivoreButtonProps {
 }
 
 const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { carnivoreFeedingData, updateCarnivoreFeedingData } = useGameContext()
 
     const isCurrentlyFeeding = carnivoreFeedingData.carnivoreId === species.id
@@ -99,7 +103,9 @@ interface FeedPlantsButtonProps {
 }
 
 const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species, index }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     if (isCarnivore(species) || species.foodEaten >= species.population) {
         return null
     }

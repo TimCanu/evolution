@@ -3,7 +3,7 @@ import { Species } from '@/src/models/species.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface SpeciesPopulationElementProps {
     index: number
@@ -27,7 +27,9 @@ export const SpeciesPopulationElement: FC<SpeciesPopulationElementProps> = ({ in
 }
 
 const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ index, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
 
     const isAnimated =
@@ -51,7 +53,9 @@ const IncreaseSpeciesPopulationButton: FC<SpeciesPopulationElementProps> = ({ in
 }
 
 const IncreaseSpeciesPopulationLabel: FC<SpeciesPopulationElementProps> = ({ index, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     return (
         <span
             className="border bg-green-600 rounded-full w-8 h-8 flex justify-center items-center mr-2"

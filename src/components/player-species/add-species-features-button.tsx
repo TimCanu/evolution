@@ -3,7 +3,7 @@ import { Species } from '@/src/models/species.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { PlusIcon } from '@/src/components/svg-icons/plus-icon'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface AddSpeciesFeatureButtonProps {
     index: number
@@ -11,7 +11,9 @@ interface AddSpeciesFeatureButtonProps {
 }
 
 export const AddSpeciesFeatureButton: FC<AddSpeciesFeatureButtonProps> = ({ index, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { updateStatus, updateSelectedSpecies, status, selectedSpecies } = useGameContext()
     const { isEvolvingStage } = usePlayerStatus()
 

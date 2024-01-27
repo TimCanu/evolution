@@ -8,7 +8,7 @@ import { FeedSpeciesButton } from '@/src/components/player-species/feed-species-
 import { AddSpeciesFeatureButton } from '@/src/components/player-species/add-species-features-button'
 import { SpeciesSizeElement } from '@/src/components/player-species/species-size-element'
 import { SpeciesPopulationElement } from '@/src/components/player-species/species-population-element'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface CardProps {
     gameId: string
@@ -18,7 +18,9 @@ interface CardProps {
 }
 
 export const SpeciesLayout: FC<CardProps> = ({ index, gameId, playerId, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { status } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 

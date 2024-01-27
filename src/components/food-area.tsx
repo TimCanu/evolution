@@ -4,10 +4,12 @@ import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
 import FoodAreaImg from '@/src/assets/images/foodArea.png'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 export const FoodArea: FC = () => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { hiddenFoods, amountOfFood } = useGameContext()
     return (
         <div className="flex justify-center w-full">

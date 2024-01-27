@@ -6,7 +6,7 @@ import { OpponentSpeciesLayout } from '@/src/components/opponent/opponent-specie
 import Image from 'next/image'
 import PouchImg from '@/src/assets/images/pouch.png'
 import { PlayerEatingIcon } from '@/src/components/svg-icons/player-eating-icon'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface OpponentLayoutProps {
     opponent: Opponent
@@ -14,7 +14,9 @@ interface OpponentLayoutProps {
 }
 
 export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentIndex }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     return (
         <li className="border border-white-600 rounded-md w-fit h-48 ml-5 text-center">
             <h1 className="mx-2 flex justify-between h-10 mt-1">

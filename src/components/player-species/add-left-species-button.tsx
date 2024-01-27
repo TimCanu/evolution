@@ -2,10 +2,12 @@ import { FC } from 'react'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { AddNewSpeciesIcon } from '@/src/components/svg-icons/add-new-species-icon'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 export const AddLeftSpeciesButton: FC = () => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { isEvolvingStage } = usePlayerStatus()
     const { updateStatus, status } = useGameContext()
 

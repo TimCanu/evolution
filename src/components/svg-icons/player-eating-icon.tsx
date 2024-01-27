@@ -1,12 +1,14 @@
 import { FC } from 'react'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface PlayerEatingIconProps {
     name: string
 }
 
 export const PlayerEatingIcon: FC<PlayerEatingIconProps> = ({ name }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     return (
         <svg
             role="img"

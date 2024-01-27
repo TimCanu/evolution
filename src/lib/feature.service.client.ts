@@ -14,7 +14,7 @@ export const getFeatureDescription = (featureKey: FeatureKey): string => {
         case FeatureKey.CLIMBING:
             return i18next.t('climbing-description')
         case FeatureKey.DIGGER:
-            return i18next.t("digger-description")
+            return i18next.t('digger-description')
         case FeatureKey.HERD:
             return i18next.t('herd-description')
         default:
@@ -25,7 +25,7 @@ export const getFeatureDescription = (featureKey: FeatureKey): string => {
 export const getFeatureName = (featureKey: FeatureKey): string => {
     switch (featureKey) {
         case FeatureKey.LONG_NECK:
-            return  i18next.t('long-neck-name')
+            return i18next.t('long-neck-name')
         case FeatureKey.FERTILE:
             return i18next.t('fertile-name')
         case FeatureKey.FORAGER:

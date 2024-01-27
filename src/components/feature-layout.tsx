@@ -5,7 +5,7 @@ import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
 import { getCardImage, getFeatureImage } from '@/src/lib/card-images.service.client'
 import { getFeatureDescription, getFeatureName } from '@/src/lib/feature.service.client'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface CardProps {
     feature: Feature
@@ -15,7 +15,9 @@ interface CardProps {
 }
 
 export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex, featureIndex }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { removeFeature } = useSpecies()
     const { isEvolvingStage } = usePlayerStatus()
 

@@ -1,12 +1,12 @@
-import React, { FC, KeyboardEventHandler } from 'react'
+import React, { FC } from 'react'
 import { Card } from '@/src/models/card.model'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
 import { useGameContext } from '@/src/providers/game.provider'
 import { GameStatus } from '@/src/enums/game.events.enum'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
 import { getCardImage } from '@/src/lib/card-images.service.client'
 import { getFeatureDescription, getFeatureName } from '@/src/lib/feature.service.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface CardProps {
     card: Card
@@ -15,7 +15,9 @@ interface CardProps {
 }
 
 export const CardLayout: FC<CardProps> = ({ card, index, playCard }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { canDiscardCard, isAddingFoodStage, isFeedingStage } = usePlayerStatus()
     const { status } = useGameContext()
 

@@ -4,7 +4,7 @@ import { useGameContext } from '@/src/providers/game.provider'
 import { feedSpecies } from '@/src/lib/species.service'
 import { FeedMeatIcon } from '@/src/components/svg-icons/feed-meat-icon'
 import { Species } from '@/src/models/species.model'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface OpponentLayoutProps {
     opponentIndex: number
@@ -13,7 +13,9 @@ interface OpponentLayoutProps {
 }
 
 export const OpponentSpeciesLayout: FC<OpponentLayoutProps> = ({ opponentIndex, speciesIndex, species }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { carnivoreFeedingData, gameId, playerId } = useGameContext()
     const canBeEaten = carnivoreFeedingData.preyIds.includes(species.id)
 

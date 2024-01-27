@@ -1,14 +1,16 @@
 import { OpponentLayout } from '@/src/components/opponent/opponent-layout'
 import { FC } from 'react'
 import { Opponent } from '@/src/models/opponent.model'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface RightOpponentsProps {
     opponents: Opponent[]
 }
 
 export const RightOpponents: FC<RightOpponentsProps> = ({ opponents }) => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     if (opponents.length <= 1) {
         return null
     }

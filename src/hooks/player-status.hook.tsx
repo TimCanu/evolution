@@ -2,7 +2,7 @@
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { Card } from '@/src/models/card.model'
 import { ALL_EVOLVING_STAGE_STEPS, EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface PlayerStatusResult {
     isAddingFoodStage: () => boolean
@@ -13,7 +13,9 @@ interface PlayerStatusResult {
 }
 
 export const usePlayerStatus = (): PlayerStatusResult => {
-    const { t } = useTranslationClient()
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { status, selectedSpecies } = useGameContext()
 
     const isAddingFoodStage = (): boolean => {

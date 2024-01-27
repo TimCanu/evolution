@@ -25,12 +25,13 @@ export function useTranslationClient(lng?: string) {
     const runsOnServerSide = typeof window === 'undefined'
 
     const [activeLng, setActiveLng] = useState(lng ?? translationHook.i18n.resolvedLanguage)
+    console.log(translationHook.i18n.resolvedLanguage)
 
     useEffect(() => {
         if (runsOnServerSide || !lng) {
             return
         }
-        if (translationHook.i18n.isInitialized){
+        if (translationHook.i18n.isInitialized) {
             if (translationHook.i18n.resolvedLanguage !== lng) {
                 console.log(lng)
                 translationHook.i18n.changeLanguage(lng).then(() => {

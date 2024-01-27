@@ -23,15 +23,16 @@ import { AddRightSpeciesButton } from '@/src/components/player-species/add-right
 import { LeftOpponents } from '@/src/components/opponent/left-opponents'
 import { RightOpponents } from '@/src/components/opponent/right-opponents'
 import { MiddleOpponent } from '@/src/components/opponent/middle-opponent'
-import { useTranslationClient } from '@/src/i18n/i18n.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface GameProps {
     game: GameModel
 }
 
 export function Game({ game }: GameProps) {
-    const params = useParams<{ lang: string }>()
-    const { t } = useTranslationClient(params.lang)
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const searchParams = useSearchParams()
     const { gameId } = useParams<{ gameId: string }>()
     const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
@@ -39,16 +40,8 @@ export function Game({ game }: GameProps) {
     if (!playerId) {
         throw Error('Player ID must be provided')
     }
-    const {
-        cards,
-        hiddenFoods,
-        isPlayerFeedingFirst,
-        numberOfFoodEaten,
-        opponents,
-        speciesList,
-        updateCards,
-        updateStatus
-    } = useGameContext()
+    const { cards, isPlayerFeedingFirst, numberOfFoodEaten, opponents, speciesList, updateCards, updateStatus } =
+        useGameContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerStatus()
     const { playEvolvingAction } = useSpecies()
     const { getCard, removeCard } = useCards()
