@@ -30,7 +30,8 @@ interface GameProps {
 }
 
 export function Game({ game }: GameProps) {
-    const { t } = useTranslationClient()
+    const params = useParams<{ lang: string }>()
+    const { t } = useTranslationClient(params.lang)
     const searchParams = useSearchParams()
     const { gameId } = useParams<{ gameId: string }>()
     const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])

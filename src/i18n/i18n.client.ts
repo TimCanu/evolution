@@ -3,8 +3,7 @@
 import i18next from 'i18next'
 import { initReactI18next, useTranslation as useTranslationOrg } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
-import { cookieName, getOptions, languages } from './settings'
-import { useCookies } from 'react-cookie'
+import { getOptions, languages } from './settings'
 import { useEffect, useState } from 'react'
 
 if (!i18next.isInitialized) {
@@ -25,22 +24,21 @@ export function useTranslationClient(lng?: string) {
     const translationHook = useTranslationOrg('translation')
     const runsOnServerSide = typeof window === 'undefined'
 
-    const [activeLng, setActiveLng] = useState(translationHook.i18n.resolvedLanguage)
+    const [activeLng, setActiveLng] = useState(lng ?? translationHook.i18n.resolvedLanguage)
 
     useEffect(() => {
-        if (runsOnServerSide || activeLng === translationHook.i18n.resolvedLanguage) {
+        if (runsOnServerSide || !lng) {
             return
         }
-        setActiveLng(translationHook.i18n.resolvedLanguage)
-    }, [activeLng, runsOnServerSide, translationHook.i18n.resolvedLanguage])
-
-    useEffect(() => {
-        if (!runsOnServerSide && lng && translationHook.i18n.resolvedLanguage !== lng) {
-            translationHook.i18n.changeLanguage(lng).then(() => {
-                setActiveLng(lng)
-            })
+        if (translationHook.i18n.isInitialized){
+            if (translationHook.i18n.resolvedLanguage !== lng) {
+                console.log(lng)
+                translationHook.i18n.changeLanguage(lng).then(() => {
+                    setActiveLng(lng)
+                })
+            }
         }
-    }, [lng, runsOnServerSide, translationHook.i18n])
+    }, [lng, runsOnServerSide, translationHook.i18n, translationHook.i18n.isInitialized])
 
     return translationHook
 }
