@@ -17,7 +17,7 @@ export default function Home({ params: { lang } }: { params: { lang: string } })
         const playerName = String(event.currentTarget.playerName.value)
         try {
             const { gameId, playerId } = await createGame({ nbOfPlayers, playerName })
-            router.push(`/games/${gameId}?playerId=${playerId}`)
+            router.push(`/${lang}/games/${gameId}?playerId=${playerId}`)
         } catch (e) {
             console.error(e)
         } finally {

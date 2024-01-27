@@ -3,13 +3,16 @@
 import i18next from 'i18next'
 import { initReactI18next, useTranslation as useTranslationOrg } from 'react-i18next'
 import resourcesToBackend from 'i18next-resources-to-backend'
-import { getOptions, languages } from './settings'
+import { cookieName, defaultNS, getOptions, languages } from './settings'
+import LanguageDetector from 'i18next-browser-languagedetector'
 import { useEffect, useState } from 'react'
+import { useCookies } from 'react-cookie'
 
 if (!i18next.isInitialized) {
     i18next
         .use(initReactI18next)
-        .use(resourcesToBackend((language: string) => import(`./locales/${language}/translation.json`)))
+        .use(LanguageDetector)
+        .use(resourcesToBackend((language: string) => import(`./locales/${language}/${defaultNS}.json`)))
         .init({
             ...getOptions(),
             lng: undefined, // let detect the language on client side
@@ -21,25 +24,31 @@ if (!i18next.isInitialized) {
 }
 
 export function useTranslationClient(lng?: string) {
-    const translationHook = useTranslationOrg('translation')
+    const [cookies, setCookie] = useCookies([cookieName])
+    const translationHook = useTranslationOrg(defaultNS)
+    const { i18n } = translationHook
     const runsOnServerSide = typeof window === 'undefined'
 
-    const [activeLng, setActiveLng] = useState(lng ?? translationHook.i18n.resolvedLanguage)
-    console.log(translationHook.i18n.resolvedLanguage)
+    const [activeLng, setActiveLng] = useState(i18n.resolvedLanguage)
+
+    if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {
+        i18n.changeLanguage(lng)
+    }
 
     useEffect(() => {
-        if (runsOnServerSide || !lng) {
+        if (runsOnServerSide && lng && i18n.resolvedLanguage !== lng) {
             return
         }
-        if (translationHook.i18n.isInitialized) {
-            if (translationHook.i18n.resolvedLanguage !== lng) {
-                console.log(lng)
-                translationHook.i18n.changeLanguage(lng).then(() => {
-                    setActiveLng(lng)
-                })
-            }
+        if (activeLng !== i18n.resolvedLanguage) {
+            setActiveLng(i18n.resolvedLanguage)
         }
-    }, [lng, runsOnServerSide, translationHook.i18n, translationHook.i18n.isInitialized])
+        if (lng && i18n.resolvedLanguage !== lng) {
+            i18n.changeLanguage(lng)
+        }
+        if (cookies.i18next !== lng) {
+            setCookie(cookieName, lng, { path: '/' })
+        }
+    }, [activeLng, cookies.i18next, i18n, lng, runsOnServerSide, setCookie])
 
     return translationHook
 }
