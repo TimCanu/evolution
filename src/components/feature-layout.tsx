@@ -5,6 +5,7 @@ import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import Image from 'next/image'
 import { getCardImage, getFeatureImage } from '@/src/lib/card-images.service.client'
 import { getFeatureDescription, getFeatureName } from '@/src/lib/feature.service.client'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface CardProps {
     feature: Feature
@@ -14,6 +15,9 @@ interface CardProps {
 }
 
 export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex, featureIndex }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { removeFeature } = useSpecies()
     const { isEvolvingStage } = usePlayerStatus()
 
@@ -37,7 +41,7 @@ export const FeatureLayout: FC<CardProps> = ({ feature, speciesId, speciesIndex,
                 >
                     <svg
                         role="img"
-                        aria-label={`Remove feature ${feature.name} at species with index ${speciesIndex}`}
+                        aria-label={t('remove-feature', { name: featureName, index: speciesIndex })}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="none"

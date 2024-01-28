@@ -3,13 +3,11 @@ import { Card } from '@/src/models/card.model'
 import { FeatureKey } from '@/src/enums/feature-key.enum'
 import { getFeatureName } from '@/src/lib/feature.service.client'
 
-export const getCardToAddAsFood = async (page: Page, card: Card): Promise<Locator> => {
-    const cardName = getFeatureName(card.featureKey)
-    return page.getByRole('listitem', { name: `Use the card ${cardName} to add ${card.foodNumber} to the water plan` })
+export const getCardToAddAsFood = async (page: Page, cardName: string, foodNumber: number): Promise<Locator> => {
+    return page.getByRole('listitem', { name: `Use the card ${cardName} to add ${foodNumber} to the water plan` })
 }
 
-export const getCardToDiscard = async (page: Page, card: Card): Promise<Locator> => {
-    const cardName = getFeatureName(card.featureKey)
+export const getCardToDiscard = async (page: Page, cardName: string): Promise<Locator> => {
     return page.getByRole('listitem', { name: `Discard the card ${cardName}` })
 }
 
@@ -22,11 +20,12 @@ export const addCardAsFood = async (
     numberOfSpecies: number,
     numberOfAddedFood: number,
     numberOfCards: number,
-    card: Card
+    cardName: string,
+    foodNumber: number
 ): Promise<void> => {
     await expect(page.getByRole('button', { name: 'Add as food' })).toBeHidden()
 
-    const cardToAdd = await getCardToAddAsFood(page, card)
+    const cardToAdd = await getCardToAddAsFood(page, cardName, foodNumber)
     await expect(cardToAdd).toBeVisible()
     await expect(page.getByTestId(`hidden-food-${numberOfAddedFood}`)).not.toBeAttached()
 

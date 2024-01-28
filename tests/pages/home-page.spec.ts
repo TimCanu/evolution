@@ -5,7 +5,7 @@ test('has button to redirect to create game page', async ({ page }) => {
 
     await page.getByRole('link', { name: 'Create a game' }).click()
 
-    await expect(page).toHaveURL('http://localhost:3000/games/create')
+    await expect(page).toHaveURL('http://localhost:3000/en/games/create')
 })
 
 test('has button to redirect to join game page', async ({ page }) => {
@@ -13,5 +13,5 @@ test('has button to redirect to join game page', async ({ page }) => {
 
     await page.getByRole('link', { name: 'Join a game' }).click()
 
-    await expect(page).toHaveURL('http://localhost:3000/games/join')
+    await expect(page).toHaveURL('http://localhost:3000/en/games/join')
 })

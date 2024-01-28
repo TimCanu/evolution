@@ -1,12 +1,13 @@
 import { Game } from '@/src/components/game'
 import { getGame } from '@/src/lib/game.service.server'
 import { GameProvider } from '@/src/providers/game.provider'
+import { LangProvider } from '@/src/providers/lang.provider'
 
 export default async function Home({
     params,
     searchParams
 }: {
-    params: { gameId: string }
+    params: { gameId: string; lang: string }
     searchParams: { playerId: string }
 }) {
     const game = await getGame(params.gameId, searchParams.playerId)
@@ -17,8 +18,10 @@ export default async function Home({
     }
 
     return (
-        <GameProvider gameId={params.gameId} game={game}>
-            <Game game={game} />
-        </GameProvider>
+        <LangProvider>
+            <GameProvider gameId={params.gameId} game={game}>
+                <Game game={game} />
+            </GameProvider>
+        </LangProvider>
     )
 }

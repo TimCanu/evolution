@@ -6,6 +6,7 @@ import { OpponentSpeciesLayout } from '@/src/components/opponent/opponent-specie
 import Image from 'next/image'
 import PouchImg from '@/src/assets/images/pouch.png'
 import { PlayerEatingIcon } from '@/src/components/svg-icons/player-eating-icon'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface OpponentLayoutProps {
     opponent: Opponent
@@ -13,12 +14,15 @@ interface OpponentLayoutProps {
 }
 
 export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentIndex }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     return (
         <li className="border border-white-600 rounded-md w-fit h-48 ml-5 text-center">
             <h1 className="mx-2 flex justify-between h-10 mt-1">
                 <span
                     className="text-lg text-amber-900 font-bold mx-1"
-                    aria-label={`Opponent's at index ${opponentIndex} name is ${opponent.name}`}
+                    aria-label={t('opponent-index-name', { index: opponentIndex, name: opponent.name })}
                 >
                     {opponent.name}
                 </span>
@@ -27,14 +31,17 @@ export const OpponentLayout: FC<OpponentLayoutProps> = ({ opponent, opponentInde
                     <div className="relative self-center place-self-end w-8">
                         <Image
                             src={PouchImg}
-                            alt={`${opponent.name} number of points: ${opponent.numberOfFoodEaten}`}
+                            alt={t('opponent-number-points', {
+                                name: opponent.name,
+                                points: opponent.numberOfFoodEaten
+                            })}
                         />
                         <span className="absolute text-xs bottom-1 start-2 border rounded-full w-4 h-4 text-center">
                             {opponent.numberOfFoodEaten}
                         </span>
                     </div>
                     {opponent.isFirstPlayerToFeed && (
-                        <PlayerTurnDinoIcon ariaLabel={`The player ${opponent.name} is the first player to feed`} />
+                        <PlayerTurnDinoIcon ariaLabel={t('opponent-first-to-feed', { name: opponent.name })} />
                     )}
                     {opponent.status === GameStatus.FEEDING_SPECIES && <PlayerEatingIcon name={opponent.name} />}
                 </span>

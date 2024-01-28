@@ -1,5 +1,3 @@
-import { Game } from '@/src/models/game.model'
-
 export const createGame = async ({
     nbOfPlayers,
     playerName

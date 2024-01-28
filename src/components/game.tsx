@@ -23,12 +23,16 @@ import { AddRightSpeciesButton } from '@/src/components/player-species/add-right
 import { LeftOpponents } from '@/src/components/opponent/left-opponents'
 import { RightOpponents } from '@/src/components/opponent/right-opponents'
 import { MiddleOpponent } from '@/src/components/opponent/middle-opponent'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface GameProps {
     game: GameModel
 }
 
 export function Game({ game }: GameProps) {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const searchParams = useSearchParams()
     const { gameId } = useParams<{ gameId: string }>()
     const playerId = useMemo(() => searchParams.get('playerId'), [searchParams])
@@ -36,16 +40,8 @@ export function Game({ game }: GameProps) {
     if (!playerId) {
         throw Error('Player ID must be provided')
     }
-    const {
-        cards,
-        hiddenFoods,
-        isPlayerFeedingFirst,
-        numberOfFoodEaten,
-        opponents,
-        speciesList,
-        updateCards,
-        updateStatus
-    } = useGameContext()
+    const { cards, isPlayerFeedingFirst, numberOfFoodEaten, opponents, speciesList, updateCards, updateStatus } =
+        useGameContext()
     const { isAddingFoodStage, isEvolvingStage, isFeedingStage, getCardDiscardMessage } = usePlayerStatus()
     const { playEvolvingAction } = useSpecies()
     const { getCard, removeCard } = useCards()
@@ -115,7 +111,7 @@ export function Game({ game }: GameProps) {
                     </button>
                 )}
                 <div role="status" className="self-center flex">
-                    {isPlayerFeedingFirst && <PlayerTurnDinoIcon ariaLabel="You are the first player to feed" />}
+                    {isPlayerFeedingFirst && <PlayerTurnDinoIcon ariaLabel={t('player-is-first-to-feed')} />}
                     <p className="flex flex-col">
                         <span>{getCardDiscardMessage()}</span>
                     </p>
@@ -129,7 +125,7 @@ export function Game({ game }: GameProps) {
                         </ul>
                     </div>
                     <div className="relative self-center place-self-end w-16">
-                        <Image src={PouchImg} alt={`Your number of points: ${numberOfFoodEaten}`} />
+                        <Image src={PouchImg} alt={t('player-number-of-points', { numberOfFoodEaten })} />
                         <span className="absolute bottom-3 start-5 border rounded-full w-6 h-6 text-center">
                             {numberOfFoodEaten}
                         </span>

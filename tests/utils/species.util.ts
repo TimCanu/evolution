@@ -1,5 +1,4 @@
 import { expect, Page } from '@playwright/test'
-import { Card } from '@/src/models/card.model'
 import { assertNumberOfCards, getCardToDiscard } from '@/tests/utils/cards.util'
 
 export const assertNumberOfSpecies = async (page: Page, numberOfSpecies: number): Promise<void> => {
@@ -28,7 +27,7 @@ const addSpecies = async (
     page: Page,
     numberOfSpecies: number,
     numberOfCards: number,
-    card: Card,
+    cardName: string,
     buttonLabel: string
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
@@ -36,7 +35,7 @@ const addSpecies = async (
 
     await page.getByRole('button', { name: buttonLabel }).click()
 
-    const cardToDiscard = await getCardToDiscard(page, card)
+    const cardToDiscard = await getCardToDiscard(page, cardName)
     await cardToDiscard.click()
 
     await assertNumberOfSpecies(page, numberOfSpecies + 1)
@@ -50,18 +49,18 @@ export const addSpeciesToTheLeft = async (
     page: Page,
     numberOfSpecies: number,
     numberOfCards: number,
-    card: Card
+    cardName: string
 ): Promise<void> => {
-    await addSpecies(page, numberOfSpecies, numberOfCards, card, 'Add a new species to the left')
+    await addSpecies(page, numberOfSpecies, numberOfCards, cardName, 'Add a new species to the left')
 }
 
 export const addSpeciesToTheRight = async (
     page: Page,
     numberOfSpecies: number,
     numberOfCards: number,
-    card: Card
+    cardName: string
 ): Promise<void> => {
-    await addSpecies(page, numberOfSpecies, numberOfCards, card, 'Add a new species to the right')
+    await addSpecies(page, numberOfSpecies, numberOfCards, cardName, 'Add a new species to the right')
 }
 
 export const addSpeciesFeature = async (
@@ -69,7 +68,7 @@ export const addSpeciesFeature = async (
     speciesIndex: number,
     numberOfSpecies: number,
     numberOfCards: number,
-    featureToAdd: Card
+    cardName: string
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
@@ -77,7 +76,7 @@ export const addSpeciesFeature = async (
 
     await page.getByRole('img', { name: `Add feature to species at position ${speciesIndex + 1}` }).click()
 
-    const cardToDiscard = await getCardToDiscard(page, featureToAdd)
+    const cardToDiscard = await getCardToDiscard(page, cardName)
 
     await cardToDiscard.click()
 
@@ -93,14 +92,14 @@ export const increaseSpeciesSize = async (
     speciesIndex: number,
     numberOfSpecies: number,
     numberOfCards: number,
-    cardToDiscard: Card
+    cardName: string
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
 
     await page.getByRole('img', { name: `Increase size of species at position ${speciesIndex + 1}` }).click()
 
-    const card = await getCardToDiscard(page, cardToDiscard)
+    const card = await getCardToDiscard(page, cardName)
 
     await card.click()
 
@@ -115,14 +114,14 @@ export const increaseSpeciesPopulation = async (
     speciesIndex: number,
     numberOfSpecies: number,
     numberOfCards: number,
-    cardToDiscard: Card
+    cardName: string
 ): Promise<void> => {
     await assertNumberOfSpecies(page, numberOfSpecies)
     await assertNumberOfCards(page, numberOfCards)
 
     await page.getByRole('img', { name: `Increase population of species at position ${speciesIndex + 1}` }).click()
 
-    const card = await getCardToDiscard(page, cardToDiscard)
+    const card = await getCardToDiscard(page, cardName)
 
     await card.click()
 

@@ -1,12 +1,16 @@
 import { OpponentLayout } from '@/src/components/opponent/opponent-layout'
 import { FC } from 'react'
 import { Opponent } from '@/src/models/opponent.model'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface LeftOpponentsProps {
     opponents: Opponent[]
 }
 
 export const LeftOpponents: FC<LeftOpponentsProps> = ({ opponents }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     if (opponents.length <= 1) {
         return null
     }
@@ -22,7 +26,7 @@ export const LeftOpponents: FC<LeftOpponentsProps> = ({ opponents }) => {
 
     return (
         <ul
-            aria-label="Opponents on the left"
+            aria-label={t('left-opponents')}
             className="mt-1 row-span-1 flex flex-col-reverse gap-4 w-full items-center justify-around"
         >
             {opponentsOnTheLeft.map((opponent, index) => {

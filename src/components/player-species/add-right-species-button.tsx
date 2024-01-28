@@ -2,8 +2,12 @@ import { FC } from 'react'
 import { usePlayerStatus } from '@/src/hooks/player-status.hook'
 import { EVOLVING_STAGES, useGameContext } from '@/src/providers/game.provider'
 import { AddNewSpeciesIcon } from '@/src/components/svg-icons/add-new-species-icon'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 export const AddRightSpeciesButton: FC = () => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { updateStatus, status } = useGameContext()
     const { isEvolvingStage } = usePlayerStatus()
     if (!isEvolvingStage()) {
@@ -20,7 +24,7 @@ export const AddRightSpeciesButton: FC = () => {
                 updateStatus(EVOLVING_STAGES.ADD_RIGHT_SPECIES)
             }}
         >
-            <AddNewSpeciesIcon ariaLabel="Add a new species to the right" />
+            <AddNewSpeciesIcon ariaLabel={t('add-species-right')} />
         </button>
     )
 }

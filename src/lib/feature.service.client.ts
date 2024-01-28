@@ -1,21 +1,22 @@
 import { FeatureKey } from '@/src/enums/feature-key.enum'
+import i18next from 'i18next'
 
 export const getFeatureDescription = (featureKey: FeatureKey): string => {
     switch (featureKey) {
         case FeatureKey.LONG_NECK:
-            return 'Before revealing food cards, pick one food from the food stash (not the water plan).'
+            return i18next.t('long-neck-description')
         case FeatureKey.FERTILE:
-            return 'Before revealing food cards, this species population increases by one if there is food left in the water plan.'
+            return i18next.t('fertile-description')
         case FeatureKey.FORAGER:
-            return 'Each time this species eats one or more Plants, it takes 1 additional Plant from the same source.'
+            return i18next.t('forager-description')
         case FeatureKey.CARNIVORE:
-            return 'This species must attack other species for food and it can never eat Plants.'
+            return i18next.t('carnivore-description')
         case FeatureKey.CLIMBING:
-            return 'A carnivore must have the Climbing feature to attack it.'
+            return i18next.t('climbing-description')
         case FeatureKey.DIGGER:
-            return "This species can't be attacked if its food number equals its population."
+            return i18next.t('digger-description')
         case FeatureKey.HERD:
-            return 'A carnivore must have a superior population to attack it.'
+            return i18next.t('herd-description')
         default:
             return ''
     }
@@ -24,19 +25,19 @@ export const getFeatureDescription = (featureKey: FeatureKey): string => {
 export const getFeatureName = (featureKey: FeatureKey): string => {
     switch (featureKey) {
         case FeatureKey.LONG_NECK:
-            return 'Long neck'
+            return i18next.t('long-neck-name')
         case FeatureKey.FERTILE:
-            return 'Fertile'
+            return i18next.t('fertile-name')
         case FeatureKey.FORAGER:
-            return 'Forager'
+            return i18next.t('forager-name')
         case FeatureKey.CARNIVORE:
-            return 'Carnivore'
+            return i18next.t('carnivore-name')
         case FeatureKey.CLIMBING:
-            return 'Climbing'
+            return i18next.t('climbing-name')
         case FeatureKey.DIGGER:
-            return 'Digger'
+            return i18next.t('digger-name')
         case FeatureKey.HERD:
-            return 'Herd'
+            return i18next.t('herd-name')
         default:
             return ''
     }

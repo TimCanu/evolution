@@ -9,6 +9,7 @@ import { CarnivoreWaitingIcon } from '@/src/components/svg-icons/carnivore-waiti
 import { CarnivoreAttackingIcon } from '@/src/components/svg-icons/carnivore-attacking-icon'
 import { GameStatus } from '@/src/enums/game.events.enum'
 import { FoodIcon } from '@/src/components/svg-icons/food-icon'
+import { useLangContext } from '@/src/providers/lang.provider'
 
 interface FeedSpeciesButtonProps {
     gameId: string
@@ -18,6 +19,9 @@ interface FeedSpeciesButtonProps {
 }
 
 export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, playerId, species }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { carnivoreFeedingData, updateStatus } = useGameContext()
     const { isFeedingStage } = usePlayerStatus()
 
@@ -40,7 +44,7 @@ export const FeedSpeciesButton: FC<FeedSpeciesButtonProps> = ({ index, gameId, p
             <FeedCarnivoreButton index={index} species={species} />
             {canBeEaten ? (
                 <button type="button" className="w-8" onClick={feedCarnivore}>
-                    <FeedMeatIcon ariaLabel={`Eat your own species at index ${index}`} />
+                    <FeedMeatIcon ariaLabel={t('eat-own-species', { index })} />
                 </button>
             ) : (
                 <FeedPlantsButton species={species} gameId={gameId} playerId={playerId} index={index} />
@@ -55,6 +59,9 @@ interface FeedCarnivoreButtonProps {
 }
 
 const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     const { carnivoreFeedingData, updateCarnivoreFeedingData } = useGameContext()
 
     const isCurrentlyFeeding = carnivoreFeedingData.carnivoreId === species.id
@@ -76,13 +83,13 @@ const FeedCarnivoreButton: FC<FeedCarnivoreButtonProps> = ({ index, species }) =
             {species.preyIds.length > 0 ? (
                 <button type="button" className="w-8" onClick={toggleCarnivoreWantingToFeed}>
                     {isCurrentlyFeeding ? (
-                        <CarnivoreWaitingIcon ariaLabel="Cancel feeding of the carnivore" />
+                        <CarnivoreWaitingIcon ariaLabel={t('carnivore-feeding-cancel')} />
                     ) : (
-                        <CarnivoreAttackingIcon ariaLabel={`Feed carnivore at index ${index}`} />
+                        <CarnivoreAttackingIcon ariaLabel={t('feed-carnivore', { index })} />
                     )}
                 </button>
             ) : (
-                <span>Go vegan</span>
+                <span>{t('go-vegan')}</span>
             )}
         </>
     )
@@ -96,6 +103,9 @@ interface FeedPlantsButtonProps {
 }
 
 const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species, index }) => {
+    const {
+        translationHook: { t }
+    } = useLangContext()
     if (isCarnivore(species) || species.foodEaten >= species.population) {
         return null
     }
@@ -108,7 +118,7 @@ const FeedPlantsButton: FC<FeedPlantsButtonProps> = ({ gameId, playerId, species
         <button
             type="button"
             className="flex justify-center items-center"
-            aria-label={`Feed plants to species at index ${index}`}
+            aria-label={t('feed-plant', { index })}
             onClick={feedPlantsEater}
         >
             <FoodIcon width="32px" height="32px" />
