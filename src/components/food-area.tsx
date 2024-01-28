@@ -23,15 +23,14 @@ export const FoodArea: FC = () => {
                     )
                 })}
             </div>
-            <div className="relative min-w-52 max-h-[80%]">
+            <div className="relative">
                 <Image
                     src={FoodAreaImg}
                     alt={t('number-of-food-food-area', { amountOfFood })}
-                    sizes="100vw"
-                    style={{
-                        width: '100%',
-                        height: '80%'
-                    }}
+                    width={100}
+                    height={100}
+                    layout="responsive"
+                    sizes="(max-height: 768px) 20vh, (max-height: 1200px) 30vh, 10vh"
                 />
                 <div className="max-h-full flex absolute top-1/4 flex-wrap ml-10 mr-16">
                     {amountOfFood > 0 &&

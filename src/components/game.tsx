@@ -24,6 +24,7 @@ import { LeftOpponents } from '@/src/components/opponent/left-opponents'
 import { RightOpponents } from '@/src/components/opponent/right-opponents'
 import { MiddleOpponent } from '@/src/components/opponent/middle-opponent'
 import { useLangContext } from '@/src/providers/lang.provider'
+import { FrenchFlagIcon, SettingsIcon } from '@/src/components/svg-icons/french-flag-icon'
 
 interface GameProps {
     game: GameModel
@@ -116,7 +117,8 @@ export function Game({ game }: GameProps) {
                         <span>{getCardDiscardMessage()}</span>
                     </p>
                 </div>
-                <div className="flex justify-center">
+                <div className="flex justify-between">
+                    <div className="w-32" />
                     <div>
                         <ul className="flex flex-row justify-center h-32 items-end">
                             {cards.map((card, index) => {
@@ -124,11 +126,31 @@ export function Game({ game }: GameProps) {
                             })}
                         </ul>
                     </div>
-                    <div className="relative self-center place-self-end w-16">
-                        <Image src={PouchImg} alt={t('player-number-of-points', { numberOfFoodEaten })} />
-                        <span className="absolute bottom-3 start-5 border rounded-full w-6 h-6 text-center">
-                            {numberOfFoodEaten}
-                        </span>
+                    <div className="flex self-end w-32 items-center">
+                        <div className="relative w-16">
+                            <Image
+                                src={PouchImg}
+                                alt={t('player-number-of-points', { numberOfFoodEaten })}
+                                width={32}
+                                height={32}
+                                layout="responsive"
+                                sizes="100vh"
+                            />
+                            <span className="absolute bottom-3 start-5 border rounded-full w-6 h-6 text-center">
+                                {numberOfFoodEaten}
+                            </span>
+                        </div>
+                        <select name="lang" id="lang-select">
+                            <option value="fr">
+                                <FrenchFlagIcon />
+                            </option>
+                            <option value="en">
+                                <FrenchFlagIcon />
+                            </option>
+                        </select>
+                        {/*<button type="button">*/}
+                        {/*    <FrenchFlagIcon />*/}
+                        {/*</button>*/}
                     </div>
                 </div>
             </div>
